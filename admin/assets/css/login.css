@@ -1,0 +1,125 @@
+ body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background: linear-gradient(120deg, #E3E5E6, #FFEFBC);
+            height: 100vh;
+        }
+
+        header{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 250px;
+        }
+
+        header .btn-back {
+            position: absolute;
+            right: 0;
+            top: 55px;
+            margin-right: 60px;
+            font-size: 28px;
+            color: #000;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        .left-panel {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        
+
+        h2 {
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 28px;
+            font-weight: 500;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-left: 10px;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #444;
+        }
+
+        .input-group input {
+            width: 370px;
+            padding: 15px 45px 15px 15px;
+            border: 1px solid #ddd;
+            border-radius: 28px;
+            font-size: 14px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 40px;
+            right: -05px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .btn {
+            margin-top: 20px;
+            width: 108%;
+            padding: 14px;
+            background: #ffcc00;
+            border: none;
+            border-radius: 28px;
+            font-weight: 400;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #ffb800;
+        }
+
+        .footer-text {
+            margin-top: 20px;
+            text-align: center;
+            margin-left: 30px;
+        }
+
+        .footer-text a {
+            color: #555;
+            text-decoration: none;
+            font-size: 14px;
+        }

@@ -1,0 +1,139 @@
+body {
+  font-family: Arial, sans-serif;
+  animation: fadeIn 1s ease-in-out;
+  background: linear-gradient(to right, #00746a4b, #ce891154);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+header {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 60px;
+  z-index: 99;
+}
+
+.logo-container {
+  gap: 10px;
+}
+
+.logo {
+  width: 180px;
+}
+
+/* Glassmorphic main container */
+.main-container {
+  max-width: 1500px;
+  margin: 150px auto;
+  padding: 40px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.438);
+  backdrop-filter: blur(12px);
+  /* box-shadow: 0 4px 3px rgba(0, 0, 0, 0.1); */
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 15px;
+  color: #1f2e2e;
+  font-size: 32px;
+}
+
+p {
+  color: #333;
+  /* margin-bottom: 40px; */
+  font-size: 16px;
+  /* line-height: 1.5; */
+  text-align: center;
+}
+
+/* Card layout */
+.card-row {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 15px;
+  /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); */
+  padding: 40px 30px;
+  width: 400px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.card h2 {
+  color: #1b7f69;
+  margin-bottom: 15px;
+  font-size: 22px;
+}
+
+.card p {
+  font-size: 15px;
+  color: #444;
+  /* margin-bottom: 25px; */
+  /* line-height: 1.5; */
+}
+
+.btn {
+  background: #1b7f69;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: bold;
+  transition: background 0.2s ease-in-out;
+  display: inline-block;
+}
+
+.btn:hover {
+  background: #145c4d;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+footer p {
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+  margin: 20px 0;
+}
+
+footer a {
+  color: #1b7f69;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}

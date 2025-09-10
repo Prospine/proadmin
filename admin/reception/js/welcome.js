@@ -37,5 +37,5 @@ const interval = setInterval(() => {
 
 // Redirect
 setTimeout(() => {
-    window.location.href = "views/dashboard.html";
+    window.location.href = "views/dashboard.php";
 }, 3000);

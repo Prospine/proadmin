@@ -9,6 +9,133 @@
   transition: background-color 0.5s, color 0.5s, border 0.5s;
 }
 
+/* Navigation */
+body.dark nav {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+}
+body.dark .nav-links {
+  border: var(--border-color);
+}
+body.dark .nav-links a {
+  color: var(--text-color);
+}
+body.dark .nav-links a:hover {
+  background-color: #444;
+}
+body.dark .nav-links a.active {
+  background-color: var(--back-color);
+  color: var(--accent-color);
+}
+
+/* Icon button */
+body.dark .icon-btn {
+  background-color: var(--card-bg2);
+}
+body.dark .icon-btn:hover {
+  background: #444;
+}
+
+/* Cards */
+body.dark .card {
+  background-color: var(--card-bg2);
+  border: 1px solid var(--border-color);
+}
+body.dark .card-header2 {
+  background-color: var(--card-bg2);
+  border: 1px solid var(--border-color);
+}
+body.dark .card-body {
+  background-color: var(--card-bg2);
+  border: 1px solid var(--border-color);
+}
+body.dark .card-body2 {
+  background: var(--card-body2);
+  border: 1px solid var(--border-color);
+}
+body.dark .card-title,
+body.dark .card-sub {
+  color: var(--text-color);
+}
+
+/* Schedule */
+body.dark .schedule {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+}
+body.dark .schedule-header h2 {
+  color: var(--text-color);
+}
+body.dark .arrow {
+  background-color: var(--card-bg2);
+  color: var(--text-color);
+}
+body.dark .time {
+  color: var(--text-color);
+}
+
+/* Forms */
+body.dark .form,
+body.dark .form-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+}
+body.dark input,
+body.dark select,
+body.dark textarea {
+  background: var(--card-bg2);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+body.dark .slider-toggle {
+  background-color: var(--card-bg2);
+}
+body.dark .form-row label {
+  color: var(--text-color);
+}
+body.dark .form-row input,
+body.dark .form-row select,
+body.dark .form-row textarea {
+  border: var(--border-color);
+}
+body.dark .submit-btn {
+  background-color: var(--accent-color);
+  color: var(--text-color);
+}
+
+/* Menu & Popups */
+body.dark .menu {
+  background-color: var(--card-bg3);
+  border: 1px solid var(--border-color);
+}
+body.dark .popup ul li a {
+  color: var(--text-color);
+  border-radius: 4px;
+}
+body.dark .popup ul li a:hover {
+  background-color: #6b6b6b;
+  color: var(--text-color);
+}
+body.dark .popup ul li {
+  border-bottom: 1px solid var(--border-color);
+}
+body.dark .closebtn {
+  color: var(--text-color);
+}
+body.dark .closebtn:hover {
+  color: var(--back-color);
+}
+
+/* Notifications & Tabs */
+body.dark .notification {
+  background: var(--card-bg3);
+  border: 1px solid var(--border-color);
+}
+body.dark .tab-btn {
+  background: var(--card-bg2);
+  color: var(--text-color2);
+}
+
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
@@ -598,7 +725,7 @@ textarea {
 
 .submit-btn {
   position: absolute;
-  bottom: -40px;
+  bottom: -20px;
   width: 27%;
   padding: 12px;
   background: #000000ff;

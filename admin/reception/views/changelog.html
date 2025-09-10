@@ -6,180 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="../image/favicon.png" type="image/x-icon" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/changelog.css">
   <title>Changelog</title>
-  <style>
-    body {
-      font-family: "Inter", "Segoe UI", sans-serif;
-      background: #0f0f14;
-      color: #ddd;
-      margin: 0;
-      padding: 0;
-      line-height: 1.6;
-    }
-
-    header {
-      text-align: center;
-      padding: 3rem 1rem 1rem;
-    }
-
-    .nav a {
-      position: absolute;
-      top: 80px;
-      left: 100px;
-      color: #ff6f61;
-    }
-
-    header h1 {
-      font-size: 2.4rem;
-      margin: 0 0 0.5rem;
-      color: #fff;
-    }
-
-    header p {
-      color: #aaa;
-      max-width: 600px;
-      margin: 0 auto;
-      font-size: 1rem;
-    }
-
-    main {
-      max-width: 1500px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-
-    /* Segment container */
-    .segment {
-      position: relative;
-      margin-bottom: 3rem;
-      padding-left: 40px;
-    }
-
-    /* Each log entry */
-    .log-entry {
-      position: relative;
-      margin-bottom: 2rem;
-      padding: 1rem 1.5rem;
-      background: #1c1c24;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-    }
-
-    .log-entry:hover {
-      background: #272732;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-      transform: translateY(-2px);
-      transition: all 0.3s ease;
-    }
-
-    /* Dots */
-    .log-entry::before {
-      content: "";
-      position: absolute;
-      top: 20px;
-      left: -30px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #e2725b;
-      border: 3px solid #0f0f14;
-      z-index: 2;
-    }
-
-    /* Connectors (only inside a segment) */
-    .log-entry:not(:last-child)::after {
-      content: "";
-      position: absolute;
-      top: 36px;
-      left: -23px;
-      width: 2px;
-      height: calc(100% + 32px);
-      background: #56566c;
-      z-index: 1;
-    }
-
-
-    .log-entry h2 {
-      font-size: 1.2rem;
-      margin: 0 0 0.3rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .meta {
-      font-size: 0.85rem;
-      color: #888;
-      margin-bottom: 1rem;
-    }
-
-    ul.changes {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    ul.changes li {
-      margin-bottom: 0.5rem;
-    }
-
-    .tag {
-      font-weight: bold;
-      margin-right: 0.4rem;
-    }
-
-    .tag.fixed {
-      color: #ff6f61;
-    }
-
-    .tag.added {
-      color: #7ac74f;
-    }
-
-    .tag.changed {
-      color: #f6d365;
-    }
-
-    .tag.improved {
-      color: #5dade2;
-    }
-
-    /* Badges */
-    .badge {
-      font-size: 0.7rem;
-      padding: 3px 7px;
-      border-radius: 6px;
-      color: #fff;
-    }
-
-    .badge.live {
-      background: #22c55e;
-    }
-
-    .badge.merged {
-      background: #3b82f6;
-    }
-
-    .badge.progress {
-      background: #eab308;
-      color: #222;
-    }
-
-    .badge.deprecated {
-      background: #6b7280;
-    }
-
-    .badge.live2 {
-      background: #ff6f61;
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem 1rem;
-      font-size: 0.9rem;
-      color: #666;
-    }
-  </style>
 </head>
 
 <body>
@@ -187,119 +18,69 @@
     <div class="nav">
       <a href="dashboard.php"> <i class="fa-solid fa-arrow-left"> Back</i></a>
     </div>
-    <h1>Changelog</h1>
-    <p>
-      Stay up to date with the latest changes! Since the first release, we’ve been
-      working hard to make this project the best it can be. Thanks everyone for your feedback ❤️
-    </p>
+    <div class="text">
+      <h1>Changelog</h1>
+      <p>
+        Stay up to date with the latest changes! Since the first release, we’ve been
+        working hard to make this project the best it can be. Thanks everyone for your feedback ❤️
+      </p>
+    </div>
   </header>
 
   <main>
-    <!-- Segment 1 -->
     <div class="segment">
       <div class="log-entry">
-        <h2>v1.17.0 <span class="badge progress">In Progress</span></h2>
-        <div class="meta">September 5, 2025 · Billing & Payments Module</div>
+        <h2>v2.1.0 <span class="badge merged">Merged</span></h2>
+        <div class="meta">September 9, 2025 · Dashboard & Schedule Module ·
+          <a href="https://github.com/Prospine/proadmin/commit/1277dca66f50e87d98377f677ae28c5b0b387548"> View changes</a>
+        </div>
         <ul class="changes">
-          <li><span class="tag added">Added</span> <code>Treatment Days</code> and <code>Attendance</code> summary
-            (e.g., <code>4/10</code>) to patient bill view.</li>
-          <li><span class="tag improved">Improved</span> Payments display by grouping records
-            <strong>by remark</strong> with nested <strong>mode-wise breakdown</strong> (entries + totals).
+          <li><span class="tag added">Added</span> brand-new <code>Schedule</code> section in the dashboard,
+            displaying upcoming and recent appointments in a structured, timeline-based view.</li>
+          <li><span class="tag improved">Improved</span> schedule rendering logic to automatically <strong>group
+              appointments by date</strong>,
+            ensuring that each day’s events are clearly separated and easier to scan.</li>
+          <li><span class="tag added">Added</span> <code>Status-based color coding</code> for appointments.
+            Events now dynamically change appearance based on whether they are <strong>Pending</strong>,
+            <strong>Consulted</strong>, or <strong>Other</strong>,
+            making it easier to identify appointment outcomes at a glance.
           </li>
-          <li><span class="tag added">Added</span> <code>Payments Overview</code> section showing total entries,
-            total paid, last payment date, and outstanding due in a compact summary card.</li>
-          <li><span class="tag improved">Improved</span> structure of bill layout while retaining existing classes,
-            logo, and clinic details for consistency with previous design.</li>
+          <li><span class="tag added">Added</span> support for <code>No Appointments</code> states.
+            On days without any scheduled appointments, a clean placeholder message is shown instead of an empty
+            timeline.</li>
+          <li><span class="tag improved">Improved</span> day selection bar (the <strong>Days Strip</strong>) to
+            highlight the current day
+            and provide quick navigation across past and future dates. The view automatically covers a <strong>date
+              range around today</strong> for context.</li>
+          <li><span class="tag fixed">Fixed</span> critical <code>Undefined variable $schedules</code> warning by
+            initializing fallback arrays and ensuring schedules are always handled safely, even when no data is present.
+          </li>
+          <li><span class="tag improved">Improved</span> appointment fetching logic by ensuring queries
+            pull from the correct <code>registration</code> table with proper <strong>branch-level filtering</strong>
+            and <strong>date constraints</strong>.</li>
+          <li><span class="tag added">Added</span> <code>Dark Mode</code> toggle in the dashboard header.
+            Users can now switch between light and dark themes with a single click, and the choice persists across
+            sessions.</li>
+          <li><span class="tag added">Added</span> dedicated <code>dark.css</code> theme file,
+            leveraging <strong>CSS variables</strong> for consistent colors and introducing a subtle <strong>gradient
+              background</strong>
+            for a polished visual appearance.</li>
+          <li><span class="tag improved">Improved</span> theme management logic using <code>localStorage</code>,
+            so that user preferences for light/dark mode are remembered automatically on page reload.</li>
+          <li><span class="tag improved">Improved</span> CSRF handling and fallback defaults for dashboard metrics,
+            preventing form rendering issues when CSRF tokens are missing or uninitialized.</li>
+          <li><span class="tag fixed">Fixed</span> multiple cases where the schedule or timeline
+            would fail to render correctly when no data was returned by the query.</li>
+          <li><span class="tag improved">Improved</span> the dashboard’s overall data-fetching flow by adding
+            <strong>try/catch safety wrappers</strong>, preventing the entire page from breaking if a single query
+            fails.
+          </li>
+          <li><span class="tag added">Added</span> scalable structure for future <code>Event Types</code>,
+            so the schedule view can later support different appointment categories (consultations, tests, follow-ups,
+            etc.).</li>
         </ul>
       </div>
     </div>
-
-    <div class="segment">
-      <div class="log-entry">
-        <h2>v1.16.2 <span class="badge live">Live</span></h2>
-        <div class="meta">September 5, 2025 · Backend Bugfix</div>
-        <ul class="changes">
-          <li>
-            <span class="tag fixed">Fixed</span>
-            Attendance count mismatch in patients table (<code>2/10</code> showing instead of <code>3/10</code>) by
-            correctly
-            binding <code>attendance_count</code> to each patient record instead of using a stray loop variable.
-          </li>
-          <li>
-            <span class="tag improved">Improved</span>
-            Data consistency between patient profile view and patients table.
-          </li>
-        </ul>
-      </div>
-      <div class="log-entry">
-        <h2>v1.16.2 <span class="badge merged">Merged</span></h2>
-        <div class="meta">September 5, 2025 · UI Enhancement</div>
-        <ul class="changes">
-          <li><span class="tag added">Added</span> Distinct pastel color themes for dashboard cards
-            (<code>.pastel-blue</code>, <code>.pastel-green</code>, <code>.pastel-purple</code>,
-            <code>.pastel-yellow</code>, <code>.pastel-pink</code>, <code>.pastel-mint</code>,
-            <code>.pastel-peach</code>, <code>.pastel-lavender</code>).
-          </li>
-          <li><span class="tag improved">Improved</span> UI readability by giving each card type a unique
-            background and accent border for quicker recognition.
-          </li>
-          <li><span class="tag enhanced">Enhanced</span> Visual hierarchy across the dashboard for
-            registrations, patients, inquiries, payments, dues, and tests.
-          </li>
-        </ul>
-      </div>
-
-      <div class="log-entry">
-        <h2>v1.16.2 <span class="badge merged">Merged</span></h2>
-        <div class="meta">September 4, 2025 · UI Enhancement</div>
-        <ul class="changes">
-          <li><span class="tag added">Added</span> Toggle switch in inquiries page to switch between
-            <code>Quick Inquiry</code> and <code>Test Inquiry</code> tables.
-          </li>
-          <li><span class="tag improved">Improved</span> Data handling by fetching both inquiry tables at once and
-            dynamically switching view with JavaScript.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Segment 2 -->
-    <div class="segment">
-      <div class="log-entry">
-        <h2>v1.16.1 <span class="badge live2">Previous Live</span></h2>
-        <div class="meta">September 3, 2025 · Frontend + Backend Update</div>
-        <ul class="changes">
-          <li><span class="tag changed">Changed</span> Inquiry status options to <code>Visited</code>,
-            <code>Cancelled</code>, and <code>Pending</code>.
-          </li>
-          <li><span class="tag added">Added</span> Attendance progress display (<code>completed/total days</code>) in
-            patients table.</li>
-        </ul>
-      </div>
-
-      <div class="log-entry">
-        <h2>v1.16.0 <span class="badge merged">Merged</span></h2>
-        <div class="meta">September 2, 2025 · API Update</div>
-        <ul class="changes">
-          <li><span class="tag added">Added</span> Attendance tracking in <code>patients page</code> with completed
-            count and last visit date.</li>
-          <li><span class="tag added">Added</span> Payment summary (total paid + last payment date) to API response.
-          </li>
-          <li><span class="tag changed">Changed</span> API response structure to include merged <code>attendance</code>
-            and <code>payments</code> data for frontend UI.</li>
-        </ul>
-      </div>
-
-      <div class="log-entry">
-        <h2>v1.15.2b <span class="badge merged">Merged</span></h2>
-        <div class="meta">August 28, 2025 · GitHub Release</div>
-        <ul class="changes">
-          <li><span class="tag fixed">Fixed</span> Bill printing font size issue.</li>
-          <li><span class="tag fixed">Fixed</span> Overflowing text layout problems.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Segment 3 -->
   </main>
 
   <footer>

@@ -1,0 +1,328 @@
+.main {
+  background-color: #ffffffa5;
+  width: 98%;
+  margin: 50px auto;
+  padding: 10px;
+  border-radius: 10px;
+  /* height: 80vh; */
+}
+
+/* === Modern Table Base === */
+.modern-table {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  height: 70vh;
+  overflow: auto;
+  /* overflow-x: auto; */
+}
+
+.modern-table table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.75rem;
+  /* space between rows */
+  font-family: "Inter", sans-serif;
+}
+
+.modern-table thead tr {
+  color: #555;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modern-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px dashed #c1c1c1;
+}
+
+.modern-table tbody tr {
+  background: #fdfdfd;
+  transition: all 0.2s ease;
+}
+
+.modern-table tbody tr:hover {
+  background: #ffd85f;
+  transform: scale(1.01);
+}
+
+.modern-table td {
+  padding: 0.9rem 1rem;
+  vertical-align: middle;
+  font-size: 0.95rem;
+  color: #333;
+  border-radius: 20px;
+}
+
+/* === Pills for Status === */
+.pill {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.pill.visited {
+  background: #e6f9f0;
+  color: #0a8f55;
+}
+
+.pill.cancelled {
+  background: #fdeaea;
+  color: #d93025;
+}
+
+.pill.pending {
+  background: #fff7e6;
+  color: #f57c00;
+}
+
+/* === Dropdowns match pills === */
+.modern-table select {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  background: #fff;
+}
+
+/* === Active Row Highlight (like yellow in screenshot) === */
+.modern-table tbody tr.active {
+  background: #fff7da !important;
+  border-left: 4px solid #ffcb2d;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.top-bar h2 {
+  margin-left: 10px;
+}
+
+.toggle-container {
+  margin: 1rem 0;
+  /* position: fixed; */
+  /* right: 0; */
+  margin-top: 5px;
+  /* margin-right: 80px; */
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #ffffffff;
+  background-color: #dedede2c;
+  width: 250px;
+}
+
+.toggle-btn {
+  padding: 8px 14px;
+  margin-right: 6px;
+  cursor: pointer;
+  border: 1px solid #ffffffff;
+  background: #e0e0e0ff;
+  border-radius: 25px;
+  color: #000;
+}
+
+.toggle-btn.active {
+  background: #222222ff;
+  color: #fff;
+  border: 1px solid #25252530;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.pill {
+  color: #000;
+}
+
+.nav-icons a {
+  text-decoration: none;
+}
+
+.pill.visited {
+  background: #077341ff;
+  color: #ffffffff;
+  padding: 10px 20px;
+}
+
+.pill.cancelled {
+  background: #bc0505ff;
+  color: #ffffffff;
+  padding: 10px 20px;
+}
+
+.pill.pending {
+  background: #a26d02ff;
+  color: #ffffffff;
+  padding: 10px 20px;
+}
+
+.drawer {
+  position: fixed;
+  top: 10px;
+  right: -620px;
+  margin-right: 20px;
+  width: 600px;
+  height: 98%;
+  background: #ffffffff;
+  color: #000;
+  border-radius: 30px;
+  box-shadow: -3px 0 8px rgba(0, 0, 0, 0.2);
+  transition: right 0.4s ease-in-out;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer.open {
+  right: 0;
+  /* slide in */
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #e3e3e3ff;
+  border-radius: 30px 30px 5px 5px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.drawer-body {
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.close-drawer {
+  cursor: pointer;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-right: 20px;
+  color: #333;
+}
+
+.action-btn {
+  background: #323232ff;
+  color: #fff;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  opacity: 0.8;
+}
+
+body.dark .main {
+  background-color: var(--card-bg2);
+}
+
+body.dark .modern-table {
+  background-color: var(--card-bg3);
+}
+
+body.dark .modern-table thead tr {
+  color: var(--text-color);
+}
+
+body.dark .modern-table th {
+  color: var(--text-color);
+  border-bottom: 2px dashed #818181;
+}
+
+body.dark .modern-table tbody tr {
+  background: var(--card-bg3);
+}
+
+body.dark .modern-table tbody tr:hover {
+  background: #a58112;
+}
+
+body.dark .modern-table td {
+  color: var(--text-color);
+}
+
+body.dark .pill {
+  color: var(--text-color);
+}
+
+body.dark .pill.visited {
+  background: var(--accent-color);
+}
+
+body.dark .pill.cancelled {
+  background: var(--accent-color);
+}
+
+body.dark .pill.pending {
+  background: var(--accent-color);
+}
+
+body.dark .modern-table select {
+  background: var(--card-bg);
+}
+
+body.dark .top-bar h2 {
+  color: var(--text-color);
+}
+
+body.dark .toggle-container {
+  background: var(--card-bg);
+  border: 1px solid #333;
+}
+
+body.dark .toggle-btn {
+  background: var(--card-bg);
+  border: 1px solid #333;
+  color: var(--text-color);
+}
+
+body.dark .toggle-btn.active {
+  background: var(--text-color);
+  color: var(--accent-color);
+  border: 1px solid #3c3c3c;
+}
+
+body.dark .pill.visited {
+  background: rgb(2, 100, 54);
+  color: #ffffffff;
+  padding: 10px 20px;
+}
+
+body.dark .pill.cancelled {
+  background: rgb(110, 2, 2);
+  color: #ffffffff;
+  padding: 10px 20px;
+}
+
+body.dark .pill.pending {
+  background: rgb(86, 58, 2);
+  color: #ffffffff;
+  padding: 10px 20px;
+}
+
+body.dark .drawer {
+  background: #1f1f1f;
+  color: #ccc;
+}
+
+body.dark .drawer-header {
+  background: #333;
+  border-radius: 30px 30px 5px 5px;
+}
+
+body.dark .close-drawer{
+    color: var(--text-color);
+}

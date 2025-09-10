@@ -325,10 +325,11 @@ $success = false;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="../css/dashboard.css">
-    <link id="theme-style" rel="stylesheet" href="../css/dark.css">
+    <link rel="stylesheet" href="../css/dark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
     <style>
-      
+
     </style>
 </head>
 
@@ -341,7 +342,7 @@ $success = false;
         <nav>
             <div class="nav-links">
                 <a href="#" class="active">Dashboard</a>
-                <a href="#">Inquiry</a>
+                <a href="inquiry.php">Inquiry</a>
                 <a href="#">Registration</a>
                 <a href="#">Patients</a>
                 <a href="#">Appointments</a>
@@ -876,7 +877,7 @@ $success = false;
                 </form>
 
                 <!-- Test Inquiry Form -->
-                <form id="uniqueTestForm" class="form-content">
+                <form id="uniqueTestForm" class="form-content form-content2">
                     <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
 
                     <div class="form-row">

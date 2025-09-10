@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const themeToggle = document.getElementById("theme-toggle");
     const themeIcon = document.getElementById("theme-icon");
-    const themeLink = document.getElementById("theme-style");
 
     // Load stored theme
     let currentTheme = localStorage.getItem("theme") || "light";
@@ -15,10 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function applyTheme(theme) {
         if (theme === "dark") {
-            themeLink.setAttribute("href", "../css/dark.css");
+            document.body.classList.add("dark");
             themeIcon.classList.replace("fa-moon", "fa-sun");
         } else {
-            themeLink.setAttribute("href", "");
+            document.body.classList.remove("dark");
             themeIcon.classList.replace("fa-sun", "fa-moon");
         }
     }

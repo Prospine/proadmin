@@ -1,0 +1,171 @@
+body {
+  font-family: "Bricolage Grotesque", sans-serif;
+  color: #ddd;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+header {
+  text-align: center;
+  padding: 3rem 1rem 1rem;
+}
+
+.nav a {
+  position: absolute;
+  top: 80px;
+  left: 100px;
+  color: #ff6f61;
+}
+
+header h1 {
+  font-size: 2.4rem;
+  margin: 0 0 0.5rem;
+  color: #111111;
+}
+
+header p {
+  color: #1e1e1e;
+  max-width: 600px;
+  margin: 0 auto;
+  font-size: 1rem;
+}
+
+main {
+  max-width: 1750px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* Segment container */
+.segment {
+  position: relative;
+  margin-bottom: 3rem;
+  padding-left: 40px;
+}
+
+/* Each log entry */
+.log-entry {
+  position: relative;
+  margin-bottom: 2rem;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+}
+
+.log-entry:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+/* Dots */
+.log-entry::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: -30px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #e2725b;
+  border: 3px solid #c4c4c4;
+  z-index: 2;
+}
+
+.log-entry:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 36px;
+  left: -23px;
+  width: 2px;
+  height: calc(100% + 32px);
+  z-index: 1;
+}
+
+.log-entry h2 {
+  font-size: 1.8rem;
+  margin: 0 0 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #000;
+}
+
+.meta {
+  font-size: 0.85rem;
+  color: #282828;
+  margin-bottom: 1rem;
+}
+
+.meta a {
+  color: #ff6f61;
+  text-decoration: none;
+}
+
+ul.changes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul.changes li {
+  margin-bottom: 0.5rem;
+  color: #222;
+}
+
+.tag {
+  font-weight: bold;
+  margin-right: 0.4rem;
+}
+
+.tag.fixed {
+  color: #fa4636;
+}
+
+.tag.added {
+  color: #77d047;
+}
+
+.tag.changed {
+  color: #f6d365;
+}
+
+.tag.improved {
+  color: #5dade2;
+}
+
+/* Badges */
+.badge {
+  font-size: 0.8rem;
+  padding: 3px 7px;
+  border-radius: 6px;
+  color: #ffffff;
+}
+
+.badge.live {
+  background: #22c55e;
+}
+
+.badge.merged {
+  background: #3b82f6;
+}
+
+.badge.progress {
+  background: #eab308;
+  color: #222;
+}
+
+.badge.deprecated {
+  background: #6b7280;
+}
+
+.badge.live2 {
+  background: #ff6f61;
+}
+
+footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}

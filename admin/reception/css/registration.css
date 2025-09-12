@@ -1,0 +1,477 @@
+:root {
+  --primary-color: #4a90e2;
+  --primary-color-hover: #3a7acc;
+  --primary-light: #e6f0ff;
+  --background-color: #f8f9fa;
+  --card-background: #ffffff;
+  --border-color: #e0e0e0;
+  --text-color: #333333;
+  --text-muted: #6c757d;
+  --shadow-light: rgba(0, 0, 0, 0.04);
+  --shadow-medium: rgba(0, 0, 0, 0.3);
+}
+
+body {
+  font-family: "Inter", sans-serif;
+}
+
+.add-to-patient-drawer,
+.add-to-patient-drawer * {
+  box-sizing: border-box;
+}
+
+/* --- MAIN DRAWER STYLES --- */
+.add-to-patient-drawer {
+  position: fixed;
+  top: 65%;
+  left: 33%;
+  transform: translate(-50%, -50%);
+  /* Corrected positioning */
+  width: min(96%, 620px);
+  max-width: 720px;
+  max-height: 90vh;
+  background: var(--background-color);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px var(--shadow-medium);
+  display: flex;
+  flex-direction: column;
+  z-index: 999999;
+  overflow: hidden;
+  padding: 0;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.add-to-patient-drawer.is-open {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* --- HEADER --- */
+.add-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px 16px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  background: var(--background-color);
+  z-index: 10;
+}
+
+.add-drawer-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.add-drawer-close {
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.add-drawer-close:hover {
+  color: var(--text-color);
+}
+
+/* --- BODY & FORM LAYOUT --- */
+.add-drawer-body {
+  padding: 24px 12px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+#addPatientForm {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+/* New grid for the input fields */
+.form-grid-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* --- TREATMENT OPTIONS (CARDS) --- */
+.treatment-options {
+  display: flex;
+  gap: 10px;
+  padding: 5px;
+  align-items: stretch;
+}
+
+.treatment-option {
+  flex: 1 1 0;
+  min-width: 0;
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px var(--shadow-light);
+}
+
+.treatment-option:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 8px 20px var(--shadow-medium);
+}
+
+.treatment-option input[type="radio"] {
+  accent-color: var(--primary-color);
+  width: 20px;
+  height: 20px;
+  margin: 0;
+}
+
+.treatment-option.is-selected {
+  border-color: var(--primary-color);
+  background-color: var(--primary-light);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
+}
+
+.treatment-option.is-selected .treatment-option-info h4 {
+  color: var(--primary-color);
+}
+
+.treatment-option-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-grow: 1;
+}
+
+.treatment-option-info h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.treatment-option-info p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* --- FORM INPUTS & CONTROLS --- */
+.form-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  margin-top: 10px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  font-size: 0.95rem;
+  background: var(--card-background);
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.15);
+}
+
+.form-group input[readonly],
+.form-group select[readonly] {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+  color: var(--text-muted);
+}
+
+/* --- BUTTONS --- */
+.submit-button-container {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.submit-button {
+  padding: 16px 40px;
+  border-radius: 12px;
+  background: var(--primary-color);
+  color: var(--card-background);
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+}
+
+.submit-button:hover {
+  background: var(--primary-color-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+}
+
+.pill.consulted {
+  display: inline-block;
+  padding: 0.7rem 1rem;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: capitalize;
+  background: #037b43;
+  color: #ffffff;
+}
+
+.pill.closed {
+  /* width: 60px; */
+  display: inline-block;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: capitalize;
+  background: #ef2828;
+  color: #ffffff;
+}
+
+/* Drawer Wrapper */
+.drawer-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  /* reduced from 20px */
+  max-height: 90vh;
+  overflow-y: auto;
+  font-family: "Inter", sans-serif;
+  color: #333;
+}
+
+/* Patient Bill Button */
+.PatientBill {
+  width: 100px;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  /* border: 1px solid; */
+  margin-top: -30px;
+  margin-bottom: 20px;
+  margin-left: 760px;
+  /* reduced from 15px */
+}
+
+.PatientBill button {
+  background: #000000ff;
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  /* down from 14px */
+  padding: 10px 18px;
+  /* reduced */
+  border-radius: 26px;
+  /* slightly smaller */
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.PatientBill button:hover {
+  background: #2c2c2cff;
+}
+
+/* Header */
+.drawer-header2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f9fc;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.drawer-header2 h2 {
+  margin: 0;
+  font-size: 18px;
+  /* down from 20px */
+  font-weight: 600;
+}
+
+.drawer-header2 small {
+  font-size: 12px;
+  color: #666;
+}
+
+.pill.status {
+  display: inline-block;
+  padding: 10px 20px;
+  /* reduced */
+  border-radius: 999px;
+  font-size: 12px;
+  /* down from 13px */
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  /* reduced from 16px */
+  margin-bottom: 14px;
+  /* reduced from 20px */
+}
+
+.info-item {
+  background: #fafafa;
+  border: 1px solid #eee;
+  padding: 10px;
+  /* reduced from 12px */
+  border-radius: 6px;
+  /* smaller */
+  display: flex;
+  flex-direction: column;
+}
+
+.info-item strong {
+  font-size: 12px;
+  /* reduced */
+  color: #666;
+  margin-bottom: 2px;
+  /* reduced */
+}
+
+.info-item span {
+  font-size: 14px;
+  /* down from 15px */
+  font-weight: 500;
+  color: #333;
+}
+
+/* Remarks Section */
+.addremarks {
+  background: #f7f9fc;
+  border-radius: 8px;
+  padding: 12px;
+  /* reduced */
+  margin-bottom: 14px;
+}
+
+.addremarks h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  /* slightly smaller */
+  font-weight: 600;
+}
+
+#remarksTextarea {
+  width: 100%;
+  min-height: 65px;
+  /* down from 80px */
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px;
+  /* reduced */
+  resize: vertical;
+  font-family: inherit;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+#submitRemarkBtn {
+  background: #000000ff;
+  color: #fff;
+  border: none;
+  padding: 8px 20px;
+  /* reduced */
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  margin-top: 10px;
+}
+
+#submitRemarkBtn:hover {
+  background: #363636ff;
+}
+
+/* Add To Patient Section */
+.addToPatient {
+  background: #f7f9fc;
+  border-radius: 8px;
+  padding: 12px;
+  /* reduced */
+  text-align: center;
+}
+
+.addToPatient p {
+  font-weight: 500;
+  margin-bottom: 6px;
+  /* reduced */
+  font-size: 18px;
+}
+
+#addToPatientBtn {
+  width: 50%;
+  background: #000000ff;
+  border: none;
+  color: #fff;
+  padding: 8px 20px;
+  /* reduced */
+  border-radius: 26px;
+  margin-top: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+#addToPatientBtn:hover {
+  background: #323232ff;
+}

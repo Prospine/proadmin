@@ -29,7 +29,7 @@ if (! isset($_SESSION['uid'])) {
     exit();
 }
 require_once '../../common/auth.php';
-require_once '../../common/db.php'; // PDO connection
+require_once '../../common/db.php';
 // -------------------------
 
 if (!isset($csrf)) {
@@ -60,11 +60,8 @@ try {
     $stmtQuick = $pdo->prepare("
 
 SELECT inquiry_id, name, phone_number, age, gender, referralSource, chief_complain, review, expected_visit_date, created_at, status
-
 FROM quick_inquiry
-
 WHERE branch_id = :branch_id
-
 ORDER BY created_at DESC
 
 ");
@@ -124,7 +121,7 @@ ORDER BY created_at DESC
         </div>
         <nav>
             <div class="nav-links"> <a href="dashboard.php">Dashboard</a> <a href="inquiry.php"
-                    class="active">Inquiry</a> <a href="#">Registration</a> <a href="#">Patients</a> <a
+                    class="active">Inquiry</a> <a href="registration.php">Registration</a> <a href="#">Patients</a> <a
                     href="#">Appointments</a> <a href="#">Billing</a> <a href="#">Attendance</a> <a href="#">Tests</a><a href="#">Reports</a> </div>
         </nav>
         <div class="nav-actions">
@@ -191,7 +188,8 @@ ORDER BY created_at DESC
                                     <td> <?php echo htmlspecialchars((string) $row['expected_visit_date']) ?> </td>
                                     <td> <?php echo htmlspecialchars((string) $row['created_at']) ?> </td>
                                     <td> <span class="pill <?php echo strtolower($row['status']) ?>">
-                                            <?php echo htmlspecialchars((string) $row['status']) ?> </span> </td>
+                                            <?php echo htmlspecialchars((string) $row['status']) ?> </span>
+                                    </td>
                                     <td> <select data-id="<?php echo $row['inquiry_id'] ?>" data-type="quick">
                                             <option <?php echo strtolower($row['status']) === 'visited' ? 'selected' : '' ?>>Visited
                                             </option>

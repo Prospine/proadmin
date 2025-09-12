@@ -30,13 +30,67 @@
 
   <main>
     <div class="segment">
+
       <div class="log-entry">
-        <h2>v2.1.4 <span class="badge merged">Merged</span></h2>
-        <div class="meta">September 12, 2025 · Inquiry Management & Dashboard Module ·
-          <a href="#>View
+        <h2>v2.1.6 <span class="badge merged">Merged</span></h2>
+        <div class="meta">September 13, 2025 · Patient Registration & Management Module ·
+          <a href="#"> View
             changes</a>
         </div>
         <ul class="changes">
+          <li><span class="tag added">Added</span> <code>check_patient.php</code> API to <strong>verify patient
+              existence by registration ID</strong>, preventing duplicates and ensuring a smoother registration
+            workflow. The API responds with clear JSON status flags for integration with forms and popups.</li>
+
+          <li><span class="tag added">Added</span> <code>get_registration.php</code> API to <strong>fetch complete
+              patient registration records</strong> (name, demographics, visit history, treatment details). This enables
+            real-time data retrieval for UI components like drawers and popups.</li>
+
+          <li><span class="tag added">Added</span> <code>save_remark.php</code> API for <strong>attaching remarks or
+              notes</strong> directly to patient registrations. Supports multiple entries per patient and timestamp
+            logging, creating a mini audit trail for doctors and staff.</li>
+
+          <li><span class="tag added">Added</span> <code>update_registration_status.php</code> API to <strong>modify
+              patient registration status</strong> (Pending → Consulted → Closed). Includes validation to avoid invalid
+            transitions and ensures backend + UI consistency.</li>
+
+          <li><span class="tag added">Added</span> comprehensive <code>registration.css</code> stylesheet with
+            <strong>modular design patterns</strong> — improved spacing, typography, drawer animations, table alignment,
+            and popup styling for a cleaner, professional look.</li>
+
+          <li><span class="tag added">Added</span> <code>registration.php</code> view — a dedicated interface for
+            managing <strong>patient registration lifecycle</strong>. Includes a searchable, sortable table with inline
+            actions and real-time updates via AJAX.</li>
+
+          <li><span class="tag added">Added</span> patient info <strong>drawer component</strong> that slides in
+            contextually, allowing staff to <em>view patient details, registration status, and remarks</em> without
+            navigating away from the dashboard. Optimized for quick lookups and updates.</li>
+
+          <li><span class="tag added">Added</span> <strong>Add Patient popup</strong> with integrated treatment plan
+            creation. Enables direct patient onboarding from any workflow — supports instant registration, plan linking,
+            and validation checks in one flow.</li>
+
+          <li><span class="tag improved">Improved</span> overall error handling — all new APIs now return
+            <strong>structured JSON with success/error flags and messages</strong>. Edge cases like missing IDs, invalid
+            status changes, and DB errors are handled gracefully.</li>
+
+          <li><span class="tag improved">Improved</span> validation rules across the registration module — stricter
+            field checks, consistent use of <code>htmlspecialchars()</code> for sanitization, and standardized response
+            codes for easier frontend integration.</li>
+
+          <li><span class="tag improved">Improved</span> registration workflow efficiency by combining <strong>lookup →
+              add → manage</strong> flows into a single UI. Staff can now check if a patient exists, register them if
+            not, and attach treatment plans without page reloads.</li>
+        </ul>
+      </div>
+
+      <div class="log-entry">
+        <h2>v2.1.4 <span class="badge merged">Merged</span></h2>
+        <div class="meta">September 12, 2025 · Inquiry Management & Dashboard Module ·
+          <a href="https://github.com/Prospine/proadmin/commit/ddd88a1e7a1f16f43b0b71229dae5be26a346316"> View
+            changes</a>
+        </div>
+        <ul class=" changes">
           <li><span class="tag added">Added</span> <code>get_slots.php</code> API to fetch <strong>half-hourly
               appointment slots</strong> (11 AM – 7 PM) dynamically, ensuring real-time availability.</li>
           <li><span class="tag added">Added</span> smart <strong>slot disabling system</strong> on the dashboard that
@@ -46,17 +100,22 @@
               handling</strong>, CSRF token verification, and robust error reporting for stability in production.</li>
           <li><span class="tag added">Added</span> <code>insert_inquiry_reg.php</code> and
             <code>insert_inquiry_test.php</code> APIs with strict <strong>server-side validation</strong>, required
-            field checks, and <strong>payment status logic</strong>.</li>
+            field checks, and <strong>payment status logic</strong>.
+          </li>
           <li><span class="tag improved">Improved</span> inquiry UI with <strong>structured forms</strong> for both
             quick inquiries and test inquiries, reducing clutter and making fields easier to navigate.</li>
-          <li><span class="tag added">Added</span> permanent <strong>dark mode styling</strong> for inputs, tables, and
+          <li><span class="tag added">Added</span> permanent <strong>dark mode styling</strong> for inputs, tables,
+            and
             dropdowns — including <strong>select menus</strong> which now remain dark even when expanded.</li>
           <li><span class="tag improved">Improved</span> background and component colors for dark mode using smooth
-            <strong>transition effects</strong> across input fields, drawer panels, and table rows.</li>
-          <li><span class="tag fixed">Fixed</span> dropdown issue where <strong>select fields</strong> reverted to white
+            <strong>transition effects</strong> across input fields, drawer panels, and table rows.
+          </li>
+          <li><span class="tag fixed">Fixed</span> dropdown issue where <strong>select fields</strong> reverted to
+            white
             on expand — now they stay fully consistent with dark mode theme.</li>
           <li><span class="tag fixed">Fixed</span> database query handling in inquiry fetch APIs to resolve
-            <code>SQLSTATE[HY093]: Invalid parameter number</code> errors.</li>
+            <code>SQLSTATE[HY093]: Invalid parameter number</code> errors.
+          </li>
           <li><span class="tag added">Added</span> developer-friendly <strong>error messages</strong> and fallback
             handling in case of API or DB failures, improving debugging and reliability.</li>
         </ul>
@@ -75,7 +134,8 @@
           <li><span class="tag added">Added</span> <code>update_inquiry_status.php</code> to update inquiry status
             dynamically
             and return JSON responses.</li>
-          <li><span class="tag added">Added</span> new <strong>drawer component</strong> that slides in from the right,
+          <li><span class="tag added">Added</span> new <strong>drawer component</strong> that slides in from the
+            right,
             showing detailed inquiry information with clean styling.</li>
           <li><span class="tag improved">Improved</span> <code>inquiry.php</code> by displaying both<strong>Quick
               Inquiries</strong> and <strong>Test Inquiries</strong> in structured tables with
@@ -126,7 +186,8 @@
             and provide quick navigation across past and future dates. The view automatically covers a <strong>date
               range around today</strong> for context.</li>
           <li><span class="tag fixed">Fixed</span> critical <code>Undefined variable $schedules</code> warning by
-            initializing fallback arrays and ensuring schedules are always handled safely, even when no data is present.
+            initializing fallback arrays and ensuring schedules are always handled safely, even when no data is
+            present.
           </li>
           <li><span class="tag improved">Improved</span> appointment fetching logic by ensuring queries
             pull from the correct <code>registration</code> table with proper <strong>branch-level filtering</strong>
@@ -145,7 +206,8 @@
           <li><span class="tag fixed">Fixed</span> multiple cases where the schedule or timeline
             would fail to render correctly when no data was returned by the query.</li>
           <li><span class="tag improved">Improved</span> the dashboard’s overall data-fetching flow by
-            adding<strong>try/catch safety wrappers</strong>, preventing the entire page from breaking if a single query
+            adding<strong>try/catch safety wrappers</strong>, preventing the entire page from breaking if a single
+            query
             fails.
           </li>
           <li><span class="tag added">Added</span> scalable structure for future <code>Event Types</code>,
@@ -165,7 +227,8 @@
             improved UX.</li>
           <li><span class="tag added">Added</span> <code>index.html</code> as the landing page for the admin portal.
           </li>
-          <li><span class="tag added">Added</span> <code>login.php</code> with session management, CSRF protection, and
+          <li><span class="tag added">Added</span> <code>login.php</code> with session management, CSRF protection,
+            and
             brute force prevention to enhance login security.</li>
           <li><span class="tag added">Added</span> CSS styles for <strong>reception dashboard</strong>
             and<strong>welcome page</strong> for consistent UI.

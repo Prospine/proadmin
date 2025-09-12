@@ -329,7 +329,7 @@ $success = false;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
     <style>
-      
+
     </style>
 </head>
 
@@ -343,7 +343,7 @@ $success = false;
             <div class="nav-links">
                 <a href="#" class="active">Dashboard</a>
                 <a href="inquiry.php">Inquiry</a>
-                <a href="#">Registration</a>
+                <a href="registration.php">Registration</a>
                 <a href="#">Patients</a>
                 <a href="#">Appointments</a>
                 <a href="#">Billing</a>
@@ -1043,7 +1043,6 @@ $success = false;
                     }
                 })
                 .catch(err => console.error("Error fetching slots:", err));
-
 
 
             // ==========================================================

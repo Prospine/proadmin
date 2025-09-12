@@ -1,66 +1,109 @@
 <?php
 
 declare(strict_types=1);
+
 session_start();
 
 // -------------------------
+
 // Error Reporting (Dev Only)
+
 // -------------------------
+
 ini_set('display_errors', '1');
+
 ini_set('display_startup_errors', '1');
+
 error_reporting(E_ALL);
 
 // -------------------------
+
 // Auth / Session Checks
+
 // -------------------------
-if (!isset($_SESSION['uid'])) {
+
+if (! isset($_SESSION['uid'])) {
+
     header('Location: ../../login.php');
+
     exit();
 }
-
 require_once '../../common/auth.php';
 require_once '../../common/db.php'; // PDO connection
+// -------------------------
+
+if (!isset($csrf)) {
+    $csrf = $_SESSION['csrf_token'] ?? null;
+    if (!$csrf) {
+        $csrf = bin2hex(random_bytes(32));
+        $_SESSION['csrf_token'] = $csrf;
+    }
+}
+
+// Branch-based Access Only
 
 // -------------------------
-// Branch-based Access Only
-// -------------------------
+
 $branchId = $_SESSION['branch_id'] ?? null;
-if (!$branchId) {
+
+if (! $branchId) {
+
     http_response_code(403);
+
     exit('Branch not assigned.');
 }
 
 try {
+
     // Quick Inquiry
+
     $stmtQuick = $pdo->prepare("
-        SELECT inquiry_id, name, phone_number, age, gender, referralSource, chief_complain, review, expected_visit_date, created_at, status 
-        FROM quick_inquiry 
-        WHERE branch_id = :branch_id 
-        ORDER BY created_at DESC
-    ");
+
+SELECT inquiry_id, name, phone_number, age, gender, referralSource, chief_complain, review, expected_visit_date, created_at, status
+
+FROM quick_inquiry
+
+WHERE branch_id = :branch_id
+
+ORDER BY created_at DESC
+
+");
+
     $stmtQuick->execute([':branch_id' => $branchId]);
+
     $quick_inquiries = $stmtQuick->fetchAll(PDO::FETCH_ASSOC);
 
     // Test Inquiry
+
     $stmtTest = $pdo->prepare("
-        SELECT inquiry_id, name, testname, reffered_by, mobile_number, expected_visit_date, created_at, status
-        FROM test_inquiry
-        WHERE branch_id = :branch_id 
-        ORDER BY created_at DESC
-    ");
+
+SELECT inquiry_id, name, testname, reffered_by, mobile_number, expected_visit_date, created_at, status
+
+FROM test_inquiry
+
+WHERE branch_id = :branch_id
+
+ORDER BY created_at DESC
+
+");
+
     $stmtTest->execute([':branch_id' => $branchId]);
+
     $test_inquiries = $stmtTest->fetchAll(PDO::FETCH_ASSOC);
 
     //branch name
+
     $stmt = $pdo->prepare("SELECT branch_name FROM branches WHERE branch_id = :branch_id");
+
     $stmt->execute(['branch_id' => $branchId]);
+
     $branchName = $stmt->fetch()['branch_name'] ?? '';
 } catch (PDOException $e) {
+
     die("Error fetching inquiries: " . $e->getMessage());
 }
+
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -73,173 +116,25 @@ try {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="../css/inquiry.css">
-    <style>
-        /* --- Base Drawer Styling --- */
-        .drawer-content {
-            padding: 24px;
-            /* Reduced padding */
-            font-family: 'Inter', system-ui, sans-serif;
-            color: #1a202c;
-            background: #ffffff;
-        }
-
-        /* --- Main Flex Container for All Cards --- */
-        .inquiry-details {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            /* Reduced space between each category card */
-        }
-
-        /* --- Core Card Styling --- */
-        .info-card {
-            background: #f8fafc;
-            padding: 16px;
-            /* Reduced padding */
-            border-radius: 8px;
-            /* Slightly smaller radius */
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            /* Less intense shadow */
-        }
-
-        /* --- Card Title / Category Heading --- */
-        .info-card h3 {
-            font-size: 1rem;
-            /* Smaller font size */
-            font-weight: 600;
-            color: #2d3748;
-            margin-top: 0;
-            margin-bottom: 12px;
-            /* Reduced margin */
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 8px;
-            /* Reduced padding */
-        }
-
-        /* --- Detail Grid within each Card --- */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            /* Smaller min-width */
-            gap: 12px 20px;
-            /* Reduced gaps */
-        }
-
-        /* --- Detail Item Styling (Label & Value) --- */
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .detail-item .label {
-            font-size: 0.7rem;
-            /* Smaller font size */
-            font-weight: 500;
-            color: #718096;
-            margin-bottom: 2px;
-            /* Reduced margin */
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .detail-item .value {
-            font-size: 0.9rem;
-            /* Smaller font size */
-            font-weight: 600;
-            color: #2d3748;
-        }
-
-        /* --- Special Full-Width Section for Chief Complain and Review --- */
-        .info-card .full-width-section {
-            display: flex;
-            /* Forces to span all columns */
-        }
-
-        .info-card .full-width-section .value {
-            /* background: #ffffff; */
-            /* padding: 12px; */
-            /* Reduced padding */
-            /* border-radius: 6px; */
-            /* Smaller radius */
-            /* border: 1px solid #cbd5e0; */
-            font-size: 0.85rem;
-            /* Smaller font size */
-            font-weight: 400;
-            /* line-height: 1.5; */
-            /* Reduced line height for compactness */
-        }
-
-        /* --- Status Badge Styling --- */
-        .status-badge-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .status-badge-container .label {
-            margin-right: 8px;
-            /* Reduced margin */
-        }
-
-        .status {
-            display: inline-flex;
-            padding: 4px 10px;
-            /* Smaller padding */
-            border-radius: 9999px;
-            font-size: 0.65rem;
-            /* Smaller font size */
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #ffffff;
-            white-space: nowrap;
-        }
-
-        .status.visited {
-            background: #047857;
-        }
-
-        .status.cancelled {
-            background: #c53030;
-        }
-
-        .status.pending {
-            background: #d69e2e;
-        }
-    </style>
 </head>
 
 <body>
     <header>
-        <div class="logo-container">
-            <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
+        <div class="logo-container"> <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
         </div>
-
         <nav>
-            <div class="nav-links">
-                <a href="dashboard.php">Dashboard</a>
-                <a href="inquiry.html" class="active">Inquiry</a>
-                <a href="#">Registration</a>
-                <a href="#">Patients</a>
-                <a href="#">Appointments</a>
-                <a href="#">Billing</a>
-                <a href="#">Attendance</a>
-                <a href="#">Tests</a>
-                <a href="#">Reports</a>
-            </div>
+            <div class="nav-links"> <a href="dashboard.php">Dashboard</a> <a href="inquiry.php"
+                    class="active">Inquiry</a> <a href="#">Registration</a> <a href="#">Patients</a> <a
+                    href="#">Appointments</a> <a href="#">Billing</a> <a href="#">Attendance</a> <a href="#">Tests</a><a href="#">Reports</a> </div>
         </nav>
         <div class="nav-actions">
-            <div class="icon-btn" title="Settings">
-                <?php echo $branchName; ?> Branch
-            </div>
-            <div class="icon-btn" id="theme-toggle">
-                <i id="theme-icon" class="fa-solid fa-moon"></i>
-            </div>
+            <div class="icon-btn" title="Settings"> <?php echo $branchName; ?> Branch </div>
+            <div class="icon-btn" id="theme-toggle"> <i id="theme-icon" class="fa-solid fa-moon"></i> </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
         </div>
     </header>
-    <div class="menu" id="myMenu">
-        <span class="closebtn" onclick="closeForm()">&times;</span>
+    <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
         <div class="popup">
             <ul>
                 <li><a href="#">Profile</a></li>
@@ -248,9 +143,7 @@ try {
             </ul>
         </div>
     </div>
-
-    <div class="notification" id="myNotif">
-        <span class="closebtn" onclick="closeNotif()">&times;</span>
+    <div class="notification" id="myNotif"> <span class="closebtn" onclick="closeNotif()">&times;</span>
         <div class="popup">
             <ul>
                 <li><a href="changelog.html" class="active2">View Changes (1) </a></li>
@@ -260,18 +153,14 @@ try {
             </ul>
         </div>
     </div>
-
     <main class="main">
         <div class="dashboard-container">
             <div class="top-bar">
                 <h2>Inquiry</h2>
-                <div class="toggle-container">
-                    <button id="quickBtn" class="toggle-btn active">Quick Inquiry</button>
+                <div class="toggle-container"> <button id="quickBtn" class="toggle-btn active">Quick Inquiry</button>
                     <button id="testBtn" class="toggle-btn">Test Inquiry</button>
                 </div>
-            </div>
-
-            <!-- Quick Inquiry Table -->
+            </div> <!-- Quick Inquiry Table -->
             <div id="quickTable" class="table-container modern-table">
                 <table>
                     <thead>
@@ -290,71 +179,36 @@ try {
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <?php if (!empty($quick_inquiries)): ?>
-                            <?php foreach ($quick_inquiries as $row): ?>
+                    <tbody> <?php if (! empty($quick_inquiries)): ?> <?php foreach ($quick_inquiries as $row): ?>
                                 <tr>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['name']) ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['phone_number']) ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['age']) ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['gender']) ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['referralSource']) ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['chief_complain']) ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['review']) ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['expected_visit_date']) ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['created_at']) ?>
-                                    </td>
-                                    <td>
-                                        <span class="pill <?= strtolower($row['status']) ?>">
-                                            <?= htmlspecialchars((string) $row['status']) ?>
-                                        </span>
-                                    </td>
-
-                                    <td>
-                                        <select data-id="<?= $row['inquiry_id'] ?>" data-type="quick">
-                                            <option <?= strtolower($row['status']) === 'visited' ? 'selected' : '' ?>>Visited</option>
-                                            <option <?= strtolower($row['status']) === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
-                                            <option <?= strtolower($row['status']) === 'pending' ? 'selected' : '' ?>>Pending</option>
-                                        </select>
-                                    </td>
-
-                                    <td>
-                                        <button class="action-btn open-drawer"
-                                            data-id="<?= $row['inquiry_id'] ?>"
-                                            data-type="quick">
-                                            View
-                                        </button>
-                                    </td>
-
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
+                                    <td> <?php echo htmlspecialchars((string) $row['name']) ?> </td>
+                                    <td> <?php echo htmlspecialchars((string) $row['phone_number']) ?> </td>
+                                    <td> <?php echo htmlspecialchars((string) $row['age']) ?> </td>
+                                    <td> <?php echo htmlspecialchars((string) $row['gender']) ?> </td>
+                                    <td> <?php echo htmlspecialchars((string) $row['referralSource']) ?> </td>
+                                    <td> <?php echo htmlspecialchars((string) $row['chief_complain']) ?> </td>
+                                    <td> <?php echo htmlspecialchars((string) $row['review']) ?> </td>
+                                    <td> <?php echo htmlspecialchars((string) $row['expected_visit_date']) ?> </td>
+                                    <td> <?php echo htmlspecialchars((string) $row['created_at']) ?> </td>
+                                    <td> <span class="pill <?php echo strtolower($row['status']) ?>">
+                                            <?php echo htmlspecialchars((string) $row['status']) ?> </span> </td>
+                                    <td> <select data-id="<?php echo $row['inquiry_id'] ?>" data-type="quick">
+                                            <option <?php echo strtolower($row['status']) === 'visited' ? 'selected' : '' ?>>Visited
+                                            </option>
+                                            <option <?php echo strtolower($row['status']) === 'cancelled' ? 'selected' : '' ?>>Cancelled
+                                            </option>
+                                            <option <?php echo strtolower($row['status']) === 'pending' ? 'selected' : '' ?>>Pending
+                                            </option>
+                                        </select> </td>
+                                    <td> <button class="action-btn open-drawer" data-id="<?php echo $row['inquiry_id'] ?>"
+                                            data-type="quick"> View </button> </td>
+                                </tr> <?php endforeach; ?> <?php else: ?>
                             <tr>
                                 <td colspan="11">No Quick Inquiry found</td>
-                            </tr>
-                        <?php endif; ?>
+                            </tr> <?php endif; ?>
                     </tbody>
                 </table>
-            </div>
-
-            <!-- Test Inquiry Table -->
+            </div> <!-- Test Inquiry Table -->
             <div id="testTable" class="table-container modern-table hidden">
                 <table>
                     <thead>
@@ -370,213 +224,357 @@ try {
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <?php if (!empty($test_inquiries)): ?>
-                            <?php foreach ($test_inquiries as $row): ?>
+                    <tbody> <?php if (! empty($test_inquiries)): ?> <?php foreach ($test_inquiries as $row): ?>
                                 <tr>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['name']) ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['testname']) ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['reffered_by'] ?? '-') ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['mobile_number']) ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['expected_visit_date']) ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars((string) $row['created_at']) ?>
-                                    </td>
-                                    <td>
-                                        <span class="pill <?= strtolower($row['status']) ?>">
-                                            <?= htmlspecialchars((string) $row['status']) ?>
-                                        </span>
-                                    </td>
-
-                                    <td>
-                                        <select data-id="<?= $row['inquiry_id'] ?>" data-type="test">
-                                            <option <?= strtolower($row['status']) === 'visited' ? 'selected' : '' ?>>Visited</option>
-                                            <option <?= strtolower($row['status']) === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
-                                            <option <?= strtolower($row['status']) === 'pending' ? 'selected' : '' ?>>Pending</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <button class="action-btn open-drawer"
-                                            data-id="<?= $row['inquiry_id'] ?>"
-                                            data-type="test">
-                                            View
-                                        </button>
-                                    </td>
-
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
+                                    <td> <?php echo htmlspecialchars((string) $row['name']) ?> </td>
+                                    <td> <?php echo htmlspecialchars((string) $row['testname']) ?> </td>
+                                    <td> <?php echo htmlspecialchars((string) $row['reffered_by'] ?? '-') ?> </td>
+                                    <td> <?php echo htmlspecialchars((string) $row['mobile_number']) ?> </td>
+                                    <td> <?php echo htmlspecialchars((string) $row['expected_visit_date']) ?> </td>
+                                    <td> <?php echo htmlspecialchars((string) $row['created_at']) ?> </td>
+                                    <td> <span class="pill <?php echo strtolower($row['status']) ?>">
+                                            <?php echo htmlspecialchars((string) $row['status']) ?> </span> </td>
+                                    <td> <select data-id="<?php echo $row['inquiry_id'] ?>" data-type="test">
+                                            <option <?php echo strtolower($row['status']) === 'visited' ? 'selected' : '' ?>>Visited
+                                            </option>
+                                            <option <?php echo strtolower($row['status']) === 'cancelled' ? 'selected' : '' ?>>Cancelled
+                                            </option>
+                                            <option <?php echo strtolower($row['status']) === 'pending' ? 'selected' : '' ?>>Pending
+                                            </option>
+                                        </select> </td>
+                                    <td> <button class="action-btn open-drawer" data-id="<?php echo $row['inquiry_id'] ?>"
+                                            data-type="test"> View </button> </td>
+                                </tr> <?php endforeach; ?> <?php else: ?>
                             <tr>
                                 <td colspan="8">No Test Inquiry found</td>
-                            </tr>
-                        <?php endif; ?>
+                            </tr> <?php endif; ?>
                     </tbody>
                 </table>
             </div>
-
         </div>
         <div id="toast-container"></div>
     </main>
 
-    <div id="rightDrawer" class="drawer">
+    <div id="rightDrawer" class="drawer" aria-hidden="true">
         <div class="drawer-header">
             <h2 id="drawerTitle">Inquiry Details</h2>
-            <span class="close-drawer">&times;</span>
+            <button class="close-drawer" aria-label="Close drawer">&times;</button>
         </div>
-        <div class="drawer-body" id="drawerContent">
-            <p>Loading...</p>
+
+        <div id="drawerMessage" class="drawer-message"></div>
+
+        <div class="drawer-body">
+
+            <!-- Quick Inquiry Form -->
+            <form id="quickForm" class="inquiry-form hidden" method="post">
+                <!-- CSRF Token -->
+                <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf ?? $_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                <input type="hidden" name="inquiry_id" id="inquiry_id" value="">
+
+                <!-- Personal Information -->
+                <div class="info-card">
+                    <h3>Personal Information</h3>
+                    <div class="card-grid">
+                        <div class="first">
+                            <div class="detail-item">
+                                <label>Enter Patient Name *</label>
+                                <input type="text" name="name" required>
+                            </div>
+                            <div class="detail-item">
+                                <label>Age *</label>
+                                <input type="number" name="age" min="1" required>
+                            </div>
+                            <div class="detail-item">
+                                <label>Gender *</label>
+                                <select name="gender" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="detail-item">
+                                <label>Phone *</label>
+                                <input type="text" name="phone_number" maxlength="10" required>
+                            </div>
+                        </div>
+                        <div class="second">
+                            <div class="detail-item">
+                                <label>Email</label>
+                                <input type="email" name="email">
+                            </div>
+                            <div class="detail-item full-width-section">
+                                <label>Address</label>
+                                <input type="text" name="address">
+                            </div>
+                            <div class="detail-item">
+                                <label>Occupation *</label>
+                                <input type="text" name="occupation" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Referral Information -->
+                <div class="info-card">
+                    <h3>Referral Information</h3>
+                    <div class="card-grid">
+                        <div class="detail-item">
+                            <label>Referred By *</label>
+                            <input type="text" name="referred_by" required>
+                        </div>
+                        <div class="detail-item">
+                            <label>How did you hear about us</label>
+                            <select name="referralSource">
+                                <option value="self">Select</option>
+                                <option value="doctor_referral">Doctor Referral</option>
+                                <option value="web_search">Web Search</option>
+                                <option value="social_media">Social Media</option>
+                                <option value="returning_patient">Returning Patient</option>
+                                <option value="local_event">Local Event</option>
+                                <option value="advertisement">Advertisement</option>
+                                <option value="employee">Employee</option>
+                                <option value="family">Family</option>
+                                <option value="self">Self</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medical Details -->
+                <div class="info-card">
+                    <h3>Medical Details</h3>
+                    <div class="card-grid">
+                        <div class="detail-item">
+                            <label>Chief Complain *</label>
+                            <select name="chief_complain">
+                                <option value="other">Select your condition</option>
+                                <option value="neck_pain">Neck Pain</option>
+                                <option value="back_pain">Back Pain</option>
+                                <option value="low_back_pain">Low Back Pain</option>
+                                <option value="radiating_pain">Radiating Pain</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="detail-item full-width-section">
+                            <label>Describe Condition / Remarks</label>
+                            <input type="text" name="review">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Details -->
+                <div class="info-card">
+                    <h3>Payment Details</h3>
+                    <div class="card-grid">
+                        <div class="detail-item">
+                            <label>Amount *</label>
+                            <input type="number" name="amount" step="0.01" required>
+                        </div>
+                        <div class="detail-item">
+                            <label>Payment Method *</label>
+                            <select name="payment_method" required>
+                                <option value="">Select Method</option>
+                                <option value="cash">Cash</option>
+                                <option value="card">Card</option>
+                                <option value="upi">UPI</option>
+                                <option value="cheque">Cheque</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consultation & Appointment -->
+                <div class="info-card">
+                    <h3>Consultation & Appointment</h3>
+                    <div class="card-grid">
+                        <div class="detail-item">
+                            <label>Consultation Type *</label>
+                            <select name="inquiry_type" required>
+                                <option value="">Select Consultation Type</option>
+                                <option value="In-Clinic">In-Clinic</option>
+                                <option value="Home-Visit">Home-Visit</option>
+                                <option value="Virtual/Online">Virtual/Online</option>
+                            </select>
+                        </div>
+                        <div class="detail-item">
+                            <label>Appointment Date</label>
+                            <input type="date" name="appointment_date">
+                        </div>
+                        <div class="detail-item">
+                            <label>Time</label>
+                            <input type="time" name="time">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="submit-btn2">
+                    <button type="submit">Save</button>
+                </div>
+            </form>
+
+
+            <!-- Test Inquiry Form -->
+            <!-- Test Inquiry Form -->
+            <form id="testForm" class="inquiry-form hidden" method="POST" action="../api/test_submission.php">
+                <!-- CSRF Token -->
+                <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
+                <input type="hidden" name="inquiry_id" id="inquiry_id" value="">
+
+                <!-- Patient Information -->
+                <div class="info-card">
+                    <h3>Patient Information</h3>
+                    <div class="card-grid">
+                        <div class="detail-item">
+                            <label>Patient Name *</label>
+                            <input type="text" name="name" placeholder="Enter Patient Name" required>
+                        </div>
+                        <div class="detail-item">
+                            <label>Age *</label>
+                            <input type="number" name="age" max="150" required>
+                        </div>
+                        <div class="detail-item">
+                            <label>DOB</label>
+                            <input type="date" name="dob">
+                        </div>
+                        <div class="detail-item">
+                            <label>Gender *</label>
+                            <select name="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="detail-item">
+                            <label>Parents/Guardian</label>
+                            <input type="text" name="parents" placeholder="Parents/Guardian Name">
+                        </div>
+                        <div class="detail-item">
+                            <label>Relation</label>
+                            <input type="text" name="relation" placeholder="e.g., Father, Mother">
+                        </div>
+                        <div class="detail-item">
+                            <label>Phone No *</label>
+                            <input type="text" name="mobile_number" placeholder="+911234567890" maxlength="10" required>
+                        </div>
+                        <div class="detail-item">
+                            <label>Alternate Phone No</label>
+                            <input type="text" name="alternate_phone_no" placeholder="+911234567890" maxlength="10">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Referral Information -->
+                <div class="info-card">
+                    <h3>Referral Information</h3>
+                    <div class="card-grid">
+                        <div class="detail-item">
+                            <label>Referred By</label>
+                            <input type="text" name="reffered_by" placeholder="Doctor/Clinic Name">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Details -->
+                <div class="info-card">
+                    <h3>Test Details</h3>
+                    <div class="card-grid">
+                        <div class="detail-item">
+                            <label>Test Name *</label>
+                            <select name="testname" required>
+                                <option value="">Select Test</option>
+                                <option value="eeg">EEG</option>
+                                <option value="ncv">NCV</option>
+                                <option value="emg">EMG</option>
+                                <option value="rns">RNS</option>
+                                <option value="bera">BERA</option>
+                                <option value="vep">VEP</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="detail-item">
+                            <label>Limb</label>
+                            <select name="limb">
+                                <option value="">Select Limb</option>
+                                <option value="upper_limb">Upper Limb</option>
+                                <option value="lower_limb">Lower Limb</option>
+                                <option value="both">Both</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+                        <div class="detail-item">
+                            <label>Date of Visit *</label>
+                            <input type="date" name="visit_date" required>
+                        </div>
+                        <div class="detail-item">
+                            <label>Assigned Test Date *</label>
+                            <input type="date" name="assigned_test_date" required>
+                        </div>
+
+                        <div class="detail-item">
+                            <label>Test Done By *</label>
+                            <select name="test_done_by" required>
+                                <option value="">Select Staff</option>
+                                <option value="achal">Achal</option>
+                                ion value="ashish">Ashish</option>
+                                <option value="pancham">Pancham</option>
+                                <option value="sayan">Sayan</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Details -->
+                <div class="info-card">
+                    <h3>Payment Details</h3>
+                    <div class="card-grid">
+                        <div class="detail-item">
+                            <label>Total Amount *</label>
+                            <input type="number" name="total_amount" step="0.01" placeholder="Enter Amount" required>
+                        </div>
+                        <div class="detail-item">
+                            <label>Advance Amount</label>
+                            <input type="number" name="advance_amount" step="0.01" value="0" placeholder="Enter Advance Amount">
+                        </div>
+                        <div class="detail-item">
+                            <label>Due Amount</label>
+                            <input type="number" name="due_amount" step="0.01" value="0" placeholder="Enter Due Amount">
+                        </div>
+                        <div class="detail-item">
+                            <label>Discount</label>
+                            <input type="number" name="discount" step="0.01" value="0" placeholder="Enter Discount">
+                        </div>
+                        <div class="detail-item">
+                            <label>Payment Method *</label>
+                            <select name="payment_method" required>
+                                <option value="">Select Method</option>
+                                <option value="cash">Cash</option>
+                                <option value="upi">UPI</option>
+                                <option value="card">Card</option>
+                                <option value="cheque">Cheque</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="submit-btn2">
+                    <button type="submit">Submit Test</button>
+                </div>
+            </form>
         </div>
     </div>
+    <div id="toast-container"></div>
 
 
     <script src="../js/theme.js"></script>
-    <script src="../js/dashboard.js"></script>
     <script src="../js/inquiry.js"></script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const drawer = document.getElementById("rightDrawer");
-            const drawerContent = document.getElementById("drawerContent");
-            const drawerTitle = document.getElementById("drawerTitle");
-            const closeBtn = document.querySelector(".close-drawer");
-
-            // Open drawer on button click
-            document.querySelectorAll(".open-drawer").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const inquiryId = btn.getAttribute("data-id");
-                    const inquiryType = btn.getAttribute("data-type"); // quick or test
-
-                    drawer.classList.add("open");
-
-                    // Update drawer header
-                    drawerTitle.textContent =
-                        inquiryType === "quick" ? "Quick Inquiry Details" : "Test Inquiry Details";
-
-                    // Show loading
-                    drawerContent.innerHTML = `<p>Fetching details for ${inquiryType} inquiry ID: <b>${inquiryId}</b>...</p>`;
-
-                    // Example fetch (replace with your backend endpoints)
-
-                    fetch(`../api/fetch_inquiry.php?id=${inquiryId}&type=${inquiryType}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                let d = data.data;
-
-                                if (inquiryType === "quick") {
-                                    drawerContent.innerHTML = `
-        <div class="inquiry-details">
-
-    <div class="info-card">
-        <h3>Personal Information</h3>
-        <div class="card-grid">
-            <div class="detail-item">
-                <div class="label">Name:</div>
-                <div class="value">${d.name}</div>
-            </div>
-            <div class="detail-item">
-                <div class="label">Phone:</div>
-                <div class="value">${d.phone_number}</div>
-            </div>
-            <div class="detail-item">
-                <div class="label">Age:</div>
-                <div class="value">${d.age}</div>
-            </div>
-            <div class="detail-item">
-                <div class="label">Gender:</div>
-                <div class="value">${d.gender}</div>
-            </div>
-            <div class="detail-item">
-                <div class="label">Referral:</div>
-                <div class="value">${d.referralSource}</div>
-            </div>
-            
-        </div>
-
-        <br>
-            <h3>Medical Details</h3>
-            <div class="card-grid">
-            <div class="detail-item">
-                <div class="label">Chief Complain:</div>
-                <div class="value">${d.chief_complain}</div>
-            </div>
-            <div class="detail-item full-width-section">
-                <div class="label">Review:</div>
-                <div class="value">${d.review}</div>
-            </div>
-            </div>
-    </div>
-
-
-    <div class="info-card">
-        <h3>Visit Details</h3>
-        <div class="card-grid">
-            <div class="detail-item">
-                <div class="label">Expected Visit:</div>
-                <div class="value">${d.expected_visit_date}</div>
-            </div>
-            <div class="detail-item">
-                <div class="label">Created At:</div>
-                <div class="value">${d.created_at}</div>
-            </div>
-            <div class="detail-item status-badge-container">
-                <div class="label">Status:</div>
-                <div class="value">
-                    <span class="status ${d.status.toLowerCase()}">${d.status}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
-    `;
-                                } else {
-                                    drawerContent.innerHTML = `
-        <div class="inquiry-details">
-            <div class="label">Name:</div><div class="value">${d.name}</div>
-            <div class="label">Test Name:</div><div class="value">${d.testname}</div>
-            <div class="label">Referred By:</div><div class="value">${d.reffered_by ?? '-'}</div>
-            <div class="label">Mobile:</div><div class="value">${d.mobile_number}</div>
-            <div class="label">Expected Visit:</div><div class="value">${d.expected_visit_date}</div>
-            <div class="label">Status:</div>
-                <div class="value"><span class="status ${d.status.toLowerCase()}">${d.status}</span></div>
-            <div class="label">Created At:</div><div class="value">${d.created_at}</div>
-        </div>
-    `;
-                                }
-                            } else {
-                                drawerContent.innerHTML = `<p class="error">${data.message}</p>`;
-                            }
-                        })
-                        .catch(err => {
-                            drawerContent.innerHTML = `<p class="error">Error: ${err}</p>`;
-                        });
-
-                });
-            });
-
-            // Close drawer
-            closeBtn.addEventListener("click", () => {
-                drawer.classList.remove("open");
-            });
-
-            // Optional: close on ESC key
-            document.addEventListener("keydown", (e) => {
-                if (e.key === "Escape") drawer.classList.remove("open");
-            });
-        });
-    </script>
-
+    <script src="../js/dashboard.js"></script>
 </body>
 
 </html>

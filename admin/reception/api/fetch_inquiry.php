@@ -35,32 +35,69 @@ if (!$id || !in_array($type, ['quick', 'test'])) {
 
 try {
     if ($type === 'quick') {
+        // Quick inquiry (same as your working version)
         $stmt = $pdo->prepare("
-            SELECT inquiry_id, name, phone_number, age, gender, referralSource, 
-                   chief_complain, review, expected_visit_date, created_at, status
-            FROM quick_inquiry
-            WHERE inquiry_id = :id AND branch_id = :branch_id
+            SELECT qi.inquiry_id, qi.name, qi.phone_number, qi.age, qi.gender, qi.referralSource, 
+                   qi.chief_complain, qi.review, qi.expected_visit_date, qi.created_at, qi.status,
+                   r.registration_id, r.created_at AS registered_at
+            FROM quick_inquiry qi
+            LEFT JOIN registration r 
+                   ON qi.inquiry_id = r.inquiry_id 
+                  AND r.branch_id = :reg_branch_id
+            WHERE qi.inquiry_id = :id 
+              AND qi.branch_id = :branch_id
             LIMIT 1
         ");
+        $params = [
+            ':id'            => $id,
+            ':branch_id'     => $branchId,
+            ':reg_branch_id' => $branchId
+        ];
     } else {
+        // Test inquiry — check against tests table, not registration
         $stmt = $pdo->prepare("
-            SELECT inquiry_id, name, testname, reffered_by, mobile_number, 
-                   expected_visit_date, created_at, status
-            FROM test_inquiry
-            WHERE inquiry_id = :id AND branch_id = :branch_id
+            SELECT ti.inquiry_id,
+                   ti.name,
+                   ti.testname,
+                   ti.reffered_by,
+                   ti.mobile_number,
+                   ti.expected_visit_date,
+                   t.test_id,
+                   t.created_at AS test_created_at
+            FROM test_inquiry ti
+            LEFT JOIN tests t
+                   ON ti.inquiry_id = t.inquiry_id
+                  AND t.branch_id = :test_branch_id
+            WHERE ti.inquiry_id = :inquiry_id
+              AND ti.branch_id = :inquiry_branch_id
             LIMIT 1
         ");
+        $params = [
+            ':inquiry_id'        => $id,
+            ':inquiry_branch_id' => $branchId,
+            ':test_branch_id'    => $branchId
+        ];
     }
 
-    $stmt->execute([
-        ':id'        => $id,
-        ':branch_id' => $branchId
-    ]);
-
+    $stmt->execute($params);
     $inquiry = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($inquiry) {
-        echo json_encode(['success' => true, 'data' => $inquiry]);
+        // Check if test exists (for test inquiry) or registered (for quick inquiry)
+        $alreadyExists = ($type === 'quick')
+            ? !empty($inquiry['registration_id'])
+            : !empty($inquiry['test_id']);
+
+        echo json_encode([
+            'success'            => true,
+            'data'               => $inquiry,
+            'already_registered' => $alreadyExists,
+            'message'            => $alreadyExists
+                ? ($type === 'quick'
+                    ? 'This person is already registered (Reg ID: ' . $inquiry['registration_id'] . ')'
+                    : 'Test already exists (Test ID: ' . $inquiry['test_id'] . ')')
+                : 'Not yet registered'
+        ]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Inquiry not found']);
     }

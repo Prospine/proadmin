@@ -8,15 +8,16 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="../css/changelog.css">
   <title>Changelog</title>
 </head>
 
 <body>
   <header>
-    <div class="nav">
-      <a href="dashboard.php"> <i class="fa-solid fa-arrow-left"> Back</i></a>
+    <div class="nav"><a href="dashboard.php"> <i class="fa-solid fa-arrow-left"> Back</i></a>
     </div>
     <div class="text">
       <h1>Changelog</h1>
@@ -30,9 +31,81 @@
   <main>
     <div class="segment">
       <div class="log-entry">
-        <h2>v2.1.0 <span class="badge merged">Merged</span></h2>
-        <div class="meta">September 9, 2025 · Dashboard & Schedule Module ·
-          <a href="https://github.com/Prospine/proadmin/commit/1277dca66f50e87d98377f677ae28c5b0b387548"> View changes</a>
+        <h2>v2.1.4 <span class="badge merged">Merged</span></h2>
+        <div class="meta">September 12, 2025 · Inquiry Management & Dashboard Module ·
+          <a href="#>View
+            changes</a>
+        </div>
+        <ul class="changes">
+          <li><span class="tag added">Added</span> <code>get_slots.php</code> API to fetch <strong>half-hourly
+              appointment slots</strong> (11 AM – 7 PM) dynamically, ensuring real-time availability.</li>
+          <li><span class="tag added">Added</span> smart <strong>slot disabling system</strong> on the dashboard that
+            prevents users from booking already filled slots, by checking <code>registrations.appointment_time</code>.
+          </li>
+          <li><span class="tag improved">Improved</span> <code>inquiry.php</code> with <strong>stronger session
+              handling</strong>, CSRF token verification, and robust error reporting for stability in production.</li>
+          <li><span class="tag added">Added</span> <code>insert_inquiry_reg.php</code> and
+            <code>insert_inquiry_test.php</code> APIs with strict <strong>server-side validation</strong>, required
+            field checks, and <strong>payment status logic</strong>.</li>
+          <li><span class="tag improved">Improved</span> inquiry UI with <strong>structured forms</strong> for both
+            quick inquiries and test inquiries, reducing clutter and making fields easier to navigate.</li>
+          <li><span class="tag added">Added</span> permanent <strong>dark mode styling</strong> for inputs, tables, and
+            dropdowns — including <strong>select menus</strong> which now remain dark even when expanded.</li>
+          <li><span class="tag improved">Improved</span> background and component colors for dark mode using smooth
+            <strong>transition effects</strong> across input fields, drawer panels, and table rows.</li>
+          <li><span class="tag fixed">Fixed</span> dropdown issue where <strong>select fields</strong> reverted to white
+            on expand — now they stay fully consistent with dark mode theme.</li>
+          <li><span class="tag fixed">Fixed</span> database query handling in inquiry fetch APIs to resolve
+            <code>SQLSTATE[HY093]: Invalid parameter number</code> errors.</li>
+          <li><span class="tag added">Added</span> developer-friendly <strong>error messages</strong> and fallback
+            handling in case of API or DB failures, improving debugging and reliability.</li>
+        </ul>
+      </div>
+
+      <div class="log-entry">
+        <h2>v2.1.3 <span class="badge merged">Merged</span></h2>
+        <div class="meta">September 9, 2025 · Inquiry Management Module ·<a
+            href="https://github.com/Prospine/proadmin/commit/dfcf1556a649d0e94499647c7497968e7c4c6639">View
+            changes</a>
+        </div>
+        <ul class="changes">
+          <li><span class="tag added">Added</span> <code>fetch_inquiry.php</code> endpoint to retrieve inquiry details
+            based on <strong>type</strong> (<code>quick</code> / <code>test</code>) and <strong>inquiry_id</strong>.
+          </li>
+          <li><span class="tag added">Added</span> <code>update_inquiry_status.php</code> to update inquiry status
+            dynamically
+            and return JSON responses.</li>
+          <li><span class="tag added">Added</span> new <strong>drawer component</strong> that slides in from the right,
+            showing detailed inquiry information with clean styling.</li>
+          <li><span class="tag improved">Improved</span> <code>inquiry.php</code> by displaying both<strong>Quick
+              Inquiries</strong> and <strong>Test Inquiries</strong> in structured tables with
+            updateable statuses.
+          </li>
+          <li><span class="tag added">Added</span> <strong>status pills</strong> (<code>Visited</code>,
+            <code>Cancelled</code>, <code>Pending</code>) with permanent color coding
+            for easier recognition across both tables.
+          </li>
+          <li><span class="tag improved">Improved</span> <code>inquiry.css</code> with compact,
+            modern styles for the drawer and table, using <strong>flexbox</strong> and<strong>two-column
+              layouts</strong> for better readability.
+          </li>
+          <li><span class="tag added">Added</span> elegant <strong>dark theme</strong> support with smooth
+            <code>transition effects</code> for background, border, and text color changes.
+          </li>
+          <li><span class="tag fixed">Fixed</span> issue where status colors
+            only appeared temporarily on update — now they remain permanent across reloads.</li>
+          <li><span class="tag improved">Improved</span> <code>inquiry.js</code> to distinguish
+            between Quick and Test tables when opening the drawer and fetching data.</li>
+          <li><span class="tag added">Added</span> <strong>toast notifications</strong> to confirm
+            successful status updates and other actions.</li>
+        </ul>
+      </div>
+
+      <div class="log-entry">
+        <h2>v2.1.2 <span class="badge merged">Merged</span></h2>
+        <div class="meta">September 10, 2025 · Dashboard & Schedule Module ·<a
+            href="https://github.com/Prospine/proadmin/commit/1277dca66f50e87d98377f677ae28c5b0b387548"> View
+            changes</a>
         </div>
         <ul class="changes">
           <li><span class="tag added">Added</span> brand-new <code>Schedule</code> section in the dashboard,
@@ -41,8 +114,8 @@
               appointments by date</strong>,
             ensuring that each day’s events are clearly separated and easier to scan.</li>
           <li><span class="tag added">Added</span> <code>Status-based color coding</code> for appointments.
-            Events now dynamically change appearance based on whether they are <strong>Pending</strong>,
-            <strong>Consulted</strong>, or <strong>Other</strong>,
+            Events now dynamically change appearance based on whether they are
+            <strong>Pending</strong>,<strong>Consulted</strong>, or <strong>Other</strong>,
             making it easier to identify appointment outcomes at a glance.
           </li>
           <li><span class="tag added">Added</span> support for <code>No Appointments</code> states.
@@ -71,8 +144,8 @@
             preventing form rendering issues when CSRF tokens are missing or uninitialized.</li>
           <li><span class="tag fixed">Fixed</span> multiple cases where the schedule or timeline
             would fail to render correctly when no data was returned by the query.</li>
-          <li><span class="tag improved">Improved</span> the dashboard’s overall data-fetching flow by adding
-            <strong>try/catch safety wrappers</strong>, preventing the entire page from breaking if a single query
+          <li><span class="tag improved">Improved</span> the dashboard’s overall data-fetching flow by
+            adding<strong>try/catch safety wrappers</strong>, preventing the entire page from breaking if a single query
             fails.
           </li>
           <li><span class="tag added">Added</span> scalable structure for future <code>Event Types</code>,
@@ -80,6 +153,32 @@
             etc.).</li>
         </ul>
       </div>
+
+      <div class="log-entry">
+        <h2>v2.1.1 <span class="badge merged">Merged</span></h2>
+        <div class="meta">September 11, 2025 · Admin Portal & Reception Dashboard ·<a
+            href="https://github.com/Prospine/proadmin/commit/8ac2861392073305a8fe59732a51230f7a0c655c">View
+            changes</a>
+        </div>
+        <ul class="changes">
+          <li><span class="tag added">Added</span> <code>login.js</code> to enable password visibility toggle for
+            improved UX.</li>
+          <li><span class="tag added">Added</span> <code>index.html</code> as the landing page for the admin portal.
+          </li>
+          <li><span class="tag added">Added</span> <code>login.php</code> with session management, CSRF protection, and
+            brute force prevention to enhance login security.</li>
+          <li><span class="tag added">Added</span> CSS styles for <strong>reception dashboard</strong>
+            and<strong>welcome page</strong> for consistent UI.
+          </li>
+          <li><span class="tag added">Added</span> <code>welcome.js</code> to display a loading progress animation and
+            redirect users post-login.</li>
+          <li><span class="tag added">Added</span> <code>dashboard.html</code> for the reception dashboard, featuring
+            navigation and card-based layout for easy access to key sections.</li>
+          <li><span class="tag improved">Improved</span> overall login flow with enhanced session security, preventing
+            unauthorized access and session hijacking.</li>
+        </ul>
+      </div>
+
     </div>
   </main>
 

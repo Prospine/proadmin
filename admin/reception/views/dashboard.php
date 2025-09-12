@@ -329,7 +329,7 @@ $success = false;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
     <style>
-
+      
     </style>
 </head>
 
@@ -543,7 +543,7 @@ $success = false;
                         <input type="number" name="age" min="1" required>
                     </div>
 
-                    <div>
+                    <div class="select-wrapper">
                         <label>Gender *</label>
                         <select name="gender" required>
                             <option value="">Select Gender</option>
@@ -558,7 +558,7 @@ $success = false;
                         <input type="text" name="referred_by" required>
                     </div>
 
-                    <div>
+                    <div class="select-wrapper">
                         <label>Cheif Complain *</label>
                         <select name="conditionType">
                             <option value="other">Select your condition</option>
@@ -594,7 +594,7 @@ $success = false;
                         <label>Amount *</label>
                         <input type="number" name="amount" step="0.01" required>
                     </div>
-                    <div>
+                    <div class="select-wrapper">
                         <label>Payment Method *</label>
                         <select name="payment_method" required>
                             <option value="">Select Method</option>
@@ -609,7 +609,7 @@ $success = false;
                         <label>Describe Condition / Remarks</label>
                         <input type="text" name="remarks"></input>
                     </div>
-                    <div>
+                    <div class="select-wrapper">
                         <label>How did you hear about us</label>
                         <select name="referralSource">
                             <option value="self">Select</option>
@@ -625,7 +625,7 @@ $success = false;
                             <option value="other">Other</option>
                         </select>
                     </div>
-                    <div>
+                    <div class="select-wrapper">
                         <label>Consultation Type *</label>
                         <select name="inquiry_type" required>
                             <option value="">Select Consultation Type</option>
@@ -640,10 +640,13 @@ $success = false;
                         <input type="date" name="appointment_date">
                     </div>
 
-                    <div>
-                        <label>Time</label>
-                        <input type="time" name="time">
+                    <div class="select-wrapper">
+                        <label>Time Slot *</label>
+                        <select name="appointment_time" id="appointment_time" required>
+
+                        </select>
                     </div>
+
                     <div class="submit-btn2">
                         <button type="submit">Submit</button>
                     </div>
@@ -668,7 +671,7 @@ $success = false;
                         <input type="date" name="dob">
                     </div>
 
-                    <div>
+                    <div class="select-wrapper">
                         <label>Gender *</label>
                         <select name="gender" required>
                             <option value="">Select Gender</option>
@@ -703,11 +706,10 @@ $success = false;
                         <input type="text" name="referred_by" placeholder="Doctor/Clinic Name">
                     </div>
 
-                    <div>
+                    <div class="select-wrapper">
                         <label>Test Name *</label>
                         <select name="test_name" required>
                             <option value="">Select Test</option>
-                            <!-- Your form options do not match your database enum, but we'll fix the PHP to match your form -->
                             <option value="eeg">EEG</option>
                             <option value="ncv">NCV</option>
                             <option value="emg">EMG</option>
@@ -718,7 +720,7 @@ $success = false;
                         </select>
                     </div>
 
-                    <div>
+                    <div class="select-wrapper">
                         <label>Limb</label>
                         <select name="limb">
                             <option value="">Select Limb</option>
@@ -731,7 +733,7 @@ $success = false;
 
                     <div>
                         <label>Receipt No *</label>
-                        <input type="text" name="receipt_no" required>
+                        <input type="text" name="receipt_no">
                     </div>
 
                     <div>
@@ -744,7 +746,7 @@ $success = false;
                         <input type="date" name="assigned_test_date" required>
                     </div>
 
-                    <div>
+                    <div class="select-wrapper">
                         <label>Test Done By *</label>
                         <select name="test_done_by" required>
                             <option value="">Select Staff</option>
@@ -776,7 +778,7 @@ $success = false;
                         <input type="number" placeholder="Enter Discount">
                     </div>
 
-                    <div>
+                    <div class="select-wrapper">
                         <label>Payment Method *</label>
                         <select name="payment_method" required>
                             <option value="">Select Method</option>
@@ -1016,6 +1018,33 @@ $success = false;
                 <?php endforeach;
                 unset($_SESSION['errors']); ?>
             <?php endif; ?>
+
+            // 4. Get Time slots
+
+
+            const slotSelect = document.getElementById("appointment_time");
+
+            fetch("../api/get_slots.php")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        data.slots.forEach(slot => {
+                            const opt = document.createElement("option");
+                            opt.value = slot.time;
+                            opt.textContent = slot.label;
+                            if (slot.disabled) {
+                                opt.disabled = true;
+                                opt.textContent += " (Booked)";
+                            }
+                            slotSelect.appendChild(opt);
+                        });
+                    } else {
+                        console.error(data.message);
+                    }
+                })
+                .catch(err => console.error("Error fetching slots:", err));
+
+
 
             // ==========================================================
             // 5. Final touches

@@ -7,8 +7,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const safeText = v => (v === null || v === undefined) ? '' : v;
 
     const showToast = (msg, type = 'info') => {
-        // placeholder: your existing showToast implementation
-        console.log(`[${type}] ${msg}`);
+        const toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            console.error('Toast container not found!');
+            return;
+        }
+
+        const toast = document.createElement('div');
+        toast.classList.add('toast', `toast-${type}`);
+        toast.textContent = msg;
+
+        toastContainer.appendChild(toast);
+
+        // Make sure the element is in the DOM before animating
+        setTimeout(() => {
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateY(0)';
+        }, 10);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(20px)';
+            // Remove the element after the animation is complete
+            toast.addEventListener('transitionend', () => toastContainer.removeChild(toast), { once: true });
+        }, 3000);
     };
 
     /* ------------------------------
@@ -204,16 +226,16 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="info-item"><strong>Follow Up Date</strong><span>${safeText(data.follow_up_date) || 'N/A'}</span></div>
             <div class="info-item"><strong>Remarks</strong><span id="remarksDisplay">${safeText(data.remarks) || 'No remarks available.'}</span></div>
           </div>
-          <div class="addremarks">
-            <h3 class="section-title">Add Remarks</h3>
-            <textarea id="remarksTextarea"></textarea>
-            <button id="submitRemarkBtn" data-id="${safeText(data.registration_id)}">Submit</button>
-          </div>
-          <div class="imp">
-            <div class="addToPatient">
-              <p><strong>Add to Patients</strong></p>
-              <button id="addToPatientBtn" data-id="${safeText(data.registration_id)}" data-open="add-patient">Add</button>
-            </div>
+          <div class="footer-grid">
+                <div class="addremarks">
+                    <h3 class="section-title">Add Remarks</h3>
+                    <textarea id="remarksTextarea"></textarea>
+                    <button id="submitRemarkBtn" data-id="${safeText(data.registration_id)}">Submit</button>
+                </div>
+                <div class="addToPatient">
+                    <p><strong>Add to Patients</strong></p>
+                    <button id="addToPatientBtn" data-id="${safeText(data.registration_id)}" data-open="add-patient">Add</button>
+                </div>
           </div>
         `;
 
@@ -348,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 parentLabel.classList.add('selected');
                 selectedTreatmentCost = parseInt(parentLabel.dataset.cost) || 0;
                 treatmentDaysInput.readOnly = e.target.value === 'package';
-                treatmentDaysInput.value = e.target.value === 'package' ? 22 : '';
+                treatmentDaysInput.value = e.target.value === 'package' ? 21 : '';
                 if (treatmentDaysGroup) treatmentDaysGroup.style.display = 'block';
                 updateCalculations();
                 updateEndDate();
@@ -383,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 showToast('Adding patient...', 'success');
 
-                const res = await fetch('add_patient.php', {
+                const res = await fetch('../api/add_patient.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

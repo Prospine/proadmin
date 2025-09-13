@@ -14,12 +14,12 @@ error_reporting(E_ALL);
 // Auth / Session Checks
 // -------------------------
 if (!isset($_SESSION['uid'])) {
-    header('Location: ../login.php');
+    header('Location: ../../login.php');
     exit();
 }
 
 require_once '../../common/auth.php';
-require_once '../../common/db.php'; // PDO connection
+require_once '../../common/db.php';
 
 // -------------------------
 // Branch Restriction
@@ -67,9 +67,102 @@ try {
     <link rel="stylesheet" href="../css/registration.css">
 
     <style>
-      
+        body.dark .drawer-content {
+            background-color: var(--card-bg2) !important;
+        }
 
-       
+        body.dark .drawer-header2 {
+            background-color: var(--card-bg2) !important;
+            color: var(--text-color);
+        }
+
+        body.dark .drawer-header2 small {
+            color: var(--text-color);
+        }
+
+        body.dark .info-item {
+            background-color: var(--card-bg2) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+
+
+        body.dark .info-item strong {
+            color: var(--text-color2) !important;
+        }
+
+        body.dark .info-item span {
+            color: var(--text-color) !important;
+        }
+
+        body.dark .PatientBill button:hover {
+            background-color: var(--card-bg2) !important;
+            color: var(--text-color) !important;
+        }
+
+        body.dark .footer-grid {
+            background-color: var(--card-bg2) !important;
+            color: var(--text-color) !important;
+        }
+
+        body.dark #submitRemarkBtn {
+            background-color: var(--text-color);
+            color: var(--accent-color);
+        }
+
+        body.dark #submitRemarkBtn:hover {
+            background-color: var(--text-color2) !important;
+            /* color: var(--text-color) !important; */
+        }
+
+        body.dark #addToPatientBtn {
+            background-color: var(--text-color);
+            color: var(--accent-color);
+        }
+
+        body.dark #addToPatientBtn:hover {
+            background-color: var(--text-color2) !important;
+        }
+
+        body.dark .add-to-patient-drawer {
+            background-color: #333;
+        }
+
+        body.dark .add-drawer-header {
+            background-color: var(--card-bg3);
+        }
+
+        body.dark .treatment-option {
+            background-color: var(--card-bg2) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+
+        body.dark .treatment-option-info h4 {
+            color: var(--text-color) !important;
+        }
+
+        body.dark .treatment-option-info p {
+            color: var(--text-color) !important;
+        }
+
+        body.dark .form-group input[readonly] {
+            background-color: var(--card-bg3);
+            color: var(--text-color);
+        }
+
+        body.dark .add-drawer-close {
+            background-color: var(--card-bg3);
+            color: var(--text-color);
+            border: none;
+        }
+
+        body.dark .add-drawer-close:hover {
+            background-color: var(--card-bg2);
+            color: var(--text-color);
+        }
+
+        body.dark .submit-button:hover {
+            background-color: var(--text-color2) !important;
+        }
     </style>
 </head>
 
@@ -216,7 +309,7 @@ try {
                             <input type="radio" name="treatmentType" value="package" required>
                             <div class="treatment-option-info">
                                 <h4>Package Treatment</h4>
-                                <p>₹30,000 for 22 days</p>
+                                <p>₹30,000 for 21 days</p>
                             </div>
                         </label>
                     </div>
@@ -275,12 +368,21 @@ try {
     <div id="toast-container"></div>
 
     <script src="../js/theme.js"></script>
-    <script src="../js/inquiry.js"></script>
     <script src="../js/dashboard.js"></script>
     <script src="../js/registration.js"></script>
 
     <script>
-      
+        // write code for toast-container
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.classList.add('toast', `toast-${type}`);
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toastContainer.removeChild(toast);
+            }, 3000);
+        }
     </script>
 
 </body>

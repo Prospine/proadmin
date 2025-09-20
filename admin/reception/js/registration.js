@@ -236,7 +236,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p><strong>Add to Patients</strong></p>
                     <button id="addToPatientBtn" data-id="${safeText(data.registration_id)}" data-open="add-patient">Add</button>
                 </div>
-          </div>
+                </div>
+                <div id="patientMessage" class="patient-message">
+                    <p><strong>Patient Message</strong></p>
+                    ${safeText(data.patient_message)}
+                </div
         `;
 
                 // Attach event handlers inside drawer via delegation

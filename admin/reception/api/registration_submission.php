@@ -25,7 +25,7 @@ try {
     $address           = trim($data['address'] ?? '');
     $consultation_type = $data['inquiry_type'] ?? 'in-clinic';
     $appointment_date  = $data['appointment_date'] ?? null;
-    $appointment_time  = $data['time'] ?? null;
+    $appointment_time  = $data['appointment_time'] ?? null;
     $consultation_amt  = (float)($data['amount'] ?? 0);
     $payment_method    = $data['payment_method'] ?? 'cash';
     $remarks           = trim($data['remarks'] ?? '');

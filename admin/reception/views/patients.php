@@ -1,0 +1,352 @@
+<?php
+
+declare(strict_types=1);
+session_start();
+
+// Error Reporting (Dev Only)
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+// Auth / Session Checks
+if (!isset($_SESSION['uid'])) {
+    header('Location: ../login.php');
+    exit();
+}
+
+require_once '../../common/auth.php';
+require_once '../../common/db.php';
+
+// -------------------------
+// Branch Restriction
+// -------------------------
+$branchId = $_SESSION['branch_id'] ?? null;
+if (!$branchId) {
+    http_response_code(403);
+    exit('Branch not assigned.');
+}
+
+try {
+    // Fetch all necessary patient data, including costs and payments
+    $stmt = $pdo->prepare("
+        SELECT
+            p.patient_id,
+            p.treatment_type,
+            p.treatment_cost_per_day,
+            p.package_cost,
+            p.treatment_days,
+            p.total_amount,
+            p.advance_payment,
+            p.discount_percentage,
+            p.due_amount,
+            p.assigned_doctor,
+            p.start_date,
+            p.end_date,
+            p.status AS patient_status,
+            r.registration_id,
+            r.patient_name AS patient_name,
+            r.phone_number AS patient_phone,
+            r.age AS patient_age,
+            r.chief_complain AS patient_condition,
+            r.created_at
+        FROM patients p
+        INNER JOIN registration r ON p.registration_id = r.registration_id
+        WHERE p.branch_id = :branch_id
+        ORDER BY p.created_at DESC
+    ");
+
+    $stmt->execute([':branch_id' => $branchId]);
+    $patients = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Fetch today's attendance for quick UI check
+    $attStmt = $pdo->prepare("
+        SELECT a.patient_id
+        FROM attendance a
+        INNER JOIN patients p2 ON a.patient_id = p2.patient_id
+        WHERE a.attendance_date = CURDATE()
+          AND p2.branch_id = :branch_id
+    ");
+    $attStmt->execute([':branch_id' => $branchId]);
+    $attendanceTodayMap = array_flip($attStmt->fetchAll(PDO::FETCH_COLUMN));
+
+    //branch name
+    $stmt = $pdo->prepare("SELECT branch_name FROM branches WHERE branch_id = :branch_id");
+    $stmt->execute(['branch_id' => $branchId]);
+    $branchName = $stmt->fetch()['branch_name'] ?? '';
+
+    // For each patient, get their attendance count and effective balance
+    // We must do this in a loop for each patient, as it's a dynamic calculation
+    foreach ($patients as &$patient) {
+        $patientId = (int)($patient['patient_id'] ?? 0);
+        $treatmentType = strtolower((string)$patient['treatment_type']);
+
+        // 1. Determine cost per day (same as add_attendance.php)
+        $costPerDay = 0.0;
+        if ($treatmentType === 'package') {
+            if ((int)($patient['treatment_days'] ?? 0) > 0) {
+                $costPerDay = (float)($patient['package_cost'] ?? 0) / (int)($patient['treatment_days']);
+            }
+        } elseif ($treatmentType === 'daily' || $treatmentType === 'advance') {
+            $costPerDay = (float)($patient['treatment_cost_per_day'] ?? 0);
+        }
+        $patient['cost_per_day'] = $costPerDay;
+
+        // 2. Fetch payments and attendance counts
+        $paidStmt = $pdo->prepare("SELECT COALESCE(SUM(amount), 0) AS paid FROM payments WHERE patient_id = ?");
+        $paidStmt->execute([$patientId]);
+        $paidSum = (float)$paidStmt->fetchColumn();
+
+        $attendanceCountStmt = $pdo->prepare("SELECT COUNT(*) FROM attendance WHERE patient_id = ?");
+        $attendanceCountStmt->execute([$patientId]);
+        $attendanceCount = (int)$attendanceCountStmt->fetchColumn();
+        $patient['attendance_count'] = $attendanceCount;
+
+
+        // 3. Conditional logic based on existence of records
+        $effectiveBalance = 0.0;
+        if ($paidSum > 0 || $attendanceCount > 0) {
+            // SCENARIO 2: EXISTING PATIENT
+            $consumedAmount = $attendanceCount * $costPerDay;
+            $effectiveBalance = $paidSum - $consumedAmount;
+        } else {
+            // SCENARIO 1: BRAND NEW PATIENT
+            $startDate = new DateTime((string)($patient['start_date'] ?? 'now'));
+            $today = new DateTime('now');
+            $daysPassed = max(0, $today->diff($startDate)->days);
+            $consumedAmount = $daysPassed * $costPerDay;
+            $initialAdvance = (float)($patient['advance_payment'] ?? 0);
+            $effectiveBalance = $initialAdvance - $consumedAmount;
+        }
+
+        // Add calculated effective balance to the patient array
+        $patient['effective_balance'] = $effectiveBalance;
+    }
+    unset($patient); // Break the reference
+} catch (PDOException $e) {
+    error_log("Error fetching patients or attendance: " . $e->getMessage());
+    die("Error fetching patients. Please try again later.");
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patients</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/dark.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/inquiry.css">
+    <link rel="stylesheet" href="../css/registration.css">
+    <link rel="stylesheet" href="../css/patients.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo-container"> <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
+        </div>
+        <nav>
+            <div class="nav-links">
+                <a href="dashboard.php">Dashboard</a>
+                <a href="inquiry.php">Inquiry</a>
+                <a href="registration.php">Registration</a>
+                <a class="active" href="patients.php">Patients</a>
+                <a href="appointments.php">Appointments</a>
+                <a href="billing.php">Billing</a>
+                <a href="attendance.php">Attendance</a>
+                <a href="#">Tests</a>
+                <a href="#">Reports</a>
+            </div>
+        </nav>
+        <div class="nav-actions">
+            <div class="icon-btn" title="Settings"> <?php echo $branchName; ?> Branch </div>
+            <div class="icon-btn" id="theme-toggle"> <i id="theme-icon" class="fa-solid fa-moon"></i> </div>
+            <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
+            <div class="profile" onclick="openForm()">S</div>
+        </div>
+    </header>
+    <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
+        <div class="popup">
+            <ul>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="logout.php">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="notification" id="myNotif"> <span class="closebtn" onclick="closeNotif()">&times;</span>
+        <div class="popup">
+            <ul>
+                <li><a href="changelog.html" class="active2">View Changes (1) </a></li>
+                <li><a href="#">You have 3 new appointments.</a></li>
+                <li><a href="#">Dr. Smith is available for consultation.</a></li>
+                <li><a href="#">New patient registered: John Doe.</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="main">
+        <div class="dashboard-container">
+            <div class="top-bar">
+                <h2>Patients</h2>
+            </div>
+            <div class="table-container modern-table">
+                <table id="patientsTable">
+                    <thead>
+                        <tr>
+                            <th data-key="id" class="sortable">ID <span class="sort-indicator"></span></th>
+                            <th data-key="name" class="sortable">Name <span class="sort-indicator"></span></th>
+                            <th data-key="age" class="sortable">Age</th>
+                            <th data-key="doctor" class="sortable">Assigned Doctor</th>
+                            <th data-key="condition" class="sortable">Condition</th>
+                            <th data-key="treatment" class="sortable">Treatment Type</th>
+                            <!-- <th data-key="days" class="sortable">Days</th> -->
+                            <th data-key="days" class="sortable">Attendance</th>
+                            <th data-key="cost" class="sortable numeric">Total Amount</th>
+                            <th data-key="advance" class="sortable numeric">Amount Paid</th>
+                            <th data-key="due" class="sortable numeric">Due Amount</th>
+                            <th data-key="period">Treatment Period</th>
+                            <th data-key="status">Status</th>
+                            <th>Mark Attendance</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($patients)): ?>
+                            <?php foreach ($patients as $row):
+                                $pid = (int) ($row['patient_id'] ?? 0);
+                                $hasToday = isset($attendanceTodayMap[$pid]);
+
+                                // Now we pass the effective balance to the front-end
+                                $data_attrs = sprintf(
+                                    'data-patient-id="%d" data-treatment-type="%s" data-cost-per-day="%s" data-due-amount="%s" data-effective-balance="%s"',
+                                    $pid,
+                                    htmlspecialchars((string)($row['treatment_type'] ?? ''), ENT_QUOTES, 'UTF-8'),
+                                    htmlspecialchars((string)($row['cost_per_day'] ?? 0), ENT_QUOTES, 'UTF-8'),
+                                    htmlspecialchars((string)($row['due_amount'] ?? 0), ENT_QUOTES, 'UTF-8'),
+                                    htmlspecialchars((string)($row['effective_balance'] ?? 0), ENT_QUOTES, 'UTF-8')
+                                );
+                            ?>
+                                <tr <?= $data_attrs ?> data-id="<?= htmlspecialchars((string)$pid, ENT_QUOTES, 'UTF-8') ?>">
+                                    <td><?= htmlspecialchars((string)($row['patient_id'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><?= htmlspecialchars((string)($row['patient_name'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><?= htmlspecialchars((string)($row['patient_age'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><?= htmlspecialchars((string)($row['assigned_doctor'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><?= htmlspecialchars((string)($row['patient_condition'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><?= htmlspecialchars((string)($row['treatment_type'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <!-- <td><?= htmlspecialchars((string)($row['treatment_days'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td> -->
+                                    <td>
+                                        <?= htmlspecialchars((string)($row['attendance_count'] ?? 0), ENT_QUOTES, 'UTF-8') ?>
+                                        /
+                                        <?= htmlspecialchars((string)($row['treatment_days'] ?? '-'), ENT_QUOTES, 'UTF-8') ?>
+                                    </td>
+
+
+                                    <td class="numeric"><?= isset($row['total_amount']) ? '₹' . number_format((float)$row['total_amount'], 2) : '-' ?></td>
+                                    <td class="numeric"><?= isset($row['advance_payment']) ? '₹' . number_format((float)$row['advance_payment'], 2) : '-' ?></td>
+                                    <td class="numeric"><?= isset($row['due_amount']) ? '₹' . number_format((float)$row['due_amount'], 2) : '-' ?></td>
+                                    <td>
+                                        <div>
+                                            <span>Start: <?= !empty($row['start_date']) ? date('d M Y', strtotime($row['start_date'])) : '-' ?></span><br>
+                                            <span>End: <?= !empty($row['end_date']) ? date('d M Y', strtotime($row['end_date'])) : '-' ?></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $statusClass = match ($row['patient_status'] ?? 'inactive') {
+                                            'active' => 'status-active',
+                                            'completed' => 'status-completed',
+                                            'inactive' => 'status-inactive',
+                                            default => 'status-inactive'
+                                        };
+                                        ?>
+                                        <span class="<?= $statusClass ?>"><?= htmlspecialchars(ucfirst($row['patient_status'] ?? 'Inactive'), ENT_QUOTES, 'UTF-8') ?></span>
+                                    </td>
+                                    <td>
+                                        <?php if ($hasToday): ?>
+                                            <button class="attendance-present-btn" disabled>Present</button>
+                                        <?php else: ?>
+                                            <button class="mark-attendance-btn" data-patient-id="<?= $pid ?>">Mark Today</button>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn" data-id="<?= htmlspecialchars((string)($row['patient_id'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">View</button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="14" class="no-data">No patients found</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div class="drawer-overlay" id="drawer">
+        <div class="drawer-panel">
+            <div class="drawer-header">
+                <h2>Patient Profile</h2>
+                <div class="but">
+
+                    <button onclick="window.location.href='patients_bill.php?patient_id=' + document.querySelector('.action-btn').dataset.id">Print Bill</button>
+                    <button onclick="window.location.href='patients_profile.php?patient_id=' + document.querySelector('.action-btn').dataset.id">View Profile</button>
+                    <button id="closeDrawer" class="drawer-close-btn">&times;</button>
+                </div>
+            </div>
+            <div class="drawer-body" id="drawer-body"></div>
+        </div>
+    </div>
+    <!-- Attendance Modal (only used for daily/advance) -->
+    <div id="attendanceModal" class="modal" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal-header">
+                <h3 id="modalTitle">Mark Attendance</h3>
+                <button class="close-modal" aria-label="Close">&times;</button>
+            </div>
+
+            <form id="attendanceForm">
+                <input type="hidden" name="patient_id" id="patient_id">
+                <input type="hidden" name="treatment_type" id="treatment_type">
+
+                <div id="payment_section" class="payment">
+                    <label for="payment_today" id="payment_label">Payment Today</label>
+                    <input type="number" id="payment_today" name="payment_amount" min="0" step="0.01">
+
+                    <label for="payment_mode">Mode</label>
+                    <select id="payment_mode" name="mode">
+                        <option value="">Select Mode</option>
+                        <option value="cash">Cash</option>
+                        <option value="upi">UPI</option>
+                        <option value="card">Card</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="remarks">Remarks for Attendance</label>
+                    <textarea id="remarks" name="remarks" placeholder="Notes for today's attendance"></textarea>
+                </div>
+
+                <div style="margin-top:12px; text-align:right;">
+                    <button type="button" class="btn btn-cancel" id="attendanceCancel">Cancel</button>
+                    <button type="submit" class="btn btn-save">Save Attendance</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="toast-container"></div>
+
+    <script src="../js/theme.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/patients.js"></script>
+    <script src="../js/addattendance.js"></script>
+</body>
+
+</html>

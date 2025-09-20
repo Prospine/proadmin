@@ -278,7 +278,7 @@ try {
         FROM registration 
         WHERE branch_id = :branch_id 
           AND appointment_date >= :today
-        ORDER BY appointment_date, appointment_time
+        ORDER BY appointment_date, appointment_time DESC
         LIMIT 20
     ");
     $stmt->execute(['branch_id' => $branchId, 'today' => $today]);
@@ -323,9 +323,9 @@ $success = false;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="../css/dashboard.css">
-    <link rel="stylesheet" href="../css/dark.css">
+    <!-- <link rel="stylesheet" href="../css/dark.css"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
     <style>
@@ -344,10 +344,10 @@ $success = false;
                 <a href="#" class="active">Dashboard</a>
                 <a href="inquiry.php">Inquiry</a>
                 <a href="registration.php">Registration</a>
-                <a href="#">Patients</a>
-                <a href="#">Appointments</a>
-                <a href="#">Billing</a>
-                <a href="#">Attendance</a>
+                <a href="patients.php">Patients</a>
+                <a href="appointments.php">Appointments</a>
+                <a href="billing.php">Billing</a>
+                <a href="attendance.php">Attendance</a>
                 <a href="#">Tests</a>
                 <a href="#">Reports</a>
             </div>
@@ -491,7 +491,7 @@ $success = false;
                 <?php if (isset($groupedSchedules[$today]) && count($groupedSchedules[$today]) > 0): ?>
                     <?php foreach ($groupedSchedules[$today] as $slot): ?>
                         <div class="time-slot">
-                            <div class="time"><?= date("H:i", strtotime($slot['appointment_time'])) ?></div>
+                            <div class="time"><?= date("h:i a", strtotime($slot['appointment_time'])) ?></div>
                             <div class="circle">•</div>
                             <div class="event <?= strtolower($slot['status']) ?>">
                                 <div class="event-title"><?= htmlspecialchars($slot['patient_name']) ?></div>
@@ -643,7 +643,6 @@ $success = false;
                     <div class="select-wrapper">
                         <label>Time Slot *</label>
                         <select name="appointment_time" id="appointment_time" required>
-
                         </select>
                     </div>
 

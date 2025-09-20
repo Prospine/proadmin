@@ -5,8 +5,36 @@
   --border-color: #dddddd;
 }
 
-* {
+/* * {
   transition: background-color 0.5s, color 0.5s, border 0.5s;
+} */
+
+body.dark {
+  /* Backgrounds */
+  --bg-color: linear-gradient(147deg, #121212 0%, #434343 74%);
+  --card-bg: rgba(
+    255,
+    255,
+    255,
+    0.08
+  ); /* matches hover state for subtle cards */
+  --card-bg2: rgba(255, 255, 255, 0.12); /* matches divider/disabled bg */
+  --card-bg3: #1e1e1e; /* close to paper background */
+  --card-body2: linear-gradient(#121212, #1e1e1e);
+
+  /* Text */
+  --text-color: #fff; /* palette.text.primary */
+  --text-color2: rgba(255, 255, 255, 0.7); /* palette.text.secondary */
+  --text-color3: #000;
+
+  /* Accent / Borders */
+  --accent-color: #000000; /* palette.action.active */
+  --accent-color2: #fff;
+  --border-color: rgba(255, 255, 255, 0.12); /* palette.divider */
+
+  /* Misc */
+  --back-color: rgba(255, 255, 255, 0.5); /* palette.text.disabled */
+  --drawer-bg: #121212; /* background.paper */
 }
 
 /* Navigation */
@@ -202,7 +230,7 @@ nav {
   flex: 1;
   margin-left: 40px;
   background-color: #ffffff89;
-  max-width: 1060px;
+  max-width: 1090px;
   border-radius: 25px;
   padding: 5px;
   /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); */
@@ -758,9 +786,8 @@ textarea {
 }
 
 .submit-btn {
-  position: absolute;
-  bottom: -20px;
-  width: 27%;
+  /* bottom: -20px; */
+  width: 100%;
   padding: 12px;
   background: #000000ff;
   color: white;

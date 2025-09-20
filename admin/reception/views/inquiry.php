@@ -107,7 +107,7 @@ ORDER BY created_at DESC
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Inquiry</title>
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/dark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -120,9 +120,16 @@ ORDER BY created_at DESC
         <div class="logo-container"> <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
         </div>
         <nav>
-            <div class="nav-links"> <a href="dashboard.php">Dashboard</a> <a href="inquiry.php"
-                    class="active">Inquiry</a> <a href="registration.php">Registration</a> <a href="#">Patients</a> <a
-                    href="#">Appointments</a> <a href="#">Billing</a> <a href="#">Attendance</a> <a href="#">Tests</a><a href="#">Reports</a> </div>
+            <div class="nav-links"> <a href="dashboard.php">Dashboard</a>
+                <a href="inquiry.php" class="active">Inquiry</a>
+                <a href="registration.php">Registration</a>
+                <a href="patients.php">Patients</a>
+                <a href="appointments.php">Appointments</a>
+                <a href="billing.php">Billing</a>
+                <a href="attendance.php">Attendance</a>
+                <a href="#">Tests</a>
+                <a href="#">Reports</a>
+            </div>
         </nav>
         <div class="nav-actions">
             <div class="icon-btn" title="Settings"> <?php echo $branchName; ?> Branch </div>
@@ -401,9 +408,11 @@ ORDER BY created_at DESC
                             <label>Appointment Date</label>
                             <input type="date" name="appointment_date">
                         </div>
-                        <div class="detail-item">
-                            <label>Time</label>
-                            <input type="time" name="time">
+                        <div class="select-wrapper">
+                            <label>Time Slot *</label>
+                            <select name="appointment_time" id="appointment_time" required>
+
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -573,6 +582,31 @@ ORDER BY created_at DESC
     <script src="../js/theme.js"></script>
     <script src="../js/inquiry.js"></script>
     <script src="../js/dashboard.js"></script>
+
+    <script>
+        // 4. Get Time slots
+        const slotSelect = document.getElementById("appointment_time");
+
+        fetch("../api/get_slots.php")
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    data.slots.forEach(slot => {
+                        const opt = document.createElement("option");
+                        opt.value = slot.time;
+                        opt.textContent = slot.label;
+                        if (slot.disabled) {
+                            opt.disabled = true;
+                            opt.textContent += " (Booked)";
+                        }
+                        slotSelect.appendChild(opt);
+                    });
+                } else {
+                    console.error(data.message);
+                }
+            })
+            .catch(err => console.error("Error fetching slots:", err));
+    </script>
 </body>
 
 </html>

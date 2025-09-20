@@ -1,0 +1,535 @@
+:root {
+  --primary-color: #4f46e5;
+  --primary-light: #6366f1;
+  --text-color: #1f2937;
+  --muted-text: #6b7280;
+  /* --bg-color: #f5f5e6; */
+  --border-color: #e5e7eb;
+  --accent-green: #22c55e;
+  --accent-red: #ef4444;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.12);
+  --radius: 1rem;
+}
+
+body.dark {
+  /* Backgrounds */
+  --bg-color: linear-gradient(147deg, #121212 0%, #434343 74%);
+  --card-bg: rgba(
+    255,
+    255,
+    255,
+    0.08
+  ); /* matches hover state for subtle cards */
+  --card-bg2: rgba(255, 255, 255, 0.12); /* matches divider/disabled bg */
+  --card-bg3: #1e1e1e; /* close to paper background */
+  --card-body2: linear-gradient(#121212, #1e1e1e);
+
+  /* Text */
+  --text-color: #fff; /* palette.text.primary */
+  --text-color2: rgba(255, 255, 255, 0.7); /* palette.text.secondary */
+  --text-color3: #000;
+
+  /* Accent / Borders */
+  --accent-color: #000000; /* palette.action.active */
+  --accent-color2: #fff;
+  --border-color: rgba(255, 255, 255, 0.12); /* palette.divider */
+
+  /* Misc */
+  --back-color: rgba(255, 255, 255, 0.5); /* palette.text.disabled */
+  --drawer-bg: #121212; /* background.paper */
+}
+
+/* Overlay */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.38);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+  z-index: 9999;
+}
+
+.drawer-overlay.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Drawer Panel */
+.drawer-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(1100px, 100%);
+  height: 100%;
+  background: var(--bg-color);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.18);
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  border-top-left-radius: var(--radius);
+  border-bottom-left-radius: var(--radius);
+  overflow: hidden;
+}
+
+.drawer-overlay.open .drawer-panel {
+  transform: translateX(0);
+}
+
+/* Drawer Header */
+.drawer-header,
+.add-drawer-header {
+  padding: 1rem 1.5rem;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.drawer-header h2,
+.add-drawer-header h3 {
+  margin: 0;
+  font: 700 1.25rem/1.2 "Inter", system-ui;
+  color: var(--text-color);
+}
+
+.drawer-close-btn,
+.add-drawer-close {
+  border: 0;
+  background: transparent;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.drawer-close-btn:hover,
+.add-drawer-close:hover {
+  transform: rotate(90deg);
+  opacity: 0.8;
+}
+
+/* Drawer Body */
+.drawer-body,
+.add-drawer-body {
+  flex: 1;
+  overflow: auto;
+  padding: 1.25rem;
+  background: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Drawer Footer */
+.drawer-footer {
+  padding: 1rem 1.5rem;
+  background: #fff;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Sections (compact cards) */
+.drawer-section {
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.drawer-section:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.drawer-section h3 {
+  margin: 0 0 0.5rem;
+  font: 600 1rem/1.2 "Inter", system-ui;
+  color: var(--text-color);
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.85rem 1rem;
+}
+
+.info-item .label {
+  font-size: 0.78rem;
+  color: var(--muted-text);
+  margin-bottom: 0.15rem;
+}
+
+.info-item .value {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-badge.Pending {
+  background: #ffdccf;
+  color: #92400e;
+}
+
+.status-badge.Consulted {
+  background: #e6f7f0;
+  color: #0f9d58;
+}
+
+.status-badge.Closed {
+  background: #ffeeee;
+  color: #ca3838;
+}
+
+/* Buttons */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-main {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.btn-main:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: var(--accent-green);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #16a34a;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: var(--muted-text);
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+  transform: translateY(-2px);
+}
+
+/* Table */
+.modern-table td {
+  font-size: 0.85em;
+  color: #131313;
+}
+
+.modern-table td div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Toast Notifications */
+#toast-container {
+  position: fixed;
+  top: 5.5rem;
+  right: 1.5rem;
+  z-index: 99999999;
+}
+
+.toast {
+  background: #ffffff;
+  color: var(--text-color);
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 1rem;
+  animation: slideIn 0.3s forwards, fadeOut 0.5s 2.5s forwards;
+  min-width: 250px;
+  display: flex;
+  align-items: center;
+  z-index: 99999999;
+}
+
+.toast-success {
+  border-left: 5px solid var(--accent-green);
+}
+
+.toast-error {
+  border-left: 5px solid var(--accent-red);
+}
+
+.toast-info {
+  border-left: 5px solid var(--primary-color);
+}
+
+.toast-icon {
+  margin-right: 1rem;
+  font-size: 1.5rem;
+}
+
+.toast-icon.success {
+  color: var(--accent-green);
+}
+
+.toast-icon.error {
+  color: var(--accent-red);
+}
+
+.toast-icon.info {
+  color: var(--primary-color);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(120%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.modern-table thead tr {
+  font-size: 0.8rem;
+}
+
+.modern-table td {
+  font-size: 0.87rem;
+}
+
+.info-item {
+  background-color: #fff;
+  border: none;
+  padding: 5px;
+}
+
+.status-badge .active {
+  color: #20c148ff;
+}
+
+.status-select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-color);
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+/* Base badge style */
+.status-active,
+.status-inactive,
+.status-completed {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  min-width: 80px;
+  transition: all 0.3s ease;
+}
+
+/* Active = green */
+.status-active {
+  background-color: #e6f7ed;
+  color: #1a7f37;
+  border: 1px solid #1a7f37;
+}
+
+/* Inactive = gray */
+.status-inactive {
+  background-color: #f0f0f0;
+  color: #666666;
+  border: 1px solid #999999;
+}
+
+/* Completed = blue */
+.status-completed {
+  background-color: #e6f0ff;
+  color: #1a4db3;
+  border: 1px solid #1a4db3;
+}
+
+/* Optional hover effect */
+.status-active:hover,
+.status-inactive:hover,
+.status-completed:hover {
+  transform: scale(1.05);
+  cursor: default;
+}
+
+body.dark .drawer-section {
+  background-color: transparent;
+}
+
+body.dark .toast {
+  background-color: var(--accent-color);
+}
+
+/* Simple modal + button styles specifically for attendance UI */
+.attendance-present-btn {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: not-allowed;
+}
+
+body.dark .attendance-present-btn {
+  background: #28a745;
+  color: #fff;
+}
+
+.mark-attendance-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+body.dark .mark-attendance-btn {
+  background: #2563eb;
+  color: #fff;
+}
+
+.mark-attendance-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal .modal-content {
+  background: #fff;
+  width: 900px;
+  height: 400px;
+  max-width: 100%;
+  border-radius: 10px;
+  padding: 18px 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+body.dark .modal .modal-content {
+  background: #333;
+}
+
+.modal .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.modal .modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+#attendanceForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.modal label {
+  display: block;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.modal input[type="number"],
+.modal select,
+.modal textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.modal .modal-actions {
+  margin-top: 14px;
+  text-align: right;
+}
+
+.modal .btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.modal .btn-cancel {
+  background: #f3f4f6;
+  color: #111827;
+  margin-right: 8px;
+}
+
+.modal .btn-save {
+  background: #2563eb;
+  color: #fff;
+}

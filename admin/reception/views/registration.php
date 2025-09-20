@@ -58,7 +58,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Registration</title>
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/dark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -67,101 +67,35 @@ try {
     <link rel="stylesheet" href="../css/registration.css">
 
     <style>
-        body.dark .drawer-content {
-            background-color: var(--card-bg2) !important;
+        .patient-message {
+            margin-top: 8px;
+            padding: 16px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+            background-color: #f7f9fc;
         }
 
-        body.dark .drawer-header2 {
-            background-color: var(--card-bg2) !important;
-            color: var(--text-color);
+        .patient-message:empty {
+            display: none;
         }
 
-        body.dark .drawer-header2 small {
-            color: var(--text-color);
+        .patient-message:contains("✅") {
+            background-color: #e6f7ed;
+            color: #1a7f37;
+            border: 1px solid #1a7f37;
         }
 
-        body.dark .info-item {
-            background-color: var(--card-bg2) !important;
-            border: 1px solid var(--border-color) !important;
+        .patient-message:contains("⚠️") {
+            background-color: #fff4e5;
+            color: #8a6d3b;
+            border: 1px solid #d6a05b;
         }
 
-
-        body.dark .info-item strong {
-            color: var(--text-color2) !important;
-        }
-
-        body.dark .info-item span {
-            color: var(--text-color) !important;
-        }
-
-        body.dark .PatientBill button:hover {
-            background-color: var(--card-bg2) !important;
-            color: var(--text-color) !important;
-        }
-
-        body.dark .footer-grid {
-            background-color: var(--card-bg2) !important;
-            color: var(--text-color) !important;
-        }
-
-        body.dark #submitRemarkBtn {
-            background-color: var(--text-color);
-            color: var(--accent-color);
-        }
-
-        body.dark #submitRemarkBtn:hover {
-            background-color: var(--text-color2) !important;
-            /* color: var(--text-color) !important; */
-        }
-
-        body.dark #addToPatientBtn {
-            background-color: var(--text-color);
-            color: var(--accent-color);
-        }
-
-        body.dark #addToPatientBtn:hover {
-            background-color: var(--text-color2) !important;
-        }
-
-        body.dark .add-to-patient-drawer {
-            background-color: #333;
-        }
-
-        body.dark .add-drawer-header {
-            background-color: var(--card-bg3);
-        }
-
-        body.dark .treatment-option {
-            background-color: var(--card-bg2) !important;
-            border: 1px solid var(--border-color) !important;
-        }
-
-        body.dark .treatment-option-info h4 {
-            color: var(--text-color) !important;
-        }
-
-        body.dark .treatment-option-info p {
-            color: var(--text-color) !important;
-        }
-
-        body.dark .form-group input[readonly] {
-            background-color: var(--card-bg3);
-            color: var(--text-color);
-        }
-
-        body.dark .add-drawer-close {
-            background-color: var(--card-bg3);
-            color: var(--text-color);
-            border: none;
-        }
-
-        body.dark .add-drawer-close:hover {
+        body.dark .patient-message {
             background-color: var(--card-bg2);
             color: var(--text-color);
-        }
-
-        body.dark .submit-button:hover {
-            background-color: var(--text-color2) !important;
         }
     </style>
 </head>
@@ -175,10 +109,10 @@ try {
                 <a href="dashboard.php">Dashboard</a>
                 <a href="inquiry.php">Inquiry</a>
                 <a class="active" href="registration.php">Registration</a>
-                <a href="#">Patients</a>
-                <a href="#">Appointments</a>
-                <a href="#">Billing</a>
-                <a href="#">Attendance</a>
+                <a href="patients.php">Patients</a>
+                <a href="appointments.php">Appointments</a>
+                <a href="billing.php">Billing</a>
+                <a href="attendance.php">Attendance</a>
                 <a href="#">Tests</a>
                 <a href="#">Reports</a>
             </div>
@@ -214,7 +148,7 @@ try {
         <div class="dashboard-container">
             <div class="top-bar">
                 <h2>Registration</h2>
-            </div> <!-- Registration Table -->
+            </div>
             <div id="quickTable" class="table-container modern-table">
                 <table>
                     <thead>

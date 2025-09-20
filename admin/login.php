@@ -209,6 +209,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>ProSpine Login</title>
     <link rel="stylesheet" href="assets/css/login.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Styling for the login error message */
+        .error-message {
+            padding: 12px 24px;
+            margin-bottom: 20px;
+            border: 1px solid #e57373;
+            border-radius: 8px;
+            background-color: #ffebee;
+            color: #c62828;
+            font-size: 0.9em;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -229,6 +242,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h2>Sign in</h2>
                 <p class="subtitle">Use your ProSpine credentials. You’ll be routed to the correct dashboard based on
                     your role.</p>
+
+                <?php if (!empty($err)) : ?>
+                    <div class="error-message">
+                        <?= htmlspecialchars($err, ENT_QUOTES, 'UTF-8') ?>
+                    </div>
+                <?php endif; ?>
                 <form method="POST" autocomplete="off" novalidate>
                     <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
 

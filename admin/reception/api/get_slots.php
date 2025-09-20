@@ -18,12 +18,13 @@ $branchId = $_SESSION['branch_id'];
 $today = date('Y-m-d');
 
 try {
-    // Fetch filled slots for today
+    // Fetch filled slots for today (based on created_at date)
     $stmt = $pdo->prepare("
         SELECT appointment_time 
         FROM registration 
-        WHERE DATE(appointment_time) = :today 
+        WHERE DATE(created_at) = :today 
           AND branch_id = :branch_id
+          AND appointment_time IS NOT NULL
     ");
     $stmt->execute([
         ':today' => $today,
@@ -34,7 +35,7 @@ try {
     // Normalize filled times to H:i format
     $filledSlots = array_map(fn($t) => date('H:i', strtotime($t)), $filledSlots);
 
-    // Generate slots (11:00 to 19:00)
+    // Generate slots (11:00 AM to 7:00 PM, every 30 minutes)
     $slots = [];
     $start = new DateTime('11:00');
     $end   = new DateTime('19:00');
@@ -42,8 +43,8 @@ try {
     while ($start < $end) {
         $time = $start->format('H:i');
         $slots[] = [
-            'time'    => $time,
-            'label'   => $start->format('h:i A'),
+            'time'     => $time,
+            'label'    => $start->format('h:i A'),
             'disabled' => in_array($time, $filledSlots)
         ];
         $start->modify('+30 minutes');

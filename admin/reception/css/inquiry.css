@@ -1,3 +1,32 @@
+body.dark {
+  /* Backgrounds */
+  --bg-color: linear-gradient(147deg, #121212 0%, #434343 74%);
+  --card-bg: rgba(
+    255,
+    255,
+    255,
+    0.08
+  ); /* matches hover state for subtle cards */
+  --card-bg2: rgba(255, 255, 255, 0.12); /* matches divider/disabled bg */
+  --card-bg3: #1e1e1e; /* close to paper background */
+  --card-body2: linear-gradient(#121212, #1e1e1e);
+
+  /* Text */
+  --text-color: #fff; /* palette.text.primary */
+  --text-color2: rgba(255, 255, 255, 0.7); /* palette.text.secondary */
+  --text-color3: #000;
+
+  /* Accent / Borders */
+  --accent-color: #000000; /* palette.action.active */
+  --accent-color2: #fff;
+  --border-color: rgba(255, 255, 255, 0.12); /* palette.divider */
+
+  /* Misc */
+  --back-color: rgba(255, 255, 255, 0.5); /* palette.text.disabled */
+  --drawer-bg: #121212; /* background.paper */
+}
+
+
 .main {
   background-color: #ffffffa5;
   width: 98%;
@@ -82,7 +111,6 @@
   background: #fff7e6;
   color: #f57c00;
 }
-
 
 /* === Dropdowns match pills === */
 .modern-table select {
@@ -171,9 +199,9 @@
 .drawer {
   position: fixed;
   top: 10px;
-  right: -620px;
+  right: -820px;
   margin-right: 20px;
-  width: 600px;
+  width: 800px;
   height: 98%;
   background: #ffffffff;
   color: #000;
@@ -183,8 +211,8 @@
   z-index: 1000;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
-
 .drawer.open {
   right: 0;
   /* slide in */
@@ -225,24 +253,6 @@
 
 .action-btn:hover {
   opacity: 0.8;
-}
-
-.drawer {
-  position: fixed;
-  top: 10px;
-  right: -920px;
-  margin-right: 20px;
-  width: 900px;
-  height: 98%;
-  background: #ffffffff;
-  color: #000;
-  border-radius: 30px;
-  box-shadow: -3px 0 8px rgba(0, 0, 0, 0.2);
-  transition: right 0.4s ease-in-out;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
 }
 
 /* --- Base Drawer Styling --- */

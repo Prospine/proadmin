@@ -113,8 +113,9 @@ try {
                 <a href="appointments.php">Appointments</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php">Attendance</a>
-                <a href="#">Tests</a>
-                <a href="#">Reports</a>
+                <a href="tests.php">Tests</a>
+                <a href="reports.php">Reports</a>
+                <a href="expenses.php">Expenses</a>
             </div>
         </nav>
         <div class="nav-actions">

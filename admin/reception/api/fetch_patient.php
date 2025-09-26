@@ -60,31 +60,55 @@ if (isset($_GET['id'])) {
     if ($data) {
         // Attendance summary
         $stmt = $pdo->prepare("
-            SELECT 
-                COUNT(*) AS attendance_completed,
-                MAX(attendance_date) AS last_attendance_date
-            FROM attendance
-            WHERE patient_id = :id
-        ");
+    SELECT 
+        COUNT(*) AS attendance_completed,
+        MAX(attendance_date) AS last_attendance_date
+    FROM attendance
+    WHERE patient_id = :id
+");
         $stmt->execute(['id' => $id]);
         $attendance = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Payment summary
-        $stmt = $pdo->prepare("
-            SELECT 
-                COALESCE(SUM(amount),0) AS total_paid,
-                MAX(payment_date) AS last_payment_date
-            FROM payments
-            WHERE patient_id = :id
-        ");
-        $stmt->execute(['id' => $id]);
-        $payments = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // Merge into main response
+        // Merge attendance into $data
         $data['attendance_completed'] = (int) ($attendance['attendance_completed'] ?? 0);
         $data['last_attendance_date'] = $attendance['last_attendance_date'] ?? null;
-        $data['total_paid'] = (float) ($payments['total_paid'] ?? 0);
-        $data['last_payment_date'] = $payments['last_payment_date'] ?? null;
+
+
+        // 3. Fetch all payments at once
+        $stmt = $pdo->prepare("
+    SELECT amount, payment_date
+    FROM payments
+    WHERE patient_id = :id
+");
+        $stmt->execute(['id' => $id]);
+        $allPayments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $totalPaid = 0;
+        $todayPaid = 0;
+        $today = date('Y-m-d');
+
+        foreach ($allPayments as $payment) {
+            $totalPaid += (float)$payment['amount'];
+            if ($payment['payment_date'] === $today) {
+                $todayPaid += (float)$payment['amount'];
+            }
+        }
+
+        $data['total_paid'] = $totalPaid;
+        $data['today_paid'] = $todayPaid;
+
+        // 4. Calculate per-day consumed amount
+        $costPerDay = 0;
+        $treatmentDays = (int) ($data['treatment_days'] ?? 0);
+
+        if (strtolower($data['treatment_type'] ?? '') === 'package' && $treatmentDays > 0) {
+            $costPerDay = (float)($data['package_cost'] ?? 0) / $treatmentDays;
+        } else {
+            $costPerDay = (float)($data['treatment_cost_per_day'] ?? 0);
+        }
+
+        $data['cost_per_day'] = $costPerDay;
+        $data['consumed_amount'] = $costPerDay * $data['attendance_completed'];
 
         echo json_encode($data);
     } else {

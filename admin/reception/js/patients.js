@@ -96,10 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
 <div class="drawer-section" data-collapsible>
     <h3><i class="fas fa-money-bill-wave"></i> Financial Details</h3>
     <div class="info-grid">
-        <div class="info-item"><span class="label">Cost / Day</span><span class="value">₹${numberFormat(data.treatment_cost_per_day ?? 0)}</span></div>
+        <div class="info-item"><span class="label">Cost / Day</span><span class="value">₹${numberFormat(data.cost_per_day)}</span></div>
+        <div class="info-item"><span class="label">Consumed Amount</span><span class="value">₹${numberFormat(data.consumed_amount)}</span></div>
+        <div class="info-item"><span class="label">Total Paid</span><span class="value">₹${numberFormat(data.total_paid)}</span></div>
+        <div class="info-item"><span class="label">Today Paid</span><span class="value">₹${numberFormat(data.today_paid)}</span></div>
+        <div class="info-item"><span class="label">Attendance</span><span class="value">${data.attendance_completed} days</span></div>
+        
         <div class="info-item"><span class="label">Package Cost</span><span class="value">₹${numberFormat(data.package_cost ?? 0)}</span></div>
         <div class="info-item"><span class="label">Total Amount</span><span class="value">₹${numberFormat(data.total_amount ?? 0)}</span></div>
-        <div class="info-item"><span class="label">Advance Paid</span><span class="value">₹${numberFormat(data.advance_payment ?? 0)}</span></div>
         <div class="info-item"><span class="label">Discount</span><span class="value">${data.discount_percentage ?? 0}%</span></div>
         <div class="info-item"><span class="label">Due Amount</span><span class="value">₹${numberFormat(data.due_amount ?? 0)}</span></div>
         <div class="info-item"><span class="label">Treatment Payment Method</span><span class="value">${ucFirst(data.treatment_payment_method ?? 'N/A')}</span></div>
@@ -177,6 +181,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         });
     });
+    
+    // When print button is clicked
+    document.querySelectorAll(".action-btn2").forEach(btn => {
+        btn.addEventListener("click", function () {
+            const patientId = this.getAttribute("data-patient-id"); // make sure your button has this attr
 
+            fetch(`../api/get_patient_summary.php?patient_id=${patientId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
 
+                    // Fill modal fields
+                    document.getElementById("popup-name").textContent = data.name;
+                    document.getElementById("popup-total-paid").textContent = data.total_paid;
+                    document.getElementById("popup-today-paid").textContent = data.today_paid;
+                    document.getElementById("popup-attendance").textContent = data.attendance;
+
+                    // Add today's date & time (JS side)
+                    const now = new Date();
+                    document.getElementById("popup-date").textContent =
+                        now.toLocaleDateString() + " " + now.toLocaleTimeString();
+
+                    // Show modal
+                    document.getElementById("token-modal").style.display = "block";
+                })
+                .catch(err => {
+                    console.error("Error fetching patient summary:", err);
+                });
+        });
+    });
+
+    // Close modal when clicking close button
+    document.querySelectorAll(".close-token").forEach(closeBtn => {
+        closeBtn.addEventListener("click", function () {
+            document.getElementById("token-modal").style.display = "none";
+        });
+    });
+
+    // Print from modal
+    document.getElementById("popup-print-btn").addEventListener("click", function () {
+        window.print(); // optimized with @media print CSS
+    });
 });

@@ -348,8 +348,9 @@ $success = false;
                 <a href="appointments.php">Appointments</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php">Attendance</a>
-                <a href="#">Tests</a>
-                <a href="#">Reports</a>
+                <a href="tests.php">Tests</a>
+                <a href="reports.php">Reports</a>
+                <a href="expenses.php">Expenses</a>
             </div>
         </nav>
         <div class="nav-actions">
@@ -571,8 +572,8 @@ $success = false;
                     </div>
 
                     <div>
-                        <label>Occupation *</label>
-                        <input type="text" name="occupation" required>
+                        <label>Occupation</label>
+                        <input type="text" name="occupation">
                     </div>
 
                     <div>
@@ -630,8 +631,9 @@ $success = false;
                         <select name="inquiry_type" required>
                             <option value="">Select Consultation Type</option>
                             <option value="In-Clinic">In-Clinic</option>
+                            <option value="Speech-Therapy">Speech Therapy</option>
                             <option value="Phone">Home-Visit</option>
-                            <option value="Phone">Virtual/Online</option>
+                            <option value="Online">Virtual/Online</option>
                         </select>
                     </div>
 
@@ -987,6 +989,7 @@ $success = false;
                         if (result.success) {
                             showToast(result.message || successMsg, "success");
                             this.reset();
+
                         } else {
                             showToast(result.message || "Submission failed.", "error");
                         }

@@ -1,0 +1,189 @@
+/* ------------------- Drawer ------------------- */
+.drawer {
+  position: fixed;
+  top: 10px;
+  right: -880px;
+  width: 800px;
+  max-width: 95%;
+  height: 94%;
+  background: #fafafa;
+  box-shadow: -6px 0 30px rgba(0, 0, 0, 0.3);
+  transition: right 0.4s ease;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 20px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body.dark .drawer {
+  background: #333;
+}
+
+.drawer.open {
+  right: 0;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.drawer-header h3 {
+  font-size: 1.6em;
+  margin: 0;
+}
+
+.drawer-header .close-drawer {
+  font-size: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+}
+
+.drawer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-radius: 10px;
+}
+
+body.dark .drawer-content {
+  background: #333;
+}
+
+/* Card */
+.drawer-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #eee;
+  transition: all 0.2s ease-in-out;
+}
+
+body.dark .drawer-card {
+  background: #333;
+  border: 1px solid #333;
+}
+
+.drawer-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+body.dark .drawer-card:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.17);
+}
+
+.drawer-card h4 {
+  margin: 0 0 12px 0;
+  font-size: 1.2em;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 5px;
+  color: #333;
+}
+
+body.dark .drawer-card h4 {
+  color: #fff;
+}
+
+.drawer-card p {
+  margin: 0;
+  font-size: 0.9em;
+  color: #777;
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 20px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+}
+
+.info-item span.label {
+  color: #777;
+  font-weight: 500;
+}
+
+body.dark .info-item span.label {
+  color: #fff;
+}
+
+.info-item span.value {
+  font-weight: 600;
+  color: #333;
+}
+
+body.dark .info-item span.value {
+  color: #fff;
+}
+
+/* Buttons */
+
+.drawer-card select {
+  padding: 5px 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 0.95em;
+  background: #fff;
+  width: 150px;
+}
+
+/* Pills */
+.pill {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.9em;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+.pill.pending {
+  background: #c43903ff;
+}
+
+.pill.completed {
+  background: #5cb85c;
+}
+
+.pill.cancelled {
+  background: #d9534f;
+}
+
+.pill.partial {
+  background: #ef630cff;
+}
+
+.pill.paid {
+  background: #4caf50;
+}
+
+/* Scrollbar */
+.drawer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.drawer::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

@@ -114,8 +114,9 @@ try {
                 <a href="appointments.php" class="active">Appointments</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php">Attendance</a>
-                <a href="#">Tests</a>
-                <a href="#">Reports</a>
+                <a href="tests.php">Tests</a>
+                <a href="reports.php">Reports</a>
+                <a href="expenses.php">Expenses</a>
             </div>
         </nav>
         <div class="nav-actions">
@@ -127,7 +128,7 @@ try {
             <div class="profile" onclick="openForm()">S</div>
         </div>
     </header>
-    
+
     <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
         <div class="popup">
             <ul>

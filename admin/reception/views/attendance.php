@@ -348,7 +348,7 @@ try {
             color: #d7e9ff;
         }
 
-        #attendance-date-details p {
+        body.dark #attendance-date-details p{
             color: #ddd;
         }
     </style>
@@ -368,8 +368,9 @@ try {
                 <a href="appointments.php">Appointments</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php" class="active">Attendance</a>
-                <a href="#">Tests</a>
-                <a href="#">Reports</a>
+                <a href="tests.php">Tests</a>
+                <a href="reports.php">Reports</a>
+                <a href="expenses.php">Expenses</a>
             </div>
         </nav>
         <div class="nav-actions">

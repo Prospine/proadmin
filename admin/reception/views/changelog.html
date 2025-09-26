@@ -31,6 +31,62 @@
   <main>
     <div class="segment">
       <div class="log-entry">
+        <h2>v2.1.9 <span class="badge merged">Merged</span></h2>
+        <div class="meta">September 26, 2025 · Tests, Payments & Patient Management ·
+          <a href="#">View changes</a>
+        </div>
+        <ul class="changes">
+          <!-- API Changes -->
+          <li><span class="tag added">Added</span> <strong>update_payment.php</strong> API to handle inline payment
+            updates for tests, including validation of amounts, automatic adjustment of <code>advance_amount</code> and
+            <code>due_amount</code>, and dynamic <code>payment_status</code> updates.</li>
+          <li><span class="tag added">Added</span> <strong>update_payment_status.php</strong> API for manual payment
+            status updates (<code>pending</code>, <code>partial</code>, <code>paid</code>) for each test record.</li>
+          <li><span class="tag added">Added</span> <strong>update_test_status.php</strong> API to manage test status
+            changes (<code>pending</code>, <code>completed</code>, <code>cancelled</code>) dynamically from the UI.</li>
+          <li><span class="tag added">Added</span> <strong>get_patient_summary.php</strong> API to fetch patient summary
+            for printing and modal display, including total paid, today’s payment, and attendance details.</li>
+          <li><span class="tag improved">Improved</span> <strong>fetch_patient.php</strong> and
+            <strong>fetch_test.php</strong> APIs to provide more comprehensive patient/test details, including
+            attendance, treatment info, and payment summaries.</li>
+
+          <!-- JavaScript Changes -->
+          <li><span class="tag added">Added</span> drawer-based inline editing for payments and statuses in
+            <strong>patients.js</strong>, <strong>billings.js</strong>, and <strong>test.js</strong>, replacing prompt
+            popups with interactive input fields and save buttons.</li>
+          <li><span class="tag added">Added</span> toast notifications for success/error messages in payment and status
+            updates with auto-dismiss and optional page reload after 3 seconds.</li>
+          <li><span class="tag improved">Improved</span> JS logic for reloading drawer content dynamically after updates
+            to maintain context and display accurate, up-to-date data.</li>
+
+          <!-- CSS Changes -->
+          <li><span class="tag improved">Improved</span> <strong>billings.css</strong>, <strong>patients.css</strong>,
+            <strong>dashboard.css</strong>, and <strong>test.css</strong> for better layout, responsiveness, and UI
+            consistency across light and dark themes.</li>
+
+          <!-- View Changes -->
+          <li><span class="tag added">Added</span> new <strong>expenses.php</strong> view with session and branch-based
+            restrictions for reporting purposes.</li>
+          <li><span class="tag improved">Improved</span> <strong>billing.php</strong>, <strong>patients.php</strong>,
+            <strong>appointments.php</strong>, and <strong>attendance.php</strong> to integrate drawer-based
+            patient/test details and inline payment/status updates.</li>
+          <li><span class="tag improved">Improved</span> <strong>dashboard.php</strong>, <strong>reports.php</strong>,
+            and <strong>tests.php</strong> with dynamic content loading, structured patient/test summaries, and
+            responsive layouts.</li>
+          <li><span class="tag fixed">Fixed</span> inconsistencies in drawer open/close behavior, ensuring smooth
+            animations and proper data refresh across multiple views.</li>
+          <li><span class="tag fixed">Fixed</span> edge cases in payment updates where invalid or excessive amounts
+            caused errors, now validated both client- and server-side.</li>
+          <li><span class="tag added">Added</span> support for showing attendance as <code>completed/total days</code>
+            in patient summary modals for better progress tracking.</li>
+
+          <!-- Misc -->
+          <li><span class="tag added">Added</span> <strong>changelog.html</strong> to maintain a structured version
+            history with detailed entries.</li>
+        </ul>
+      </div>
+
+      <div class="log-entry">
         <h2>v2.1.8 <span class="badge merged">Merged</span></h2>
         <div class="meta">September 20, 2025 · Billing & Patients Module ·
           <a href="#">View changes</a>

@@ -10,7 +10,7 @@ error_reporting(E_ALL);
 
 // Auth / Session Checks
 if (!isset($_SESSION['uid'])) {
-    header('Location: ../login.php');
+    header('Location: ../../login.php');
     exit();
 }
 
@@ -158,8 +158,9 @@ try {
                 <a href="appointments.php">Appointments</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php">Attendance</a>
-                <a href="#">Tests</a>
-                <a href="#">Reports</a>
+                <a href="tests.php">Tests</a>
+                <a href="reports.php">Reports</a>
+                <a href="expenses.php">Expenses</a>
             </div>
         </nav>
         <div class="nav-actions">
@@ -206,12 +207,13 @@ try {
                             <th data-key="treatment" class="sortable">Treatment Type</th>
                             <!-- <th data-key="days" class="sortable">Days</th> -->
                             <th data-key="days" class="sortable">Attendance</th>
-                            <th data-key="cost" class="sortable numeric">Total Amount</th>
+                            <!-- <th data-key="cost" class="sortable numeric">Total Amount</th> -->
                             <th data-key="advance" class="sortable numeric">Amount Paid</th>
-                            <th data-key="due" class="sortable numeric">Due Amount</th>
+                            <!-- <th data-key="due" class="sortable numeric">Due Amount</th> -->
                             <th data-key="period">Treatment Period</th>
                             <th data-key="status">Status</th>
                             <th>Mark Attendance</th>
+                            <th>Token</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -246,9 +248,9 @@ try {
                                     </td>
 
 
-                                    <td class="numeric"><?= isset($row['total_amount']) ? '₹' . number_format((float)$row['total_amount'], 2) : '-' ?></td>
+                                    <!-- <td class="numeric"><?= isset($row['total_amount']) ? '₹' . number_format((float)$row['total_amount'], 2) : '-' ?></td> -->
                                     <td class="numeric"><?= isset($row['advance_payment']) ? '₹' . number_format((float)$row['advance_payment'], 2) : '-' ?></td>
-                                    <td class="numeric"><?= isset($row['due_amount']) ? '₹' . number_format((float)$row['due_amount'], 2) : '-' ?></td>
+                                    <!-- <td class="numeric"><?= isset($row['due_amount']) ? '₹' . number_format((float)$row['due_amount'], 2) : '-' ?></td> -->
                                     <td>
                                         <div>
                                             <span>Start: <?= !empty($row['start_date']) ? date('d M Y', strtotime($row['start_date'])) : '-' ?></span><br>
@@ -272,6 +274,9 @@ try {
                                         <?php else: ?>
                                             <button class="mark-attendance-btn" data-patient-id="<?= $pid ?>">Mark Today</button>
                                         <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn2" data-patient-id="<?= htmlspecialchars((string)($row['patient_id'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">Print</button>
                                     </td>
                                     <td>
                                         <button class="action-btn" data-id="<?= htmlspecialchars((string)($row['patient_id'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">View</button>
@@ -303,6 +308,7 @@ try {
             <div class="drawer-body" id="drawer-body"></div>
         </div>
     </div>
+    
     <!-- Attendance Modal (only used for daily/advance) -->
     <div id="attendanceModal" class="modal" aria-hidden="true">
         <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -341,12 +347,32 @@ try {
             </form>
         </div>
     </div>
+
+    <div id="token-modal" class="popups">
+        <div class="token-modal-content" id="token-print-area">
+            <div class="token-header">
+                <h3>Patient Summary</h3>
+                <button class="close-token">&times;</button>
+            </div>
+            <p><strong>Name:</strong> <span id="popup-name"></span></p>
+            <p><strong>Date & Time:</strong> <span id="popup-date"></span></p>
+            <p><strong>Total Paid:</strong> ₹<span id="popup-total-paid"></span></p>
+            <p><strong>Today Paid:</strong> ₹<span id="popup-today-paid"></span></p>
+            <p><strong>Attendance:</strong> <span id="popup-attendance"></span> days</p>
+            <hr>
+            <button id="popup-print-btn">🖨 Print</button>
+
+            <p class="patient-message">Thank You for your Visit</p>
+        </div>
+    </div>
+
     <div id="toast-container"></div>
 
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
     <script src="../js/patients.js"></script>
     <script src="../js/addattendance.js"></script>
+
 </body>
 
 </html>

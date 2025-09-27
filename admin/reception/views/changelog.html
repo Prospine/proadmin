@@ -30,6 +30,59 @@
 
   <main>
     <div class="segment">
+      
+      
+      <div class="log-entry">
+        <h2>v2.2.0 <span class="badge merged">Merged</span></h2>
+        <div class="meta">September 27, 2025 · Reporting, Auditing & Expenses ·
+          <a href="#">View changes</a>
+        </div>
+        <ul class="changes">
+          <li><span class="tag added">Added</span> A comprehensive **Reporting Suite** with four new dynamic report
+            pages: <strong>Test Reports</strong>, <strong>Registration Reports</strong>, <strong>Patient
+              Reports</strong>, and <strong>Inquiry Reports</strong>.</li>
+          <li><span class="tag added">Added</span> Dynamic, server-side filtering for all reports, allowing users to
+            query data by date ranges and other relevant criteria (e.g., test name, patient status, referral source).
+          </li>
+          <li><span class="tag added">Added</span> <strong>AJAX functionality</strong> to all report pages, enabling
+            interactive filtering and data refreshes without requiring a full page reload.</li>
+          <li><span class="tag improved">Improved</span> User experience on report pages with the addition of loading
+            indicators during data fetching and a dynamic **filter status message** that confirms the action and
+            displays the number of results found.</li>
+
+          <li><span class="tag added">Added</span> A new <strong>`audit_log`</strong> database table to provide a
+            comprehensive and secure trail of all significant user actions.</li>
+          <li><span class="tag added">Added</span> A centralized <strong>`logger.php`</strong> utility with a
+            `log_activity()` function to handle all log insertions consistently. The logger captures user info, branch,
+            action type, and detailed JSON snapshots of data changes (`details_before` and `details_after`).</li>
+          <li><span class="tag improved">Improved</span> All critical API endpoints (for creating/updating inquiries,
+            registrations, and tests) by integrating them with the new audit logging system.</li>
+          <li><span class="tag improved">Improved</span> The <strong>`logout.php`</strong> script to be more secure by
+            fully unsetting session variables, destroying the session cookie, and logging the `LOGOUT` event for
+            security auditing.</li>
+          <li><span class="tag fixed">Fixed</span> A critical dependency by updating the <strong>`login.php`</strong>
+            script to correctly store the `username` in the session, which is now required for all logging activities.
+          </li>
+
+          <li><span class="tag added">Added</span> A new <strong>`expenses`</strong> database table to track clinic
+            operational costs, designed based on the physical payment voucher.</li>
+          <li><span class="tag added">Added</span> A new <strong>`expenses.php`</strong> view for full management of
+            clinic expenses, including a form for adding new vouchers and a table to display expense history.</li>
+          <li><span class="tag added">Added</span> A **popup modal** for the "Add New Expense" form, improving the main
+            view's UI by hiding the form until it's needed.</li>
+          <li><span class="tag added">Added</span> Client-side JavaScript to automatically convert numeric amounts to
+            their word representation in the expense form, improving data entry speed and accuracy.</li>
+          <li><span class="tag improved">Improved</span> The expense form layout was refactored into a clean, two-column
+            "table-like" structure for better readability and usability.</li>
+
+          <li><span class="tag added">Added</span> An API to handle status updates for `quick_inquiry` and
+            `test_inquiry` tables, which now also logs the "before" and "after" state of the change.</li>
+          <li><span class="tag improved">Improved</span> The database schema with the addition of the `expenses` and
+            `audit_log` tables, including foreign key constraints and appropriate indexes.</li>
+        </ul>
+      </div>
+
+
       <div class="log-entry">
         <h2>v2.1.9 <span class="badge merged">Merged</span></h2>
         <div class="meta">September 26, 2025 · Tests, Payments & Patient Management ·
@@ -39,7 +92,8 @@
           <!-- API Changes -->
           <li><span class="tag added">Added</span> <strong>update_payment.php</strong> API to handle inline payment
             updates for tests, including validation of amounts, automatic adjustment of <code>advance_amount</code> and
-            <code>due_amount</code>, and dynamic <code>payment_status</code> updates.</li>
+            <code>due_amount</code>, and dynamic <code>payment_status</code> updates.
+          </li>
           <li><span class="tag added">Added</span> <strong>update_payment_status.php</strong> API for manual payment
             status updates (<code>pending</code>, <code>partial</code>, <code>paid</code>) for each test record.</li>
           <li><span class="tag added">Added</span> <strong>update_test_status.php</strong> API to manage test status
@@ -48,12 +102,14 @@
             for printing and modal display, including total paid, today’s payment, and attendance details.</li>
           <li><span class="tag improved">Improved</span> <strong>fetch_patient.php</strong> and
             <strong>fetch_test.php</strong> APIs to provide more comprehensive patient/test details, including
-            attendance, treatment info, and payment summaries.</li>
+            attendance, treatment info, and payment summaries.
+          </li>
 
           <!-- JavaScript Changes -->
           <li><span class="tag added">Added</span> drawer-based inline editing for payments and statuses in
             <strong>patients.js</strong>, <strong>billings.js</strong>, and <strong>test.js</strong>, replacing prompt
-            popups with interactive input fields and save buttons.</li>
+            popups with interactive input fields and save buttons.
+          </li>
           <li><span class="tag added">Added</span> toast notifications for success/error messages in payment and status
             updates with auto-dismiss and optional page reload after 3 seconds.</li>
           <li><span class="tag improved">Improved</span> JS logic for reloading drawer content dynamically after updates
@@ -62,14 +118,16 @@
           <!-- CSS Changes -->
           <li><span class="tag improved">Improved</span> <strong>billings.css</strong>, <strong>patients.css</strong>,
             <strong>dashboard.css</strong>, and <strong>test.css</strong> for better layout, responsiveness, and UI
-            consistency across light and dark themes.</li>
+            consistency across light and dark themes.
+          </li>
 
           <!-- View Changes -->
           <li><span class="tag added">Added</span> new <strong>expenses.php</strong> view with session and branch-based
             restrictions for reporting purposes.</li>
           <li><span class="tag improved">Improved</span> <strong>billing.php</strong>, <strong>patients.php</strong>,
             <strong>appointments.php</strong>, and <strong>attendance.php</strong> to integrate drawer-based
-            patient/test details and inline payment/status updates.</li>
+            patient/test details and inline payment/status updates.
+          </li>
           <li><span class="tag improved">Improved</span> <strong>dashboard.php</strong>, <strong>reports.php</strong>,
             and <strong>tests.php</strong> with dynamic content loading, structured patient/test summaries, and
             responsive layouts.</li>

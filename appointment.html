@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pro Spine</title>
+  <link rel="icon" href="image/favicon.png" type="image/x-icon" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .sec3 {
+      width: 96%;
+      text-align: center;
+      padding: 10px 20px 50px 10px;
+      background-color: #f9f9f971;
+      border-radius: 20px;
+      margin-bottom: 0px;
+    }
+
+    .textcont h2 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .textcont p {
+      font-size: 1.4rem;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    .service-boxes {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      /* border: 1px solid; */
+      /* Ensures responsiveness on smaller screens */
+    }
+
+    .service-box {
+      background: #fff;
+      padding: 20px 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 570px;
+    }
+
+    .service-box h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    .service-box p {
+      font-size: 1rem;
+      color: #666;
+      /* margin-bottom: 15px; */
+    }
+
+    .service-box button {
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      margin: 20px;
+      padding: 15px;
+      border-radius: 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      transition: 0.3s ease;
+    }
+
+    .service-box button:hover {
+      background: #e9e9e9;
+    }
+
+    /* Form Container */
+    .appointment-form {
+      margin: 20px auto;
+      background: #ffffffa2;
+      padding: 20px;
+      width: 90%;
+      /* max-width: 700px; */
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
+
+    /* Section Header */
+    .textcont h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: #222;
+      text-align: center;
+    }
+
+    .textcont p {
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Flex Container for Form Rows */
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .form-row>div {
+      flex: 1;
+      min-width: 200px;
+      /* Ensures fields don’t get too small */
+    }
+
+    /* Labels */
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    /* Inputs and Select Fields */
+    input,
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 13px;
+      background: #fdfdfd;
+      transition: border 0.3s ease-in-out;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    /* Address Field - Hidden by Default */
+    #addressField {
+      display: none;
+      width: 100%;
+    }
+
+    /* Textarea Specific Styling */
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 13px;
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Contact Acknowledgment */
+    .acknowledgment {
+      font-size: 11px;
+      color: #555;
+      background: #f1f1f1;
+      padding: 8px;
+      border-radius: 5px;
+      margin: 15px 0;
+      text-align: center;
+    }
+
+    /* Submit Button */
+    button {
+      width: 100%;
+      background: #007bff;
+      color: #fff;
+      font-size: 14px;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    /* Small Note */
+    .note {
+      font-size: 14px;
+      color: #333;
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .time {
+      display: flex;
+      margin: 0 auto;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+      margin-bottom: -10px;
+    }
+
+    .time p {
+      font-size: 1.1rem;
+      color: rgb(255, 60, 0);
+      font-weight: 600;
+    }
+
+    @media screen and (max-width: 768px) {
+      .textcont h2 {
+        font-size: 14px;
+      }
+
+      .textcont p {
+        font-size: 12px;
+      }
+
+      .sec3 {
+        padding: 5px;
+      }
+
+      .service-boxes {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .service-box {
+        width: 96%;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        padding: 10px;
+      }
+
+      .service-box h3 {
+        font-size: 12px;
+      }
+
+      .service-box p {
+        font-size: 10px;
+      }
+
+      .service-box strong {
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      .service-box button {
+        margin: 10px;
+      }
+
+      .time {
+        flex-direction: column;
+        gap: 0px;
+        margin-bottom: 10px;
+      }
+
+      .time p {
+        font-size: 10px;
+      }
+
+      .appointment-form {
+        margin-top: 30px;
+        padding: 10px;
+        margin-bottom: 20px;
+      }
+
+      .appointment-form {
+        width: 90%;
+      }
+
+      label {
+        font-size: 10px;
+        margin: 8px;
+      }
+
+      input,
+      select {
+        padding: 5px;
+        font-size: 9px;
+        border-radius: 5px;
+      }
+
+      .acknowledgment {
+        margin: 5px;
+        margin-top: 10px;
+        font-size: 10px;
+      }
+
+      button {
+        min-width: 100%;
+        margin: 0 auto;
+      }
+
+      .note {
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+    }
+
+
+    .toast {
+      visibility: hidden;
+      min-width: 280px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 14px;
+      position: fixed;
+      z-index: 9999;
+      left: 50%;
+      bottom: 40px;
+      font-size: 14px;
+      transform: translateX(-50%);
+      transition: all 0.4s ease;
+    }
+
+    .toast.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .toast.success {
+      background-color: #28a745;
+    }
+
+    .toast.error {
+      background-color: #dc3545;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="image/logo.png" alt="Pro Physio Logo" class="logo" />
+    </div>
+
+    <nav>
+      <div class="nav-container">
+        <div class="hamburger" id="hamburger">&#9776;</div>
+        <div class="nav-links" id="navLinks">
+          <a href="index.html">Home</a>
+          <a href="aboutus.html">About Us</a>
+          <a href="treatment.html">Conditions We Treat</a>
+          <a href="services.html">Our Services</a>
+          <a href="team.html">Our Team</a>
+          <a href="testimonials.html">Testimonials</a>
+          <a href="events.html">Events</a>
+          <a href="prospineapproach.html">Why Pro Spine</a>
+          <a href="career.html">Career</a>
+          <a href="contact.html">Contact Us</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <section class="sec2">
+    <div class="textcont">
+      <h2>Book an Appointment</h2>
+      <p>
+        Fill out the form below to request an appointment with us. Our team
+        will contact you within 24 hours to finalize the schedule. For urgent
+        scheduling needs, rescheduling, or cancellations, please call
+        +91+918002421212.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec3">
+    <div class="textcont">
+      <h2>Our Consultation Options</h2>
+      <p>Choose the most convenient way to receive expert medical care.</p>
+    </div>
+    <div class="service-boxes">
+      <div class="service-box">
+        <h3>Virtual Consultation</h3>
+        <p>Connect with our doctors online from the comfort of your home.</p>
+        <p>
+          <strong>Get expert medical advice through a secure video call.</strong>
+        </p>
+        <p>
+          <strong>Available between 11:30 AM - 1:00 PM.</strong> Book your
+          slot in advance.
+        </p>
+      </div>
+      <div class="service-box">
+        <h3>In-Clinic Visit</h3>
+        <p>
+          Schedule an appointment and visit our clinic for personalized care.
+        </p>
+        <p>
+          <strong>Availability is subject to open slots.</strong> Please check
+          for the next available appointment to secure your spot.
+        </p>
+      </div>
+      <div class="service-box">
+        <h3>Home Care Visit</h3>
+        <p>Receive medical attention at your home for added convenience.</p>
+        <p>
+          <strong>Best suited for patients who need assistance at home.</strong>
+          Book in advance for seamless scheduling.
+        </p>
+      </div>
+    </div>
+    <div class="time">
+      <p>Time - 8:00 AM - 8:00 PM (Monday - Saturday)</p>
+      <p>Time - 10:00 AM - 1:00 PM (Sunday)</p>
+    </div>
+  </section>
+  <section class="appointment-form">
+    <div class="textcont">
+      <h2>Book Your Appointment</h2>
+      <p>Schedule your consultation with Pro Spine today!</p>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toast" class="toast"></div>
+
+    <form id="appointmentForm">
+      <!-- Row 1: Consultation Type and Full Name -->
+      <div class="form-row">
+        <div>
+          <label for="consultationType">Consultation Type*</label>
+          <select id="consultationType" name="consultationType" required onchange="updateForm()">
+            <option value="" disabled selected>Select a type</option>
+            <option value="virtual">Virtual Consultation</option>
+            <option value="clinic">In-Clinic Visit</option>
+            <option value="home">Home Care Visit</option>
+          </select>
+        </div>
+        <div>
+          <label for="fullName">Full Name*</label>
+          <input type="text" id="fullName" name="fullName" required />
+        </div>
+      </div>
+
+      <!-- Row 2: Email and Phone -->
+      <div class="form-row">
+        <div>
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" />
+        </div>
+        <div>
+          <label for="phone">WhatsApp Number*</label>
+          <input type="tel" id="phone" name="phone" required maxlength="10"/>
+        </div>
+        <div>
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender" required>
+            <option value="" disabled selected>Select a gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 3: Date of Birth and Occupation -->
+      <div class="form-row">
+        <div>
+          <label for="dob">Date of Birth</label>
+          <input type="date" id="dob" name="dob" />
+        </div>
+
+        <div>
+          <label for="age">Age*</label>
+          <input type="number" id="age" name="age" required />
+        </div>
+        <div>
+          <label for="occupation">Occupation*</label>
+          <input type="text" id="occupation" name="occupation" required />
+        </div>
+      </div>
+
+      <!-- Address Field (Full Width) -->
+      <div id="addressField">
+        <label for="address">Address*</label>
+        <input type="text" id="address" name="address" />
+      </div>
+
+      <!-- Row 4: Condition Type and Condition Description -->
+      <div class="form-row">
+        <div>
+          <label for="conditionType">Select Your Condition</label>
+          <select id="conditionType" name="conditionType">
+            <option value="neck_pain">Neck Pain</option>
+            <option value="back_pain">Back Pain</option>
+            <option value="low_back_pain">Low Back Pain</option>
+            <option value="radiating_pain">Radiating Pain</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label for="condition">Describe Your Condition*</label>
+          <input type="text" id="condition" name="condition" required />
+        </div>
+      </div>
+
+      <!-- Row 5: Referral Source and Contact Method -->
+      <div class="form-row">
+        <div>
+          <label for="referralSource">How Did You Hear About Us?</label>
+          <select id="referralSource" name="referralSource">
+            <option value="doctor_referral">Doctor Referral</option>
+            <option value="web_search">Web Search</option>
+            <option value="social_media">Social Media</option>
+            <option value="returning_patient">Happy Patient</option>
+            <option value="local_event">Local Event</option>
+            <option value="advertisement">Advertisement</option>
+            <option value="employee">Employee</option>
+            <option value="family">Family</option>
+            <option value="self">Self</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label for="contactMethod">Preferred Contact Method*</label>
+          <select id="contactMethod" name="contactMethod" required>
+            <option value="" disabled selected>Select a method</option>
+            <option value="Phone">Phone</option>
+            <option value="Email">Email</option>
+            <!-- <option value="Text">Text</option> -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="Location">Select Branch</label>
+          <select name="branch" id="branch" required>
+            <option value="select_branch">Select Branch</option>
+            <option value="bhagalpur_branch">Bhagalpur Branch</option>
+            <option value="siliguri_branch">Siliguri Branch</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Acknowledgment -->
+      <div class="acknowledgment">
+        <label for="consent">
+          I acknowledge and give my explicit consent to be contacted via SMS
+          and receive emails for various purposes, which may include marketing
+          and promotional content. Message and data rates may apply. Message
+          frequency may vary.
+        </label>
+      </div>
+
+      <!-- Note and Submit Button -->
+      <p class="note">
+        A scheduling representative will reach out within 24 hours to schedule
+        your appointment.
+      </p>
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+
+  <a href="https://wa.me/+918002421212" target="_blank" class="whatsapp-float">
+    <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="WhatsApp" />
+  </a>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-quote">
+        <h2>"Revolutionizing Non-Surgical Spinal Care"</h2>
+        <img src="image/logo.png" alt="Logo" class="logo" />
+      </div>
+      <hr class="hr" />
+      <div class="footer-sections">
+        <div class="about-section footer-section">
+          <h3>About us</h3>
+          <ul>
+            <li><a href="#">Vision</a></li>
+            <li><a href="#">People</a></li>
+            <li><a href="#">Partners</a></li>
+            <li><a href="#">Awards & Affiliations</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <ul>
+            <li><a href="#">Locations</a></li>
+            <li><a href="#">Contacts</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Conditions We Treat</h3>
+          <ul>
+            <li><a href="conditions.html?condition=herniated-disc">Herniated Disc</a></li>
+            <li><a href="conditions.html?condition=spondylolisthesis">Spondylolisthesis</a></li>
+            <li><a href="conditions.html?condition=degenerative-disc">Degenerative Disc</a></li>
+            <li><a href="conditions.html?condition=brachial-neuralgia">Brachial Neuralgia</a></li>
+            <li><a href="conditions.html?condition=disc-prolapse">Disc Prolapse</a></li>
+            <li><a href="conditions.html?condition=retrolisthesis">Retrolisthesis</a></li>
+            <li><a href="conditions.html?condition=scoliosis">Scoliosis</a></li>
+            <li><a href="conditions.html?condition=facet-joint-syndrome">Facet Joint Syndrome</a></li>
+            <li><a href="conditions.html?condition=thecal-compression">Thecal Compression</a></li>
+            <li><a href="treatment.html">See All →</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="prospineapproach.html">Why Pro Spine</a></li>
+            <li><a href="#">Portfolio</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Carrier</a></li>
+            <li><a href="#">Manipal Physiotherapy</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Copyright © 2025, ProSpine. All rights reserved.</p>
+      <ul class="footer-links">
+        <li><a href="#">Terms & conditions</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul>
+      <div class="social-icons">
+        <a href="#"><img src="image/facebook-icon.png" alt="Facebook" /></a>
+        <!-- <a href="#"><img src="image/twitter-icon.png" alt="Twitter"></a> -->
+        <a href="#"><img src="image/icons8-instagram-48.png" alt="Instagram" /></a>
+      </div>
+    </div>
+  </footer>
+  <script src="script.js"></script>
+  <script>
+    document.querySelectorAll(".faq-question").forEach((question) => {
+      question.addEventListener("click", () => {
+        const faqItem = question.closest(".faq-item");
+        faqItem.classList.toggle("active");
+      });
+    });
+  </script>
+
+  <script>
+    function updateForm() {
+      let consultationType =
+        document.getElementById("consultationType").value;
+      let emailField = document.getElementById("email");
+      let addressField = document.getElementById("addressField");
+
+      // Reset visibility
+      emailField.required = false;
+      addressField.style.display = "none";
+
+      if (consultationType === "virtual") {
+        emailField.required = true; // Email required for virtual
+      }
+
+      if (consultationType === "home") {
+        addressField.style.display = "block"; // Show address for home visits
+        document.getElementById("address").required = true;
+      }
+    }
+  </script>
+
+  <script>
+    document.getElementById("appointmentForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+
+      try {
+        const response = await fetch("submit_detailed.php", {
+          method: "POST",
+          body: formData
+        });
+
+        const result = await response.text();
+
+        if (response.ok) {
+          showToast(result, "success");
+          this.reset(); // clear form after success
+        } else {
+          showToast("Error: " + result, "error");
+        }
+      } catch (err) {
+        showToast("❌ Something went wrong. Try again.", "error");
+      }
+    });
+
+    function showToast(message, type = "success") {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = "toast show " + type;
+
+      setTimeout(() => {
+        toast.className = "toast";
+      }, 4000);
+    }
+  </script>
+
+</body>
+
+</html>

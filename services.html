@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Services</title>
+  <link rel="icon" href="image/favicon.png" type="image/x-icon" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .textcont {
+      margin: 0 auto;
+      margin-top: 20px;
+      width: 60%;
+      align-items: center;
+      justify-content: center;
+      text-align: justify;
+      font-weight: 500;
+    }
+
+    .sec2 .textcont p {
+      font-weight: 500;
+    }
+
+    .sec2 .textcont strong {
+      font-weight: 600;
+    }
+
+    .textcont h2 {
+      text-align: center;
+    }
+
+    .textcont2 h2 {
+      margin: 0 auto;
+      margin-top: 20px;
+      margin-bottom: -20px;
+      width: 100%;
+      /* font-size: 32px; */
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .textcont2 h2 {
+      text-align: center;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 10px;
+      justify-content: center;
+      align-items: center;
+      margin: auto;
+      margin-top: 50px;
+      width: 90%;
+      padding: 20px;
+    }
+
+    .service-item {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      gap: 20px;
+      padding: 10px;
+      margin-top: 30px;
+      /* margin-bottom: 30px; */
+      /* border: 1px solid; */
+    }
+
+    .non {
+      margin-top: 50px;
+      width: 100%;
+      /* border: 1px solid; */
+    }
+
+    .non .service-text {
+      min-width: 100%;
+      /* border: 1px solid red; */
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .service-item img {
+      width: 250px;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .service-text {
+      margin-left: 40px;
+      max-width: 45%;
+      flex: 1;
+    }
+
+    .service-text h3 {
+      margin-bottom: 8px;
+      font-size: 1.4rem;
+    }
+
+    .service-text p {
+      color: #181818;
+      font-size: 1rem;
+    }
+
+    @media screen and (max-width: 1024px) {
+      .container {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      .service-item {
+        display: flex;
+        flex-direction: column;
+        padding: 5px;
+      }
+
+      .textcont {
+        width: 100%;
+      }
+
+      .textcont p {
+        width: 90%;
+        margin: 0 auto;
+        text-align: justify;
+        margin-bottom: 10px;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        padding: 10px;
+        width: 96%;
+        padding: 20px;
+      }
+
+      .container h2 {
+        text-align: center;
+        font-size: 16px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      .service-item {
+        margin: 0;
+        margin-bottom: 10px;
+        width: 100%;
+        background-color: #e7e7e79a;
+      }
+
+      .service-text {
+        margin: 0;
+        padding: 5px;
+        max-width: 100%;
+      }
+
+      .service-text h3 {
+        width: 100%;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      .service-text p {
+        width: 80%;
+        margin: 0 auto;
+        font-size: 10px;
+        text-align: justify;
+      }
+
+      .service-item img {
+        width: 150px;
+        height: auto;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .textcont {
+        width: 100%;
+      }
+
+      .textcont p {
+        width: 90%;
+        margin: 0 auto;
+        text-align: justify;
+        margin-bottom: 10px;
+      }
+
+      .container {
+        padding: 10px;
+        width: 96%;
+        padding: 20px;
+      }
+
+      .container h2 {
+        text-align: center;
+        font-size: 16px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      .service-item {
+        margin: 0;
+        margin-bottom: 10px;
+        width: 100%;
+        background-color: #dfdede9a;
+        border-radius: 10px;
+      }
+
+      .service-text {
+        margin: 0;
+        padding: 5px;
+        max-width: 100%;
+      }
+
+      .service-text h3 {
+        width: 100%;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      .service-text p {
+        width: 80%;
+        margin: 0 auto;
+        font-size: 10px;
+        text-align: justify;
+      }
+
+      .service-item img {
+        margin-top: 10px;
+        width: 150px;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="image/logo.png" alt="Pro Physio Logo" class="logo" />
+    </div>
+
+    <nav>
+      <div class="nav-container">
+        <div class="hamburger" id="hamburger">&#9776;</div>
+        <div class="nav-links" id="navLinks">
+          <a href="index.html">Home</a>
+          <a href="aboutus.html">About Us</a>
+          <a href="treatment.html">Conditions We Treat</a>
+          <a href="services.html">Our Services</a>
+          <a href="team.html">Our Team</a>
+          <a href="testimonials.html">Testimonials</a>
+          <a href="events.html">Events</a>
+          <a href="prospineapproach.html">Why Pro Spine</a>
+          <a href="career.html">Career</a>
+          <a href="contact.html">Contact Us</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <section class="sec2">
+    <div class="textcont">
+      <h2>Our Services – Advanced Non-Surgical Spinal Care</h2>
+      <p>
+        At <strong>Pro Spine</strong>, we offer a wide range of
+        <strong>non-surgical spinal treatments</strong>
+        designed to alleviate pain, improve mobility, and enhance overall
+        spinal health. Our approach combines
+        <strong>state-of-the-art robotic therapies</strong> with
+        <strong>expert manual techniques</strong>, ensuring personalized and
+        effective treatment for conditions like
+        <em>herniated discs, sciatica, chronic pain, and postural issues</em>.
+      </p>
+      <p>
+        With a focus on
+        <strong>precision, innovation, and patient-centered care</strong>, our
+        therapies target the root cause of spinal discomfort, providing
+        long-term relief and rehabilitation. Explore our advanced treatment
+        options below:
+      </p>
+    </div>
+  </section>
+
+  <div class="textcont2 textcont">
+    <h2>Advanced Technology Treatments</h2>
+  </div>
+  <section class="container">
+    <div class="service-item">
+      <img src="slideImages/image8.png" alt="Spinal Decompression" />
+      <div class="service-text">
+        <h3>Non-Invasive Robotic Spinal Decompression Therapy</h3>
+        <p>
+          Used for <em>herniated discs, chronic back pain, and sciatica</em>.
+          Helps
+          <strong>reduce pressure on spinal discs and nerves</strong> with
+          AI-controlled robotic precision for safe & targeted decompression.
+        </p>
+      </div>
+    </div>
+
+    <div class="service-item">
+      <img src="serviceimg/Frame6.png" alt="Ultrasound Therapy" />
+      <div class="service-text">
+        <h3>Combination Therapy (Ultrasound + Therapeutic Currents)</h3>
+        <p>
+          Reduces pain and inflammation while enhancing deep tissue healing
+          and circulation.
+        </p>
+      </div>
+    </div>
+
+    <div class="service-item">
+      <img src="serviceimg/Frame8.png" alt="Shock Wave Therapy" />
+      <div class="service-text">
+        <h3>Shock Wave Therapy</h3>
+        <p>
+          Breaks down scar tissue and promotes tissue regeneration for pain
+          relief.
+        </p>
+      </div>
+    </div>
+
+    <div class="service-item">
+      <img src="serviceimg/Frame2.png" alt="Laser Therapy" />
+      <div class="service-text">
+        <h3>LASER Therapy</h3>
+        <p>
+          Stimulates cell repair and regeneration. Used for
+          <em>chronic pain, disc degeneration, and nerve healing</em>.
+        </p>
+      </div>
+    </div>
+
+    <div class="service-item">
+      <img src="serviceimg/Frame7.png" alt="Ultrasound Therapy" />
+      <div class="service-text">
+        <h3>Dual Frequency Ultrasound Therapy</h3>
+        <p>Deep tissue penetration for reducing inflammation.</p>
+      </div>
+    </div>
+
+    <div class="service-item">
+      <img src="serviceimg/Frame4.png" alt="TENS Therapy" />
+      <div class="service-text">
+        <h3>Interferential Therapy (IFT) & Advanced TENS Therapy</h3>
+        <p>
+          Provides <strong>deep pain relief</strong> and stimulates muscle
+          function.
+        </p>
+      </div>
+    </div>
+
+    <div class="service-item">
+      <img src="serviceimg/Frame9.png" alt="Short Wave Diathermy" />
+      <div class="service-text">
+        <h3>Short Wave Diathermy with Disc Electrode</h3>
+        <p>Used for <em>arthritis, joint pain, and muscle stiffness</em>.</p>
+      </div>
+    </div>
+
+    <div class="service-item">
+      <img src="serviceimg/Frame11.png" alt="Harness System" />
+      <div class="service-text">
+        <h3>Harness System with Dual Motor and Treadmill</h3>
+        <p>
+          Supports
+          <strong>spinal rehabilitation and posture correction</strong>.
+        </p>
+      </div>
+    </div>
+    <div class="service-item">
+      <img src="serviceimg/Frame10.png" alt="Decompression Therapy" />
+      <div class="service-text">
+        <h3>Spinal Decompression Therapy</h3>
+        <p>
+          Provides targeted relief for spinal conditions, reducing pressure on
+          discs and nerves.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec2 sec3 secs2">
+    <div class="textcont">
+      <h2>Advanced Manual Therapy Techniques</h2>
+    </div>
+    <div class="box4">
+      <p class="tech">Maitland Method</p>
+      <p class="tech">McKenzie Method</p>
+      <p class="tech">Mulligan Concept</p>
+      <p class="tech">Cyriax Method</p>
+    </div>
+
+    <div class="circles">
+      <div class="circle">
+        <h3>Neurodynamic Techniques</h3>
+      </div>
+      <div class="circle">
+        <h3>Myofascial Release</h3>
+      </div>
+      <div class="circle">
+        <h3>Muscle Energy Techniques</h3>
+      </div>
+      <div class="circle">
+        <h3>Energy Conservation Techniques</h3>
+      </div>
+    </div>
+  </section>
+
+  <a href="https://wa.me/+918002421212" target="_blank" class="whatsapp-float">
+    <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="WhatsApp" />
+  </a>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-quote">
+        <h2>"Revolutionizing Non-Surgical Spinal Care"</h2>
+        <img src="image/logo.png" alt="Logo" class="logo" />
+      </div>
+      <hr class="hr" />
+      <div class="footer-sections">
+        <div class="about-section footer-section">
+          <h3>About us</h3>
+          <ul>
+            <li><a href="#">Vision</a></li>
+            <!-- <li><a href="#">People</a></li> -->
+            <!-- <li><a href="#">Partners</a></li> -->
+            <li><a href="#">Awards & Affiliations</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <ul>
+            <li><a href="#">Locations</a></li>
+            <li><a href="#">Contacts</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Conditions We Treat</h3>
+          <ul>
+            <li><a href="conditions.html?condition=herniated-disc">Herniated Disc</a></li>
+            <li><a href="conditions.html?condition=spondylolisthesis">Spondylolisthesis</a></li>
+            <li><a href="conditions.html?condition=degenerative-disc">Degenerative Disc</a></li>
+            <li><a href="conditions.html?condition=brachial-neuralgia">Brachial Neuralgia</a></li>
+            <li><a href="conditions.html?condition=disc-prolapse">Disc Prolapse</a></li>
+            <li><a href="conditions.html?condition=retrolisthesis">Retrolisthesis</a></li>
+            <li><a href="conditions.html?condition=scoliosis">Scoliosis</a></li>
+            <li><a href="conditions.html?condition=facet-joint-syndrome">Facet Joint Syndrome</a></li>
+            <li><a href="conditions.html?condition=thecal-compression">Thecal Compression</a></li>
+            <li><a href="treatment.html">See All →</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="prospineapproach.html">Why Pro Spine</a></li>
+            <li><a href="#">Portfolio</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Carrier</a></li>
+            <li><a href="#">Manipal Physiotherapy</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Copyright © 2025, ProSpine. All rights reserved.</p>
+      <ul class="footer-links">
+        <li><a href="#">Terms & conditions</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul>
+      <div class="social-icons">
+        <a href="#"><img src="image/facebook-icon.png" alt="Facebook" /></a>
+        <!-- <a href="#"><img src="image/twitter-icon.png" alt="Twitter"></a> -->
+        <a href="#"><img src="image/icons8-instagram-48.png" alt="Instagram" /></a>
+      </div>
+    </div>
+  </footer>
+  <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Condition Details</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* General body and typography styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            /* background: #f0f2f5; */
+            color: #333;
+            /* margin: 0; */
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* --- Main Content Area --- */
+        .container {
+            max-width: 960px;
+            margin: 10rem auto 2rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* --- Card Styling --- */
+        .card {
+            background: #ffffffa9;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #0056b3;
+            font-size: 1.6rem;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        p,
+        li {
+            color: #4a5568;
+        }
+
+        ul {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        ul.list-disc {
+            list-style-type: disc;
+        }
+
+        /* --- Footer Styling --- */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background: #e2e8f0;
+            color: #4a5568;
+            font-size: 0.9rem;
+            border-top: 1px solid #cbd5e0;
+        }
+
+        /* --- Responsive Design for Mobile --- */
+        @media screen and (max-width: 768px) {
+
+            header{
+                display: flex;
+
+            }
+            .box {
+                display: flex;
+            }
+
+            .logo-container{
+                max-width: 30%;
+                /* border: 1px solid; */
+            }
+
+            .logo{
+                width: 50px;
+                /* height: 80px; */
+            }
+
+            #pageTitle {
+                font-size: 1.4rem;
+                margin-top: 10px;
+            }
+
+            .breadcrumb {
+                background-color: #fff;
+                padding: 5px;
+                border-radius: 8px;
+                position: relative;
+                font-size: 0.7rem;
+                margin-top: 0px;
+                color: #000;
+            }
+
+            .container {
+                width: 98%;
+                margin-top: 6.5rem;
+                padding: 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            footer {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="image/logo.png" alt="Pro Physio Logo" class="logo" />
+        </div>
+
+        <nav>
+            <div class="nav-container">
+                <div class="breadcrumb" id="breadcrumb">Home > Conditions</div>
+            </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="box">
+        <h1 id="pageTitle" style="display: none;">Condition Details</h1>
+    </div>
+
+    <div class="container" id="conditionContent">
+        <!-- Dynamic content goes here -->
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-quote">
+                <h2>"Revolutionizing Non-Surgical Spinal Care"</h2>
+                <img src="image/logo.png" alt="Logo" class="logo" />
+            </div>
+            <hr class="hr" />
+            <div class="footer-sections">
+                <div class="about-section footer-section">
+                    <h3>About us</h3>
+                    <ul>
+                        <li><a href="#">Vision</a></li>
+                        <!-- <li><a href="#">People</a></li> -->
+                        <!-- <li><a href="#">Partners</a></li> -->
+                        <li><a href="#">Awards & Affiliations</a></li>
+                        <li><a href="testimonials.html">Testimonials</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><a href="#">Locations</a></li>
+                        <li><a href="#">Contacts</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+          <h3>Conditions We Treat</h3>
+          <ul>
+            <li><a href="conditions.html?condition=herniated-disc">Herniated Disc</a></li>
+            <li><a href="conditions.html?condition=spondylolisthesis">Spondylolisthesis</a></li>
+            <li><a href="conditions.html?condition=degenerative-disc">Degenerative Disc</a></li>
+            <li><a href="conditions.html?condition=brachial-neuralgia">Brachial Neuralgia</a></li>
+            <li><a href="conditions.html?condition=disc-prolapse">Disc Prolapse</a></li>
+            <li><a href="conditions.html?condition=retrolisthesis">Retrolisthesis</a></li>
+            <li><a href="conditions.html?condition=scoliosis">Scoliosis</a></li>
+            <li><a href="conditions.html?condition=facet-joint-syndrome">Facet Joint Syndrome</a></li>
+            <li><a href="conditions.html?condition=thecal-compression">Thecal Compression</a></li>
+            <li><a href="treatment.html">See All →</a></li>
+          </ul>
+        </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="prospineapproach.html">Why Pro Spine</a></li>
+                        <li><a href="#">Portfolio</a></li>
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">Carrier</a></li>
+                        <li><a href="#">Manipal Physiotherapy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © 2025, ProSpine. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="#">Terms & conditions</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+            </ul>
+            <div class="social-icons">
+                <a href="#"><img src="image/facebook-icon.png" alt="Facebook" /></a>
+                <!-- <a href="#"><img src="image/twitter-icon.png" alt="Twitter"></a> -->
+                <a href="#"><img src="image/icons8-instagram-48.png" alt="Instagram" /></a>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        const conditionsData = {
+            "disc-prolapse": {
+                title: "Disc Prolapse (Slipped Disc)",
+                overview: "A disc prolapse, commonly known as a slipped or herniated disc, occurs when the soft, jelly-like center of a spinal disc (the nucleus pulposus) pushes out through a tear in the tougher, outer ring (the annulus fibrosus). This can cause irritation or compression of nearby spinal nerves, leading to pain and other symptoms. While it sounds scary, most cases resolve with non-surgical treatments.",
+                anatomy: "The spine is made up of a stack of bones called vertebrae, with intervertebral discs acting as cushions between them. These discs are like little shock absorbers, with a tough outer layer and a soft inner core. A disc prolapse happens when the inner core squeezes out, often due to a crack or weakness in the outer layer.",
+                symptoms: [
+                    "Localized pain: Sharp or dull pain in the neck or lower back, often aggravated by movement.",
+                    "Radiating pain: Pain that travels down the arms or legs, often following the path of the compressed nerve (e.g., sciatica).",
+                    "Numbness or Tingling: A 'pins and needles' sensation or numbness in the area served by the affected nerve.",
+                    "Muscle Weakness: Difficulty lifting things, holding objects, or experiencing a 'foot drop' if a nerve in the leg is affected.",
+                    "Pain on exertion: Symptoms that worsen with bending, twisting, coughing, or sneezing due to increased pressure on the spine."
+                ],
+                causes: [
+                    "Age-related degeneration: As we age, our spinal discs lose water content and flexibility, making them more prone to tearing. This is the most common cause.",
+                    "Trauma or injury: A sudden injury, like a fall or a car accident, can cause a disc to rupture.",
+                    "Poor lifting technique: Using your back instead of your legs to lift heavy objects can put immense pressure on the discs, leading to a prolapse.",
+                    "Repetitive strain: Occupations or activities that involve frequent bending, twisting, or prolonged sitting can increase the risk.",
+                    "Lifestyle factors: Being overweight or obese puts extra stress on the lower back. Smoking is also a risk factor as it can reduce oxygen supply to the discs, weakening them."
+                ],
+                diagnosis: "A doctor will typically start with a physical exam and a discussion of your symptoms. To confirm a disc prolapse and rule out other conditions, they may order imaging tests such as an MRI (Magnetic Resonance Imaging) scan, which provides a detailed look at the spinal discs and nerves. An X-ray might also be used to rule out other bone-related issues.",
+                treatments: [
+                    "Conservative Management (First-line): This is the most common approach. It includes a combination of:<ul><li>Rest and activity modification: Limiting activities that aggravate pain while staying as active as possible with low-impact exercises.</li><li>Medication: Over-the-counter or prescription pain relievers, muscle relaxants, or anti-inflammatory drugs to manage pain.</li><li>Physiotherapy: A physical therapist will guide you through specific exercises to strengthen the muscles supporting your spine and improve flexibility. They may also use techniques like massage, heat/cold therapy, or ultrasound.</li></ul>",
+                    "Interventional Treatments: If conservative methods are not enough, a doctor may recommend:<ul><li>Epidural Steroid Injections: An injection of a steroid medication directly into the space around the spinal nerves to reduce inflammation and pain.</li><li>Nerve Blocks: A procedure to block pain signals from a specific nerve.</li></ul>",
+                    "Surgical Intervention: Surgery is usually considered a last resort for severe, persistent pain, significant nerve compression, or when symptoms like severe weakness or loss of bladder/bowel control are present. The most common procedure is a microdiscectomy, where a small portion of the herniated disc is removed to relieve pressure on the nerve."
+                ],
+                prognosis: "The good news is that most people with a disc prolapse recover fully with conservative treatment within a few weeks to months. The disc can often shrink or be reabsorbed by the body over time, reducing pressure on the nerve. Adherence to physical therapy and lifestyle changes is key to long-term success and preventing recurrence."
+            },
+
+            "sciatica": {
+                title: "Sciatica",
+                overview: "Sciatica isn't a condition itself, but rather a symptom of an underlying problem that is irritating or compressing the sciatic nerve. It's characterized by pain that radiates from the lower back down through the hip and buttocks and into one leg. While the pain can be severe, it is usually manageable with non-surgical treatments.",
+                anatomy: "The sciatic nerve is the longest and thickest nerve in the human body. It's formed by several nerve roots from the lower spine (L4 to S3). It runs from the lower back, through the buttocks, and branches down the back of each leg to the foot. When this nerve is compressed or inflamed, it causes the characteristic radiating pain known as sciatica.",
+                symptoms: [
+                    "Shooting or sharp pain: A distinct, often intense, pain that travels along the nerve's path, most commonly down the back of one leg.",
+                    "Burning or tingling sensation: A feeling of 'pins and needles' or a burning sensation in the leg or foot.",
+                    "Numbness or weakness: Reduced sensation or difficulty moving the affected leg or foot.",
+                    "Pain that worsens with sitting: Sitting for long periods, coughing, or sneezing can increase pressure on the nerve, intensifying the pain."
+                ],
+                causes: [
+                    "Herniated Disc: A slipped or prolapsed disc is the most common cause of sciatica, as the bulging disc material can press directly on the sciatic nerve root.",
+                    "Spinal Stenosis: The narrowing of the spinal canal, which can put pressure on the nerves.",
+                    "Piriformis Syndrome: A condition where the piriformis muscle in the buttock spasms or tightens, compressing the sciatic nerve that runs nearby.",
+                    "Spondylolisthesis: A condition where one vertebra slips forward over the one below it, which can compress the nerve.",
+                    "Other rare causes: Tumors or infections that put pressure on the nerve, or injury/trauma to the spine."
+                ],
+                diagnosis: "A doctor will review your medical history and perform a physical examination, including checking your reflexes, muscle strength, and sensation. They may ask you to perform certain movements to see what triggers the pain. Imaging tests like an MRI or CT scan may be used to identify the underlying cause of the nerve compression.",
+                treatments: [
+                    "Conservative Management: Most cases of sciatica respond well to these treatments:<ul><li>Physical Therapy and Exercise: A cornerstone of treatment. A physical therapist will teach you specific stretches and exercises to improve flexibility, strengthen the core muscles that support the spine, and reduce pressure on the nerve.</li><li>Pain Management: Over-the-counter pain relievers, muscle relaxants, or anti-inflammatory drugs. In some cases, short-term use of oral steroids may be prescribed.</li><li>Hot and Cold Therapy: Applying a cold pack to the painful area can help reduce inflammation, while heat can soothe muscle spasms and tension.</li></ul>",
+                    "Interventional Treatments: If pain persists, a doctor might suggest:<ul><li>Epidural Steroid Injections: These are often very effective in providing short-term pain relief by reducing inflammation around the nerve root.</li></ul>",
+                    "Surgery: Surgery for sciatica is rare and is only considered for severe cases, such as when there is significant muscle weakness, loss of bowel/bladder control, or if conservative treatments have failed to provide relief after a prolonged period."
+                ],
+                prognosis: "Sciatica symptoms can be frustrating, but the outlook is generally very positive. The pain often resolves on its own within a few weeks to months. With proper treatment and a commitment to a strengthening and stretching routine, many people can manage their symptoms and prevent future flare-ups."
+            },
+
+
+            "herniated-disc": {
+                title: "Herniated Disc",
+                overview: "A herniated disc, often interchangeably used with 'slipped disc' or 'ruptured disc,' occurs when a portion of the soft, gel-like center of a spinal disc pushes out through a tear in the tougher outer layer. This displacement can irritate or put pressure on nearby spinal nerves, leading to symptoms that range from mild discomfort to significant pain and nerve-related issues. While the term may sound intimidating, most people find relief through non-surgical treatments.",
+                anatomy: "Our spine is a column of stacked bones called vertebrae, and between each vertebra is a round, flat disc that acts as a cushion and shock absorber. Each disc has two parts: a soft, inner core (the nucleus pulposus) and a tough, fibrous outer ring (the annulus fibrosus). A herniated disc happens when a crack or weakness in the outer ring allows the inner core to bulge or protrude out.",
+                symptoms: [
+                    "Arm or Leg Pain (Radiculopathy): This is the most common symptom. If the herniated disc is in your lower back, you'll likely feel a sharp, shooting pain down your leg, often following the path of the sciatic nerve (sciatica). If it's in your neck, the pain will radiate into your shoulder and arm.",
+                    "Numbness or Tingling: You might experience a 'pins and needles' sensation or numbness in the body part served by the compressed nerve. For example, a lower back herniation might cause numbness in your leg or foot.",
+                    "Muscle Weakness: The muscles connected to the affected nerve may become weak, leading to difficulty lifting or holding objects, or even stumbling if the nerve in your leg is affected.",
+                    "Pain that Worsens with Movement: The pain often intensifies with certain movements like bending, twisting, or sitting for long periods. Activities that increase pressure on the spine, such as coughing, sneezing, or laughing, can also make the pain worse."
+                ],
+                causes: [
+                    "Age-Related Degeneration: As we get older, our spinal discs lose some of their water content and flexibility, making them more susceptible to tears and cracks. This is a very common cause.",
+                    "Strain from Improper Lifting: Using your back instead of your legs to lift heavy objects can put enormous pressure on your spinal discs and lead to a herniation.",
+                    "Trauma or Injury: A sudden impact, like a fall or a car accident, can cause a disc to rupture.",
+                    "Repetitive Motions: Occupations or sports that involve constant twisting, bending, and heavy lifting can increase the risk of a herniated disc over time.",
+                    "Lifestyle Factors: Being overweight puts additional stress on the spine, particularly in the lower back. Smoking is also a risk factor, as it can reduce oxygen flow to the discs, making them weaker."
+                ],
+                diagnosis: "A healthcare provider will typically begin with a physical examination, checking for tenderness, muscle weakness, and changes in your reflexes. They will also review your symptoms and medical history. To get a clear picture of the problem and confirm the diagnosis, they may order imaging tests such as a Magnetic Resonance Imaging (MRI) scan, which provides detailed images of the spinal discs and nerves. An X-ray might also be used to rule out other potential causes of pain.",
+                treatments: [
+                    "Conservative Care (The First Step): Most herniated discs can be successfully managed without surgery. The primary goal is to reduce pain and inflammation and improve mobility. This often includes:<ul><li>Rest and Activity Modification: Taking a short period of rest from strenuous activities, while still staying active with gentle, low-impact movements.</li><li>Medication: Over-the-counter pain relievers (like ibuprofen) or prescription anti-inflammatory drugs and muscle relaxants to help manage the pain.</li><li>Physical Therapy: A physical therapist will create a personalized program of exercises to strengthen the muscles that support your spine and improve your flexibility. They may also use modalities like heat/cold therapy or massage.</li></ul>",
+                    "Advanced Treatments: If conservative methods are not providing enough relief, a doctor may suggest:<ul><li>Epidural Steroid Injections: An injection of a steroid directly into the area around the spinal nerves to reduce inflammation and provide temporary pain relief.</li><li>Spinal Decompression: A non-surgical method using a traction table to gently stretch the spine and relieve pressure on the disc.</li></ul>",
+                    "Surgical Intervention: Surgery is typically considered only if conservative treatments have failed after several months, or if you have severe symptoms like progressive nerve weakness, or loss of bowel or bladder control (a medical emergency). The most common surgical procedure is a microdiscectomy, where a small piece of the herniated disc is removed to alleviate pressure on the nerve."
+                ],
+                prognosis: "The outlook for a herniated disc is very positive. The vast majority of people get better within a few weeks to months with conservative treatment. The body can often reabsorb the protruding disc material over time, which naturally relieves the pressure on the nerve. Sticking to your physical therapy routine and adopting healthy lifestyle habits are key to a lasting recovery and preventing future issues."
+            },
+
+
+            "degenerative-disc": {
+                title: "Degenerative Disc Disease (DDD)",
+                overview: "Despite its intimidating name, Degenerative Disc Disease (DDD) is not actually a disease but a condition that describes the natural, age-related wear and tear of the spinal discs. These discs, which act as cushions between the vertebrae, can lose hydration, leading to reduced flexibility and a decrease in their ability to absorb shock. While disc degeneration is a normal part of aging, when it causes persistent pain and other symptoms, it is referred to as Degenerative Disc Disease. It is a common source of chronic back and neck pain.",
+                anatomy: "The spine is composed of a stack of vertebrae with discs between them. These discs are like fluid-filled cushions with a tough outer layer. As we age, the discs can dry out and shrink, and the outer layer may develop tiny cracks. This process reduces the disc’s height and effectiveness, causing the vertebrae to sit closer together. This can put pressure on the facet joints and spinal nerves, which can lead to pain.",
+                symptoms: [
+                    "Chronic back pain: The most common symptom is a nagging, low-level pain that occasionally flares up into severe, disabling pain. The pain may last for weeks or months.",
+                    "Stiffness: A feeling of stiffness in the back, especially in the morning or after prolonged sitting.",
+                    "Radiating pain: Pain that travels down the legs (sciatica) or into the arms, shoulders, and neck, depending on the location of the affected disc.",
+                    "Pain that worsens with activity: Symptoms can be aggravated by bending, twisting, lifting, and sitting for long periods. You may find relief when walking or lying down.",
+                    "Instability: In some cases, you may feel as if your back is 'giving out' due to muscle weakness or spinal instability."
+                ],
+                causes: [
+                    "Aging: The primary cause is the natural process of aging, as discs lose water content and their ability to function as shock absorbers.",
+                    "Repetitive strain: Activities or occupations that involve repetitive bending, twisting, or heavy lifting can accelerate the degenerative process.",
+                    "Genetics: There is evidence to suggest that a genetic predisposition can make some individuals more susceptible to developing painful DDD.",
+                    "Injury or Trauma: A past injury to the back can initiate or accelerate the degeneration of a disc.",
+                    "Lifestyle factors: Smoking, obesity, and a sedentary lifestyle can all contribute to the breakdown of spinal discs."
+                ],
+                diagnosis: "Diagnosis typically begins with a thorough medical history and physical examination. Your doctor will assess your symptoms, range of motion, and any nerve-related issues. Imaging tests are often used to confirm the diagnosis and rule out other conditions. An MRI (Magnetic Resonance Imaging) is the most effective tool, as it can show the dehydration and structural changes in the discs. An X-ray can also be used to check for disc height loss or the presence of bone spurs.",
+                treatments: [
+                    "Conservative Management: This is the first-line approach for most people with DDD. It includes:<ul><li>Physical Therapy: A customized exercise program to strengthen core and back muscles, improve flexibility, and support the spine.</li><li>Pain Management: Use of over-the-counter anti-inflammatory medications (NSAIDs), or in some cases, prescription painkillers and muscle relaxers.</li><li>Lifestyle Modifications: Avoiding activities that trigger pain, maintaining a healthy weight, and incorporating regular, low-impact exercise like walking or swimming.</li></ul>",
+                    "Interventional Treatments: If conservative care is not enough, a doctor may suggest:<ul><li>Epidural Steroid Injections: Injections that deliver powerful anti-inflammatory medication directly to the area around the spinal nerves.</li><li>Radiofrequency Ablation (RFA): A procedure that uses heat to temporarily 'turn off' the nerves that send pain signals from the facet joints.</li></ul>",
+                    "Surgical Intervention: Surgery is generally reserved for severe cases where conservative treatments have failed. Options include spinal fusion, which permanently fuses two or more vertebrae to eliminate painful motion, or artificial disc replacement, which replaces the damaged disc with a prosthetic."
+                ],
+                prognosis: "While the degenerative changes in the spine are permanent, the pain and symptoms associated with DDD are not. Many people with DDD can find long-term relief through a combination of physical therapy and lifestyle management. Flare-ups can be managed, and with a strong, flexible core, the spine can be better supported to reduce the frequency and severity of pain episodes."
+            },
+
+            "retrolisthesis": {
+                title: "Retrolisthesis",
+                overview: "Retrolisthesis is a condition where a vertebra slips backward relative to the vertebra below it. This is the opposite of spondylolisthesis, where the vertebra slips forward. Retrolisthesis can occur at any level of the spine but is most common in the neck (cervical) and lower back (lumbar) regions. While minor cases may be asymptomatic, a significant slippage can cause spinal instability, nerve compression, and pain.",
+                anatomy: "The spine's structural integrity is maintained by a series of interconnected bones (vertebrae), spinal discs, and strong ligaments. Retrolisthesis disrupts this alignment when a vertebra shifts backward. This can put abnormal stress on the spinal joints and surrounding soft tissues, potentially leading to a narrowing of the spinal canal and pressure on the nerve roots.",
+                symptoms: [
+                    "Localized back or neck pain: A persistent, dull ache or sharp pain at the site of the slippage.",
+                    "Spinal instability: A feeling of instability or a 'giving out' sensation in the back.",
+                    "Radiating pain: If a nerve is compressed, you may experience pain, numbness, or tingling that radiates down the arms or legs.",
+                    "Limited range of motion: The misalignment can make it difficult to bend, twist, or straighten your back.",
+                    "Muscle spasms: The muscles surrounding the affected area may tense up and spasm in an attempt to stabilize the spine."
+                ],
+                causes: [
+                    "Degenerative Changes: The most common cause is the degeneration of the spinal discs and facet joints as we age. As the discs lose height, the joints become looser, allowing a vertebra to slip backward.",
+                    "Trauma: A sudden injury from a fall, car accident, or other trauma can cause ligaments to tear, leading to a vertebral slippage.",
+                    "Poor Posture and Core Weakness: A weak core and poor posture can put unnecessary strain on the spine, contributing to instability and a higher risk of retrolisthesis.",
+                    "Infections or Tumors: In rare cases, infections or tumors in the spine can weaken the bone structure and cause a vertebra to shift."
+                ],
+                diagnosis: "Retrolisthesis is typically diagnosed using imaging tests. A standing X-ray of the spine is the most common diagnostic tool, as it can clearly show the backward displacement of the vertebra and allow the doctor to grade the severity of the slippage. An MRI or CT scan may also be used to get a more detailed look at the spinal nerves, discs, and soft tissues to determine if there is any nerve compression.",
+                treatments: [
+                    "Conservative Management: The majority of retrolisthesis cases are treated non-surgically. This includes:<ul><li>Physical Therapy: A targeted exercise program to strengthen the core and back muscles that support the spine, improving stability and reducing pain.</li><li>Pain Relief: Over-the-counter anti-inflammatory medications or prescription pain relievers to manage symptoms.</li><li>Lifestyle Adjustments: Practicing good posture, maintaining a healthy weight, and avoiding activities that put excessive strain on the back.</li></ul>",
+                    "Interventional Treatments: Injections may be used to help manage pain. This can include steroid injections to reduce inflammation around the affected nerves.",
+                    "Surgical Intervention: Surgery is a rare option and is considered only for severe cases with significant pain, instability, or neurological deficits that have not responded to conservative treatments. The most common procedure is a spinal fusion, which permanently joins the affected vertebrae together to provide stability and prevent further slippage."
+                ],
+                prognosis: "For most people, retrolisthesis can be effectively managed with a focus on core strengthening and physical therapy. While the vertebral alignment may not return to normal, the symptoms can often be well-controlled. Early diagnosis and adherence to a treatment plan are crucial to preventing the condition from worsening and improving long-term quality of life."
+            },
+
+            "facet-joint-syndrome": {
+                title: "Facet Joint Syndrome (Facet Arthropathy)",
+                overview: "Facet Joint Syndrome is a condition that causes pain in the facet joints of the spine. These small joints, located on the back of each vertebra, connect the bones and allow for the spine's bending and twisting movements. Facet Joint Syndrome is often caused by inflammation and degeneration of these joints, similar to arthritis in other parts of the body. It is a common cause of chronic back and neck pain.",
+                anatomy: "The facet joints (also called zygapophyseal joints) are the bony connections between the vertebrae. They are lined with cartilage and surrounded by a fluid-filled capsule, which allows them to glide smoothly. Over time, due to aging, injury, or repetitive strain, the cartilage in these joints can wear down. This wear and tear leads to inflammation and irritation, which can cause pain and stiffness.",
+                symptoms: [
+                    "Localized pain: The pain is often a dull, aching sensation that is concentrated directly over the affected joints in the lower back or neck.",
+                    "Pain with twisting/bending: Symptoms are typically worsened by activities that extend or twist the spine, such as standing up from a chair, leaning backward, or rotating the torso.",
+                    "Stiffness: You may feel stiffness in the morning or after long periods of inactivity.",
+                    "Radiating pain: The pain can sometimes spread to the buttocks, hips, and back of the thigh (for lumbar facet syndrome) or to the shoulders and arms (for cervical facet syndrome). This is often called 'referred pain' and does not follow a specific nerve path like sciatica.",
+                    "Muscle spasms: The muscles in the affected area may involuntarily tighten or spasm in response to the joint pain."
+                ],
+                causes: [
+                    "Arthritis (Osteoarthritis): As the cartilage in the joints wears down with age, the bones can rub against each other, causing pain and inflammation. This is the most common cause.",
+                    "Overuse Injury or Trauma: Repetitive stress from sports or manual labor, or an acute injury like a whiplash from a car accident, can damage the facet joints.",
+                    "Aging: As part of the natural aging process, the facet joints are subjected to a lifetime of stress, which can lead to their gradual degeneration.",
+                    "Poor Posture and Spinal Imbalance: A lack of core strength or poor posture can lead to an uneven distribution of weight on the spine, placing extra stress on the facet joints."
+                ],
+                diagnosis: "Diagnosing Facet Joint Syndrome can be a bit tricky as the symptoms can overlap with other spinal conditions. Doctors will conduct a physical examination and may order imaging tests like X-rays, CT scans, or MRIs, which can show signs of arthritis. The most definitive diagnostic tool is a diagnostic medial branch block. This is an injection of a local anesthetic near the nerves that supply the facet joint. If the pain is significantly reduced after the injection, it confirms that the facet joint is the source of the pain.",
+                treatments: [
+                    "Conservative Management: Initial treatment focuses on reducing pain and inflammation:<ul><li>Physical Therapy: A therapist will guide you through exercises to strengthen your core and back muscles and improve your posture.</li><li>Medication: Over-the-counter non-steroidal anti-inflammatory drugs (NSAIDs) can help manage pain and inflammation.</li><li>Hot and Cold Therapy: Applying heat or cold packs to the affected area can help soothe muscle spasms and reduce pain.</li></ul>",
+                    "Interventional Treatments: These procedures can provide longer-lasting relief:<ul><li>Corticosteroid Injections: A steroid is injected directly into the facet joint to reduce inflammation and provide temporary pain relief.</li><li>Radiofrequency Ablation (RFA): A procedure that uses radiofrequency waves to heat and 'ablate' (destroy) the small nerves that carry pain signals from the facet joint. This can provide relief for 6-12 months or longer.</li></ul>",
+                    "Surgical Intervention: Surgery is very rarely needed for Facet Joint Syndrome and is typically considered only if there is a severe underlying issue like spinal instability. In such cases, a spinal fusion might be performed to stabilize the joint and relieve pain."
+                ],
+                prognosis: "While the degenerative changes of Facet Joint Syndrome are permanent, the pain is not. Many people can find significant and long-lasting relief through a combination of physical therapy and interventional procedures like RFA. By managing symptoms and strengthening the muscles that support the spine, it is possible to maintain an active lifestyle and prevent frequent flare-ups."
+            },
+
+
+            "spinal-canal-stenosis": {
+                title: "Spinal Canal Stenosis",
+                overview: "Spinal canal stenosis, often simply called spinal stenosis, is a condition where the spaces within the spine narrow, which can put pressure on the nerves that travel through the spine. This narrowing is most common in the lower back (lumbar stenosis) and the neck (cervical stenosis). While it can be present without any symptoms, when the narrowing becomes significant, it can lead to pain, numbness, and other nerve-related problems that can affect your daily life.",
+                anatomy: "The spine contains a central canal that houses the spinal cord and a series of smaller openings on the sides called foramina, through which the spinal nerves exit to the rest of the body. Spinal stenosis occurs when either the central canal or the foramina become constricted. This can be caused by the degeneration of discs, the thickening of ligaments, or the growth of bone spurs. When these spaces shrink, they can pinch the spinal cord or the nerve roots, leading to the condition’s characteristic symptoms.",
+                symptoms: [
+                    "Leg Pain While Walking (Claudication): This is a hallmark symptom of lumbar spinal stenosis. The pain, cramping, or numbness in the legs often worsens with walking or standing and is typically relieved by sitting down or leaning forward, such as when pushing a shopping cart.",
+                    "Numbness or Tingling: You may experience a 'pins and needles' sensation or numbness in the legs, feet, or arms, depending on where the nerve compression is.",
+                    "Weakness and Balance Problems: As the condition progresses, you may notice weakness in your arms or legs, leading to difficulty with fine motor skills or balance issues, which can increase the risk of falls.",
+                    "Back or Neck Pain: While the most notable symptoms are in the limbs, many people also experience a constant, dull ache in the lower back or neck."
+                ],
+                causes: [
+                    "Arthritis (Osteoarthritis): This is the most common cause. The wear and tear on the facet joints can lead to inflammation and the formation of bone spurs, which narrow the spinal canal.",
+                    "Bone Overgrowth: As a result of arthritis, the body may create extra bone (bone spurs) that can grow into the spinal canal or foramina.",
+                    "Herniated Discs: A bulging or ruptured disc can protrude into the spinal canal, directly compressing the nerves.",
+                    "Thickened Ligaments: The ligaments that connect the vertebrae can become thick and rigid over time, reducing the space available for nerves.",
+                    "Tumors or Injuries: In some cases, spinal stenosis can be caused by tumors or a past injury that has caused a misalignment or fracture."
+                ],
+                diagnosis: "A doctor will typically begin by discussing your symptoms and conducting a physical examination to check your reflexes, sensation, and strength. To confirm the diagnosis, imaging tests are essential. An MRI (Magnetic Resonance Imaging) is the most effective tool, as it provides a detailed view of the nerves, discs, and ligaments. A CT scan or X-ray may also be used to get a closer look at the bony structures of the spine.",
+                treatments: [
+                    "Conservative Care: The initial treatment plan for spinal stenosis almost always begins with non-surgical options. These can include:<ul><li>Physical Therapy: A physical therapist will help you strengthen the muscles that support your spine and teach you exercises that help open up the spinal canal.</li><li>Medications: Over-the-counter anti-inflammatory drugs or prescription medications can help manage pain and inflammation.</li><li>Corticosteroid Injections: An injection of a steroid into the space around the nerves can provide significant, though temporary, pain relief by reducing inflammation.</li></ul>",
+                    "Surgical Intervention: Surgery is generally considered a last resort when conservative treatments have failed or if symptoms are severe and progressive. The most common procedure is a laminectomy, which involves removing a part of the vertebra called the lamina to create more space for the spinal nerves. In some cases, a spinal fusion may also be performed to stabilize the spine."
+                ],
+                prognosis: "While the anatomical changes of spinal stenosis are permanent, the good news is that the symptoms are often manageable. Many people can find long-term relief with conservative care and lifestyle adjustments. For those who need surgery, the success rate for pain relief and improved function is generally very high. Maintaining a healthy weight and staying active are key to managing the condition over time."
+            },
+
+            "scoliosis": {
+                title: "Scoliosis",
+                overview: "Scoliosis is an abnormal, sideways curvature of the spine. While a spine is naturally straight when viewed from the front, a person with scoliosis will have a spine that curves to the left or right, often resembling a 'C' or 'S' shape. Scoliosis is most commonly diagnosed in adolescents during a growth spurt, but it can also affect adults. The severity of the curve can range from mild to severe, with most cases being mild and requiring only observation.",
+                anatomy: "The spine is composed of individual bones called vertebrae. In scoliosis, these vertebrae rotate and curve to the side. The degree of the curve is measured in degrees using a Cobb angle on an X-ray. A curve greater than 10 degrees is considered scoliosis, and a curve greater than 25 degrees may be considered significant. In severe cases, the curvature can put pressure on the ribs, lungs, and heart.",
+                symptoms: [
+                    "Uneven Shoulders or Hips: One shoulder blade may appear more prominent or higher than the other, or one hip may look higher than the other.",
+                    "Visible Spinal Curvature: When viewed from the back, the spine appears to curve to the side.",
+                    "Back Pain: While scoliosis itself isn't always painful, it can cause back pain, especially in adults. The pain is often a result of muscle strain and joint stress caused by the uneven posture.",
+                    "Rib Hump: When the person with scoliosis bends forward, a rib 'hump' may be visible on one side of the back due to the rotation of the spine and ribs."
+                ],
+                causes: [
+                    "Genetic Factors (Idiopathic Scoliosis): This is the most common type of scoliosis, and its cause is unknown. It's thought to be hereditary, as it often runs in families.",
+                    "Neuromuscular Conditions: Scoliosis can be caused by conditions that affect the nerves and muscles, such as cerebral palsy, muscular dystrophy, or spina bifida.",
+                    "Congenital: Some infants are born with scoliosis due to a malformation of the vertebrae during fetal development.",
+                    "Degenerative: In adults, scoliosis can develop from age-related wear and tear of the spinal discs and joints, often accompanied by conditions like arthritis."
+                ],
+                diagnosis: "Scoliosis is often first detected during a routine physical exam in a child's check-up or a school screening. A doctor will have the patient perform a 'forward bend test' to look for any signs of a spinal curve or a rib hump. To confirm the diagnosis and measure the severity of the curve, a full-spine X-ray is the standard procedure. In some cases, an MRI or CT scan may be used to rule out other underlying conditions.",
+                treatments: [
+                    "Observation: For mild curves, the most common approach is regular monitoring through check-ups and X-rays to ensure the curve isn't progressing, especially during growth spurts.",
+                    "Bracing: For adolescents with moderate curves who are still growing, a custom-fitted back brace may be recommended. The brace does not correct the existing curve but is designed to prevent it from getting worse.",
+                    "Physical Therapy: While it cannot correct the curve, physical therapy can help with pain management, improve flexibility, and strengthen the muscles that support the spine.",
+                    "Surgical Intervention: Surgery is reserved for severe curves (typically over 40-50 degrees) that are progressing or causing significant symptoms. The most common procedure is a spinal fusion, where a surgeon straightens the spine and then fuses the vertebrae together with bone grafts, rods, and screws to create a solid, stable segment."
+                ],
+                prognosis: "The prognosis for scoliosis is generally excellent. The majority of cases are mild and do not require invasive treatment. With early detection and proper management, most people with scoliosis can lead full, active lives. For those who require treatment, whether it's bracing or surgery, the goal is to stabilize the curve and prevent future progression, allowing for a good quality of life."
+            },
+
+            "brachial-neuralgia": {
+                title: "Brachial Neuralgia (Brachial Plexus Neuritis)",
+                overview: "Brachial neuralgia, also known as brachial plexopathy or Parsonage-Turner syndrome, is a condition that causes sudden, severe pain in the shoulder and upper arm. It is caused by inflammation or damage to the brachial plexus, a complex network of nerves that runs from the neck, through the shoulder, and down the arm. Following the intense pain, a person often develops significant weakness or numbness in the affected arm and hand.",
+                anatomy: "The brachial plexus is a crucial bundle of nerves that originates from the lower cervical and upper thoracic spinal nerve roots (C5 to T1). These nerves are responsible for all the motor and sensory functions of the shoulder, arm, and hand. When this nerve network is inflamed or damaged, it disrupts the signals between the spinal cord and the arm muscles, leading to the characteristic pain and weakness of brachial neuralgia.",
+                symptoms: [
+                    "Sudden, Severe Shoulder Pain: The condition typically begins with an abrupt onset of intense, deep, and often burning pain in one shoulder or upper arm. This pain can be so severe that it wakes you up at night.",
+                    "Muscle Weakness: Within a few hours or days after the pain begins, the pain may subside and be replaced by a noticeable weakness in the muscles of the shoulder and arm. This weakness can make it difficult to lift the arm or perform simple tasks.",
+                    "Numbness or Tingling: You may experience a loss of sensation, or a tingling and 'pins and needles' feeling, in the shoulder, arm, or hand.",
+                    "Loss of Muscle Mass (Atrophy): Over time, the affected arm may begin to look thinner or 'wasted' due to the lack of nerve signals to the muscles."
+                ],
+                causes: [
+                    "Immune Response: The exact cause is often unknown (idiopathic), but it is thought to be an autoimmune response where the body's immune system mistakenly attacks the nerves of the brachial plexus. This can be triggered by a recent infection, vaccination, surgery, or injury.",
+                    "Nerve Compression: The nerves can be compressed by a tumor, a cervical rib, or by scar tissue from a past injury.",
+                    "Direct Injury: Trauma, such as a severe blow to the shoulder or a stretching injury (like a car accident or sports injury), can directly damage the brachial plexus.",
+                    "Inflammation: In some cases, other inflammatory conditions can lead to damage to the nerves."
+                ],
+                diagnosis: "Diagnosing brachial neuralgia can be challenging as the symptoms can mimic other conditions like a herniated disc or a rotator cuff tear. A doctor will perform a physical examination to test the strength and reflexes of the affected arm. They may also order an EMG (electromyography) or nerve conduction study to measure the electrical activity of the muscles and nerves. An MRI may be used to rule out other causes of nerve compression like tumors or disc issues.",
+                treatments: [
+                    "Pain Management: The initial focus is on controlling the severe pain. This can involve prescription-strength painkillers, anti-inflammatory drugs, or nerve pain medications.",
+                    "Physiotherapy: Once the initial pain has subsided, a physical therapist is key to recovery. They will help you with exercises to regain muscle strength, improve range of motion, and prevent muscle atrophy.",
+                    "Medications for Inflammation: In some cases, a doctor may prescribe a short course of oral corticosteroids to help reduce the inflammation of the nerves.",
+                    "Surgery: Surgery is rarely required but may be considered if a clear cause of nerve compression is found, such as a tumor, or if the nerves need to be repaired after a severe traumatic injury."
+                ],
+                prognosis: "The good news is that most people with brachial neuralgia recover spontaneously and fully. The recovery process can be slow, sometimes taking a few months to a couple of years, but the nerves often regenerate. Consistent physical therapy is crucial during this period to maintain muscle function and ensure a complete recovery. With proper management, the outlook is very positive."
+            },
+
+
+            "stiff-neck-back-pain": {
+                title: "Stiff Neck & Back Pain",
+                overview: "A stiff neck or back is a very common condition that is usually caused by simple muscle strain or sprain. It is a feeling of tightness or reduced range of motion that can be a nuisance and may be accompanied by pain. While it can be caused by more serious underlying issues, it is most often a temporary condition that resolves with a few days of self-care. The pain and stiffness can range from a minor annoyance to a debilitating problem that makes simple movements difficult.",
+                anatomy: "The muscles of the neck and back, particularly those in the upper back and shoulders, are responsible for supporting the head and spine. They can become tense and knotted from overuse, poor posture, or sleeping in an awkward position. The cervical spine (neck) and lumbar spine (lower back) are the most mobile parts of the spine, making them susceptible to strain and stiffness.",
+                symptoms: [
+                    "Limited Range of Motion: Difficulty or pain when trying to turn your head, bend forward, or twist your torso.",
+                    "Muscle Soreness or Tenderness: A feeling of soreness or a dull ache in the affected muscles.",
+                    "Muscle Spasms: Involuntary tightening or twitching of the muscles, which can be quite painful.",
+                    "Tension Headaches: A stiff neck is a common cause of tension headaches, which feel like a tight band around the head."
+                ],
+                causes: [
+                    "Sleeping Awkwardly: Sleeping in an unusual position, or with a pillow that doesn’t properly support your neck, is a very common cause of neck stiffness.",
+                    "Poor Posture: Slouching over a desk, a phone, or a computer can put prolonged strain on the muscles of the neck and back, leading to stiffness and pain over time.",
+                    "Repetitive Strain: Activities that involve repetitive neck or back movements, such as looking down at a phone for long periods or working at a computer without a break.",
+                    "Injury: A sudden movement, like a whiplash injury from a car accident or a sprain from a sports activity, can cause acute stiffness and pain."
+                ],
+                diagnosis: "A stiff neck or back is usually a self-diagnosable condition. If the pain and stiffness are severe or don't improve with self-care, a doctor can perform a physical examination to check your range of motion and assess muscle tenderness. Imaging tests like an X-ray or MRI are typically not needed unless there are signs of a more serious underlying condition, such as nerve compression or a fracture.",
+                treatments: [
+                    "Self-Care & Home Remedies: Most cases can be managed at home with simple, effective techniques:<ul><li>Heat or Cold Therapy: Applying a cold pack to the sore area can help reduce inflammation, while a warm shower or heating pad can help relax tight muscles.</li><li>Gentle Stretching: Performing gentle stretches can help increase blood flow to the muscles and improve flexibility.</li><li>Over-the-Counter Medications: Non-steroidal anti-inflammatory drugs (NSAIDs) like ibuprofen can help relieve pain and reduce inflammation.</li></ul>",
+                    "Professional Treatment: If home remedies aren't enough, professional care can help.<ul><li>Massage Therapy: A therapeutic massage can help release muscle knots and reduce tension.</li><li>Physical Therapy: A physical therapist can provide tailored exercises and techniques to strengthen your muscles and correct your posture, preventing future issues.</li></ul>"
+                ],
+                prognosis: "The prognosis for a stiff neck and back is generally excellent. The vast majority of cases resolve within a few days to a week with simple rest and self-care. By identifying and correcting the cause, such as improving your sleeping posture or ergonomic setup, you can often prevent the stiffness from coming back. If symptoms persist for more than a couple of weeks, it's a good idea to consult a professional."
+            },
+
+            "muscle-strain": {
+                title: "Muscle Strain",
+                overview: "A muscle strain, often called a 'pulled muscle,' is an injury in which muscle fibers are overstretched or torn. In the context of the spine, this most often occurs in the lower back (lumbar strain) and the muscles of the neck. A muscle strain can range from a mild injury, where only a few fibers are damaged, to a severe one, involving a complete tear of the muscle. While painful, most muscle strains heal with rest and conservative care.",
+                anatomy: "The muscles of the back and neck are a complex network of fibers that support the spine and allow for movement. A muscle strain happens when a muscle is forced to contract too quickly or is stretched beyond its capacity, causing the fibers to tear. This leads to internal bleeding, inflammation, and pain. Unlike sprains, which affect ligaments (the tissue that connects bones), strains affect muscles or tendons (the tissue that connects muscles to bones).",
+                symptoms: [
+                    "Localized Pain: A sharp, acute pain at the moment of injury, followed by a dull, constant ache in the affected muscle.",
+                    "Swelling and Bruising: Inflammation and swelling may be visible at the site of the injury, and bruising may appear a few days later.",
+                    "Muscle Spasms: The injured muscle may involuntarily contract, leading to painful spasms.",
+                    "Reduced Movement and Weakness: The pain and swelling may make it difficult to move the affected area, and the muscle may feel weak when you try to use it."
+                ],
+                causes: [
+                    "Sudden Movement: A sudden, uncontrolled movement, such as a quick twist or turn, can cause muscle fibers to strain or tear.",
+                    "Heavy Lifting: Improper lifting technique, particularly using your back instead of your legs, is a leading cause of back muscle strains.",
+                    "Overuse and Repetitive Strain: Repetitive motions, especially without a proper warm-up, can lead to muscle fatigue and an increased risk of strain.",
+                    "Sports Injuries: Muscle strains are a common injury in sports that involve sudden starts, stops, or changes in direction, like basketball or football."
+                ],
+                diagnosis: "A muscle strain is often diagnosed through a physical examination. Your doctor will ask about the incident that caused the injury and will examine the affected area for tenderness, swelling, and reduced range of motion. In most cases, imaging tests are not necessary, but an MRI or X-ray may be used to rule out other more serious conditions, such as a herniated disc or a fracture.",
+                treatments: [
+                    "R.I.C.E. Protocol: The standard first-aid treatment for a muscle strain is:<ul><li>Rest: Avoid using the injured muscle for the first 24-48 hours.</li><li>Ice: Apply a cold pack to the area to reduce swelling and pain.</li><li>Compression: Use a bandage to provide support and limit swelling (not typically used for back strains).</li><li>Elevation: Keep the injured body part elevated to reduce swelling (not typically used for back strains).</li></ul>",
+                    "Medications & Therapies:<ul><li>Over-the-Counter Pain Relievers: NSAIDs like ibuprofen can help manage pain and inflammation.</li><li>Physical Therapy: A physical therapist can guide you through gentle exercises to restore range of motion and strength as the muscle heals.</li><li>Massage: Gentle massage can help improve blood flow and reduce muscle spasms after the initial inflammatory period.</li></ul>"
+                ],
+                prognosis: "The good news is that most muscle strains heal on their own. Mild strains can recover in a few weeks, while more severe strains may take several months. A full recovery is expected with proper rest and rehabilitation. The key to preventing future strains is to warm up properly before exercise, use correct lifting techniques, and maintain a strong and flexible core."
+            },
+
+            "radiculopathy": {
+                title: "Radiculopathy",
+                overview: "Radiculopathy is a condition that occurs when a spinal nerve root is pinched, irritated, or compressed. This can lead to a variety of symptoms, including pain, numbness, tingling, or weakness that radiates along the path of the affected nerve. The location of the radiculopathy determines the symptoms—for example, a pinched nerve in the lower back (lumbar radiculopathy) can cause symptoms to radiate down the leg (sciatica), while a pinched nerve in the neck (cervical radiculopathy) can cause symptoms in the shoulder, arm, or hand.",
+                anatomy: "Spinal nerve roots branch off the spinal cord at each level of the spine, exiting through small openings called foramina. These nerves travel to specific areas of the body, carrying both sensory and motor signals. Radiculopathy occurs when a nerve root is compressed as it exits the spine. The pressure on the nerve interferes with its ability to function correctly, leading to the characteristic symptoms.",
+                symptoms: [
+                    "Sharp Radiating Pain: A distinct, often intense, pain that feels like a shooting, burning, or electrical sensation that travels down the arm or leg.",
+                    "Numbness or Tingling: A 'pins and needles' sensation or a complete loss of feeling in the limb.",
+                    "Muscle Weakness: The muscles controlled by the affected nerve may become weak, making it difficult to lift or grip objects.",
+                    "Loss of Reflexes: In some cases, the reflexes in the affected limb may be diminished or absent."
+                ],
+                causes: [
+                    "Herniated Disc: A bulging or ruptured disc is a very common cause of radiculopathy, as the disc material can press directly on a nearby nerve root.",
+                    "Bone Spurs (Osteophytes): The body may form extra bone to stabilize the spine, but these bone spurs can grow into the foramina and pinch a nerve.",
+                    "Spinal Stenosis: The narrowing of the spinal canal or foramina due to arthritis, thickened ligaments, or other degenerative changes can compress the nerve roots.",
+                    "Degenerative Disc Disease: As discs lose height, the space for the nerves shrinks, which can lead to compression.",
+                    "Trauma or Injury: A spinal fracture or a traumatic injury can cause a misalignment that pinches a nerve root."
+                ],
+                diagnosis: "A doctor will typically begin by performing a physical examination and discussing your symptoms. To pinpoint the exact location and cause of the nerve compression, imaging tests are often required. An MRI (Magnetic Resonance Imaging) is the gold standard for diagnosing radiculopathy, as it provides clear images of the nerve roots and the surrounding soft tissues. An EMG (electromyography) or nerve conduction study can also be used to measure nerve function.",
+                treatments: [
+                    "Conservative Management: Most cases of radiculopathy can be treated successfully without surgery. This includes:<ul><li>Medications: Over-the-counter or prescription pain relievers, anti-inflammatory drugs, or muscle relaxants.</li><li>Physical Therapy: A physical therapist will help you with exercises to strengthen your core and back, which can help take pressure off the nerve. They may also use traction to gently decompress the spine.</li><li>Corticosteroid Injections: An injection of a steroid directly into the space around the affected nerve root can provide significant, though temporary, pain relief.</li></ul>",
+                    "Surgical Intervention: Surgery is usually considered for severe cases that have not responded to conservative treatment, or if there is significant and progressive muscle weakness. The goal of surgery is to decompress the nerve by removing the source of pressure, whether it's a herniated disc or a bone spur."
+                ],
+                prognosis: "The outlook for radiculopathy is generally very positive. The pain and symptoms often resolve on their own, or with conservative treatment, within a few weeks to months. The key to a full recovery and preventing future issues is to address the underlying cause through exercise, good posture, and proper weight management."
+            },
+
+            "thecal-compression": {
+                title: "Thecal Compression",
+                overview: "Thecal compression is a medical term used to describe pressure on the thecal sac, the delicate membrane that surrounds the spinal cord and cerebrospinal fluid. This compression can be caused by various factors, including a herniated disc, a tumor, or other degenerative changes in the spine. While it may not always produce symptoms, significant or prolonged compression can lead to serious neurological issues, including pain, weakness, and loss of sensation.",
+                anatomy: "The spinal cord, a crucial part of the central nervous system, is protected by the vertebrae and encased in a fluid-filled sac called the thecal sac. This sac acts as a protective layer, allowing the spinal cord to move freely and remain cushioned. When something encroaches upon this space, it can press on the thecal sac and, in turn, the spinal cord itself, disrupting nerve signals and causing a range of symptoms.",
+                symptoms: [
+                    "Back or Neck Pain: The most common symptom is a localized pain at the site of the compression, which can be a constant, dull ache or a sharp, shooting pain.",
+                    "Weakness: The pressure on the spinal cord can lead to muscle weakness in the arms, legs, or both, making it difficult to perform daily tasks or maintain balance.",
+                    "Loss of Sensation: You may experience numbness, tingling, or a 'pins and needles' sensation in the limbs or torso, often following a specific nerve pattern.",
+                    "Bowel or Bladder Dysfunction: In severe cases, thecal compression can affect the nerves controlling bowel and bladder function, which is considered a medical emergency.",
+                    "Difficulty with Coordination: The loss of nerve function can affect your coordination, leading to balance problems or an unsteady gait."
+                ],
+                causes: [
+                    "Tumor: A tumor, either benign or malignant, can grow in or around the spine, placing direct pressure on the thecal sac.",
+                    "Disc Herniation: A large herniated or ruptured disc can push out and press directly against the thecal sac.",
+                    "Trauma or Injury: A spinal fracture, dislocation, or other traumatic injury can cause a bone fragment or swelling to compress the thecal sac.",
+                    "Spinal Stenosis: Severe narrowing of the spinal canal due to bone spurs, thickened ligaments, or other degenerative changes can lead to thecal compression.",
+                    "Spinal Cysts: Cysts can sometimes form along the spine and expand to put pressure on the thecal sac."
+                ],
+                diagnosis: "Thecal compression is a serious condition that requires a definitive diagnosis. A doctor will perform a thorough neurological exam to check for any signs of nerve damage. The gold standard for diagnosis is an MRI (Magnetic Resonance Imaging) scan, which provides a detailed, cross-sectional view of the spinal cord and the surrounding structures, making it possible to pinpoint the exact location and cause of the compression. A CT scan or X-ray may also be used to get a better look at the bony structures.",
+                treatments: [
+                    "Surgical Intervention: The primary treatment for thecal compression is surgery to remove the source of the pressure and decompress the spinal cord. The type of surgery depends on the cause of the compression, such as a laminectomy to remove bone or a discectomy to remove a herniated disc.",
+                    "Radiation Therapy or Chemotherapy: If the compression is caused by a tumor, radiation therapy or chemotherapy may be used to shrink the tumor and relieve pressure.",
+                    "Pain Management: Medications can be used to help manage symptoms and improve comfort before or after treatment. This can include anti-inflammatory drugs and nerve pain medications.",
+                    "Physical Therapy: Post-surgery, a physical therapist can help you regain strength, flexibility, and a healthy range of motion."
+                ],
+                prognosis: "The prognosis for thecal compression depends heavily on the cause and the severity of the symptoms. If diagnosed and treated early, a full recovery of nerve function is possible. For chronic compression, the goal is to manage symptoms and prevent the condition from worsening. Following your doctor’s advice and a post-treatment rehabilitation plan is crucial to ensuring the best possible outcome."
+            },
+
+            "whiplash-injury": {
+                title: "Whiplash Injury",
+                overview: "Whiplash is a common neck injury that occurs due to a forceful, rapid back-and-forth motion of the neck, similar to the cracking of a whip. This sudden motion can stretch and tear the muscles, ligaments, and tendons in the neck. The injury is most commonly associated with rear-end car accidents, but it can also be a result of sports collisions, falls, or other types of trauma. While the symptoms can be painful and persistent, most people with whiplash recover fully with proper care.",
+                anatomy: "The neck is a complex structure of vertebrae, muscles, ligaments, and tendons. In a whiplash injury, the head is suddenly jerked forward and then backward, or side-to-side. This abrupt movement can overstretch the soft tissues of the neck, causing sprains and strains. The facet joints in the neck and the spinal discs can also be injured, leading to a host of symptoms.",
+                symptoms: [
+                    "Neck Stiffness and Pain: The most common symptom is a stiff, sore neck with pain that may worsen with movement. You may have a reduced range of motion, making it difficult to turn your head.",
+                    "Headaches: Headaches, often starting at the base of the skull, are a frequent symptom of whiplash.",
+                    "Dizziness and Vertigo: Some people experience feelings of dizziness or instability, especially when changing positions.",
+                    "Shoulder and Back Pain: The pain can radiate from the neck into the shoulders, upper back, and arms.",
+                    "Numbness or Tingling: If a nerve is compressed, you may experience a 'pins and needles' sensation or numbness in your arms or hands.",
+                    "Fatigue and Irritability: The pain and discomfort can lead to fatigue, sleep disturbances, and a feeling of being on edge."
+                ],
+                causes: [
+                    "Car Accidents: A sudden stop or collision, especially a rear-end impact, is the most common cause of whiplash.",
+                    "Sports Collisions: Impacts from sports like football, boxing, or hockey can cause the head to snap back and forth, leading to a whiplash injury.",
+                    "Falls: A fall that causes the head to snap backward or forward can result in whiplash.",
+                    "Physical Abuse: Whiplash can also be a result of physical abuse, such as being shaken or punched."
+                ],
+                diagnosis: "A doctor will diagnose a whiplash injury through a physical examination, assessing your range of motion, muscle tenderness, and any signs of nerve damage. They will likely order an X-ray to rule out more serious injuries, like a fracture or dislocation of the vertebrae. In some cases, an MRI or CT scan may be used to get a more detailed look at the soft tissues, such as discs and ligaments.",
+                treatments: [
+                    "Rest and Pain Relief: In the first 24 hours, rest and applying ice to the neck can help reduce swelling and pain. Over-the-counter pain relievers and anti-inflammatory drugs are often recommended.",
+                    "Physical Therapy: A physical therapist is key to a full recovery. They will guide you through gentle exercises to stretch and strengthen the neck muscles, improve range of motion, and reduce stiffness. Manual therapy and massage may also be used.",
+                    "Maintaining Activity: While initial rest is important, staying active with gentle movements is crucial for recovery. A neck collar is now rarely recommended as prolonged immobilization can lead to stiffness.",
+                    "Injections: For persistent or severe pain, a doctor may suggest a corticosteroid injection to help reduce inflammation in the affected joints."
+                ],
+                prognosis: "The good news is that most whiplash injuries are not life-threatening and heal within a few weeks to months. The recovery process can be gradual, but with a consistent physical therapy routine and a commitment to self-care, a full recovery is very likely. Early intervention is key to preventing the condition from becoming chronic. The outlook for a full return to daily activities is excellent."
+            },
+
+            "spondylolisthesis": {
+                title: "Spondylolisthesis",
+                overview: "Spondylolisthesis is a condition in which one of the bones of the spine (a vertebra) slips forward over the vertebra below it. While a minor slip may cause no symptoms, a more significant slippage can lead to lower back pain and nerve compression. It is most common in the lower back (lumbar spine) and can occur in children, adolescents, or adults.",
+                anatomy: "The spine's structural integrity is maintained by a series of interconnected bones (vertebrae), spinal discs, and strong ligaments. Spondylolisthesis occurs when a defect or injury in a part of the vertebra called the pars interarticularis weakens, allowing the vertebra to shift forward. This slippage can put pressure on the spinal nerves as they exit the spine, causing pain and other symptoms.",
+                symptoms: [
+                    "Lower Back Pain: A persistent ache or soreness in the lower back is the most common symptom. The pain may worsen with activity and improve with rest.",
+                    "Tight Hamstrings: The body's natural response to the spinal instability is to tighten the hamstrings in an attempt to stabilize the pelvis. This can lead to a noticeable tightness in the back of the legs.",
+                    "Leg Numbness or Weakness: If the slipping vertebra is pressing on a nerve root, you may experience radiating pain, numbness, or weakness that travels down one or both legs.",
+                    "Lordosis: A visible increase in the inward curve of the lower back, often referred to as 'swayback.'",
+                    "Difficulty with Activity: You may find it difficult to stand or walk for long periods and may feel pain when bending or twisting."
+                ],
+                causes: [
+                    "Congenital Defect: Some people are born with a weakness in the vertebra that makes them more prone to spondylolisthesis.",
+                    "Degenerative Changes: In adults, age-related wear and tear of the spinal discs and facet joints can cause the vertebra to become unstable and slip forward. This is the most common cause in older adults.",
+                    "Injury (Traumatic): A sudden, forceful blow or fall can cause a fracture in the vertebra, leading to a slippage.",
+                    "Stress Fractures (Isthmic Spondylolisthesis): Repetitive overextension of the lower back, common in sports like gymnastics or football, can cause a stress fracture in the pars interarticularis, which can then lead to a slippage."
+                ],
+                diagnosis: "A doctor will perform a physical examination to check your range of motion, reflexes, and muscle strength. To confirm the diagnosis, an X-ray of the lower back is the primary diagnostic tool, as it can clearly show the forward slippage of the vertebra. The severity of the slip is graded from 1 to 5. An MRI may be used to get a better look at the spinal nerves and discs to see if there is any compression.",
+                treatments: [
+                    "Conservative Management: Most cases of spondylolisthesis can be managed without surgery. This includes:<ul><li>Physical Therapy: A physical therapist will create a customized exercise plan to strengthen your core and back muscles, which can help stabilize the spine.</li><li>Bracing: In some cases, a back brace may be used for a short period to limit movement and reduce pain.</li><li>Pain Management: Over-the-counter anti-inflammatory drugs or prescription pain relievers can help manage symptoms.</li></ul>",
+                    "Surgical Intervention: Surgery is typically considered for severe cases with a high-grade slippage, progressive symptoms, or for people who have not responded to conservative treatment. The most common procedure is a spinal fusion, where the surgeon fuses the affected vertebrae together to prevent further slippage and stabilize the spine."
+                ],
+                prognosis: "For most people with spondylolisthesis, the outlook is very positive. The condition can often be managed effectively with a combination of physical therapy and lifestyle changes. A commitment to core strengthening and avoiding activities that aggravate the condition are key to long-term success. Even for those who require surgery, the outcomes are generally good, with a significant reduction in pain and a return to normal activities."
+            }
+        };
+
+
+
+        // 2. Helper to create card sections
+        function createCard(title, icon, content) {
+            let html = `<div class="card">
+        <h2><i class="${icon}"></i> ${title}</h2>`;
+            if (Array.isArray(content)) {
+                html += "<ul>" + content.map(item => `<li>${item}</li>`).join("") + "</ul>";
+            } else {
+                html += `<p>${content}</p>`;
+            }
+            html += "</div>";
+            return html;
+        }
+
+        // 3. Get condition from URL
+        const params = new URLSearchParams(window.location.search);
+        const conditionKey = params.get("condition");
+
+        // 4. Render content
+        if (conditionKey && conditionsData[conditionKey]) {
+            const data = conditionsData[conditionKey];
+            document.getElementById("pageTitle").innerText = data.title;
+            document.getElementById("breadcrumb").innerText = `Home > Conditions > ${data.title}`;
+
+            const contentDiv = document.getElementById("conditionContent");
+            contentDiv.innerHTML =
+                createCard(data.title, "fa-solid fa-spine", data.overview) +
+                createCard("Anatomy", "fa-solid fa-bone", data.anatomy) +
+                createCard("Symptoms", "fa-solid fa-triangle-exclamation", data.symptoms) +
+                createCard("Causes", "fa-solid fa-magnifying-glass", data.causes) +
+                createCard("Diagnosis", "fa-solid fa-diagnoses", data.diagnosis) +
+                createCard("Treatment Options", "fa-solid fa-hand-holding-medical", data.treatments) +
+                createCard("Self-Care & Lifestyle Tips", "fa-solid fa-lightbulb", data.prognosis);
+        } else {
+            document.getElementById("conditionContent").innerHTML =
+                `<div class="card">
+        <p>Condition not found. Please go back and select a valid one.</p>
+    </div>`;
+        }
+    </script>
+
+</body>
+
+</html>

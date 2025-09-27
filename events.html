@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Events</title>
+  <link rel="icon" href="image/favicon.png" type="image/x-icon" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="about.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .sec2 {
+      margin-top: 130px;
+      margin-bottom: 50px;
+    }
+
+    .design-section {
+      width: 100%;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      padding: 50px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .design {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timeline {
+      width: 96%;
+      padding: 10px;
+      margin: 0 auto;
+      position: relative;
+      /* border: 1px solid #f27121; */
+    }
+
+    .timeline-content {
+      background: #ffffff05;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: all 0.5s ease;
+      transform: translateX(-100px);
+      opacity: 0;
+      color: white;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .timeline-content.animate {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .timeline-content:hover {
+      transform: translateX(10px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .text {
+      flex: 1;
+      padding: 10px;
+    }
+
+    .text h3 {
+      font-size: 1.8em;
+      margin-bottom: 10px;
+      color: #f27121;
+      text-align: left;
+    }
+
+    .text p {
+      font-size: 1em;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    .text h4 {
+      margin-top: 15px;
+      font-weight: 400;
+      color: #e94057;
+      font-size: 0.9em;
+    }
+
+    .images {
+      flex: 0 0 300px;
+    }
+
+    .images img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .images img:hover {
+      transform: scale(1.05);
+    }
+
+    .timeline-middle {
+      position: absolute;
+      width: 4px;
+      background: linear-gradient(to bottom, #f27121, #e94057, #8a2387);
+      left: 50%;
+      transform: translateX(-50%);
+      height: 100%;
+      z-index: 0;
+    }
+
+    /* .timeline-circle {
+        width: 16px;
+        height: 16px;
+        background: white;
+        border: 3px solid #e94057;
+        border-radius: 50%;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+      } */
+
+    .timeline-item {
+      position: relative;
+      margin: 30px 0;
+    }
+
+    @media screen and (min-width: 768px) {
+      .timeline {
+        display: block;
+      }
+
+      .timeline-item:nth-child(odd) .timeline-content {
+        margin-right: calc(50% + 30px);
+      }
+
+      .timeline-item:nth-child(even) .timeline-content {
+        margin-left: calc(50% + 30px);
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .sec2 {
+        margin-top: 100px;
+      }
+
+      .timeline {
+        width: 95%;
+      }
+
+      .timeline-content {
+        flex-direction: column;
+        margin: 20px 0 !important;
+        transform: translateX(0);
+        width: 100%;
+      }
+
+      .images {
+        flex: 0 0 auto;
+        width: 100%;
+      }
+
+      .images img {
+        height: 150px;
+      }
+
+      .timeline-middle {
+        left: 20px;
+      }
+
+      .timeline-circle {
+        left: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="image/logo.png" alt="Pro Physio Logo" class="logo" />
+    </div>
+
+    <nav>
+      <div class="nav-container">
+        <div class="hamburger" id="hamburger">&#9776;</div>
+        <div class="nav-links" id="navLinks">
+          <a href="index.html">Home</a>
+          <a href="aboutus.html">About Us</a>
+          <a href="treatment.html">Conditions We Treat</a>
+          <a href="services.html">Our Services</a>
+          <a href="team.html">Our Team</a>
+          <a href="testimonials.html">Testimonials</a>
+          <a href="events.html">Events</a>
+          <a href="prospineapproach.html">Why Pro Spine</a>
+          <a href="career.html">Career</a>
+          <a href="contact.html">Contact Us</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="sec2">
+    <div class="textcont">
+      <h2>Our Spine Health Awareness Events</h2>
+      <p>
+        Discover Pro Spine's journey through educational and interactive
+        events focused on spine health, wellness, and recovery. Explore
+        insights and practical strategies shared in past events, and stay
+        tuned for announcements of upcoming ones. Check back frequently to
+        stay updated!
+      </p>
+    </div>
+  </section>
+  <section class="design-section">
+    <div class="timeline" id="eventsTimeline">
+      <!-- Events will be inserted here dynamically -->
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-quote">
+        <h2>"Revolutionizing Non-Surgical Spinal Care"</h2>
+        <img src="image/logo.png" alt="Logo" class="logo" />
+      </div>
+      <hr class="hr" />
+      <div class="footer-sections">
+        <div class="about-section footer-section">
+          <h3>About us</h3>
+          <ul>
+            <li><a href="#">Vision</a></li>
+            <!-- <li><a href="#">People</a></li> -->
+            <!-- <li><a href="#">Partners</a></li> -->
+            <li><a href="#">Awards & Affiliations</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <ul>
+            <li><a href="#">Locations</a></li>
+            <li><a href="#">Contacts</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Conditions We Treat</h3>
+          <ul>
+            <li><a href="conditions.html?condition=herniated-disc">Herniated Disc</a></li>
+            <li><a href="conditions.html?condition=spondylolisthesis">Spondylolisthesis</a></li>
+            <li><a href="conditions.html?condition=degenerative-disc">Degenerative Disc</a></li>
+            <li><a href="conditions.html?condition=brachial-neuralgia">Brachial Neuralgia</a></li>
+            <li><a href="conditions.html?condition=disc-prolapse">Disc Prolapse</a></li>
+            <li><a href="conditions.html?condition=retrolisthesis">Retrolisthesis</a></li>
+            <li><a href="conditions.html?condition=scoliosis">Scoliosis</a></li>
+            <li><a href="conditions.html?condition=facet-joint-syndrome">Facet Joint Syndrome</a></li>
+            <li><a href="conditions.html?condition=thecal-compression">Thecal Compression</a></li>
+            <li><a href="treatment.html">See All →</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="prospineapproach.html">Why Pro Spine</a></li>
+            <li><a href="#">Portfolio</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Carrier</a></li>
+            <li><a href="#">Manipal Physiotherapy</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Copyright © 2025, ProSpine. All rights reserved.</p>
+      <ul class="footer-links">
+        <li><a href="#">Terms & conditions</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul>
+      <div class="social-icons">
+        <a href="#"><img src="image/facebook-icon.png" alt="Facebook" /></a>
+        <!-- <a href="#"><img src="image/twitter-icon.png" alt="Twitter"></a> -->
+        <a href="#"><img src="image/icons8-instagram-48.png" alt="Instagram" /></a>
+      </div>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/+918002421212" target="_blank" class="whatsapp-float">
+    <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="WhatsApp" />
+  </a>
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const timeline = document.getElementById("eventsTimeline");
+
+      if (!timeline) {
+        console.error("Error: #eventsTimeline not found!");
+        return;
+      }
+
+      fetch("https://sumit11.serv00.net/prospine/fetch_events.php")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((events) => {
+          console.log("Fetched Events Data:", events);
+
+          if (!Array.isArray(events)) {
+            console.error("Error: Events data is not an array", events);
+            return;
+          }
+
+          timeline.innerHTML = '<div class="timeline-middle"></div>';
+
+          events.forEach((event, index) => {
+            console.log("Processing Event:", event);
+
+            const timelineItem = document.createElement("div");
+            timelineItem.className = "timeline-item";
+
+            timelineItem.innerHTML = `
+                  <div class="timeline-content">
+                    <div class="text">
+                      <h3>${event.title || "No title"}</h3>
+                      <p>${event.description || "No description"}</p>
+                      <h4>Date - ${event.event_date || "No date"}</h4>
+                    </div>
+                    <div class="images">
+                      <img src="${event.image_url || "placeholder.jpg"
+              }" alt="Event Image" onerror="this.src='placeholder.jpg'">
+                    </div>
+                  </div>
+                  <div class="timeline-circle" style="top: ${index * 280 + 40
+              }px;"></div>
+                `;
+
+            timeline.appendChild(timelineItem);
+
+            setTimeout(() => {
+              timelineItem
+                .querySelector(".timeline-content")
+                .classList.add("animate");
+            }, index * 200);
+          });
+        })
+        .catch((error) => console.error("Error fetching events:", error));
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("animate");
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+        }
+      );
+
+      setTimeout(() => {
+        document.querySelectorAll(".timeline-content").forEach((content) => {
+          observer.observe(content);
+        });
+      }, 1000);
+    });
+  </script>
+  <script>
+    // Function to add animation class when elements enter the viewport
+    const timelineContents = document.querySelectorAll(".timeline-content");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("animate");
+          observer.unobserve(entry.target); // Stop observing once animated
+        }
+      });
+    });
+
+    timelineContents.forEach((content) => observer.observe(content));
+  </script>
+</body>
+
+</html>

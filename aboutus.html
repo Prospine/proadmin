@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="image/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>About Us - Pro Spine</title>
+    <style>
+        body {
+            background: linear-gradient(to left, #FFFFFF, #017469af);
+
+        }
+
+        .sec2 {
+            margin-top: 8%;
+            width: 80%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: justify;
+            background: linear-gradient(to right, #ffffff 0%, #ffffffb4);
+            padding: 0;
+        }
+
+        .sec3 {
+            background: linear-gradient(to right, #ffffff 0%, #ffffffb4);
+            padding: 20px;
+        }
+
+        .imgcont img {
+            /* padding: 20px; */
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .sec2 h2 {
+            font-size: 22px;
+            text-align: center;
+        }
+
+        .textcont p {
+            font-size: 16px;
+        }
+
+        .wrapper {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 60%;
+            padding: 20px;
+        }
+
+        .wrapper h3 {
+            cursor: pointer;
+            padding: 10px 10px;
+            background-color: #ffffffd7;
+            /* background:  #039c8db4; */
+            color: #000000;
+            text-decoration: underline;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .popup {
+            display: none;
+            width: auto;
+            height: auto;
+            font-size: 14px;
+            border-radius: 10px;
+            text-align: justify;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #ffffff;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            z-index: 1000000;
+        }
+
+        .popup h2 {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .popup h3 {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .popup p {
+            margin: 0 auto;
+            width: 60%;
+            margin-bottom: 20px;
+            color: #000000;
+            font-size: 14px;
+        }
+
+        .popup button {
+            margin: 0 auto;
+            display: block;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 24px;
+            background-color: #fff;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-weight: 500;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999999;
+        }
+
+
+
+        @media screen and (max-width: 1400px) {
+            .sec3 {
+                min-width: 90%;
+                margin-top: 10%;
+            }
+
+            .textcont p {
+                font-size: 14px;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .sec2 {
+                display: flex;
+                flex-direction: column;
+                width: 90%;
+            }
+
+            .sec3 {
+                margin-top: 20%;
+            }
+
+            .imgcont img {
+                width: 100%;
+                height: auto;
+            }
+
+            .textcont h2 {
+                font-size: 22px;
+                margin-top: 10px;
+                margin-bottom: 5px;
+            }
+
+            .textcont p {
+                font-size: 10px;
+                line-height: 1.5;
+                margin-bottom: 0px;
+                text-align: justify;
+            }
+
+            .wrapper {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center;
+                width: 98%;
+                gap: 10px;
+                margin-top: 0px;
+                /* margin: 0 auto; */
+            }
+
+            .wrapper h3 {
+                font-size: 10px;
+                padding: 10px;
+            }
+
+            .popup {
+                width: 90%;
+                height: auto;
+                margin: 0 auto;
+                border-radius: 10px;
+            }
+
+            .popup h2 {
+                font-size: 18px;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .popup h3 {
+                font-size: 16px;
+                margin-bottom: 20px;
+            }
+
+            .popup p {
+                width: 90%;
+                margin-top: 20px;
+                font-size: 16px;
+            }
+
+            .popup button {
+                padding: 5px 10px;
+                font-size: 14px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .popup p {
+                font-size: 10px;
+                width: 95%;
+            }
+
+            .popup h2 {
+                margin: 0;
+                margin-bottom: 0px;
+                margin-bottom: 0px;
+                font-size: 14px;
+            }
+
+            .popup h3 {
+                font-size: 12px;
+            }
+        }
+
+        @media screen and (max-width: 375px) {
+            .popup h2 {
+                font-size: 14px;
+            }
+
+            .popup h3 {
+                font-size: 12px;
+            }
+
+            .popup p {
+                font-size: 12px;
+            }
+
+            .popup2 h2 {
+                font-size: 10px;
+                margin: 0;
+            }
+
+            .popup2 p {
+                font-size: 8px;
+            }
+
+            .popup button {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="image/logo.png" alt="Pro Physio Logo" class="logo" />
+        </div>
+
+        <nav>
+            <div class="nav-container">
+                <div class="hamburger" id="hamburger">
+                    &#9776;
+                </div>
+                <div class="nav-links" id="navLinks">
+                    <a href="index.html">Home</a>
+                    <a href="aboutus.html">About Us</a>
+                    <a href="treatment.html" class="hover-link">Conditions We Treat</a>
+                    <a href="services.html">Our Services</a>
+                    <a href="team.html">Our Team</a>
+                    <a href="testimonials.html">Testimonials</a>
+                    <a href="events.html">Events</a>
+                    <a href="prospineapproach.html">Why Pro Spine</a>
+                    <a href="career.html">Career</a>
+                    <a href="contact.html">Contact Us</a>
+                </div>
+            </div>
+        </nav>
+        <div class="header-right" style="display: none;">
+            <button class="btn" onclick="appointment.html">Book Appointment</button>
+        </div>
+    </header>
+
+    <section class="sec2 sec3">
+        <div class="imgcont">
+            <img src="slideImages/Frame3.png" alt="">
+        </div>
+        <div class="textcont">
+            <h2>About Us</h2>
+            <p>Pro Spine is a pioneering initiative in India dedicated to providing
+                advanced, non-surgical interventions for spinal conditions.
+                Combining cutting-edge technology with expert manual therapy
+                techniques, Pro Spine aims to revolutionize the way spinal disorders
+                are treated, emphasizing effective, non-invasive solutions.</p>
+            <!-- <br> -->
+            <p>Our mission is to enhance patients' quality of life by offering
+                evidence-based, non-surgical approaches to spinal care. At Pro
+                Spine, we are committed to delivering exceptional care that
+                integrates technology, expertise, and compassion.</p>
+        </div>
+    </section>
+    <div class="wrapper">
+        <h3 onclick="openPopup('visionPopup')">Our Vision</h3>
+        <h3 onclick="openPopup('missionPopup')">Our Mission</h3>
+        <h3 onclick="openPopup('historyPopup')">Pro Spine - Story</h3>
+        <!-- <h3 onclick="openPopup('morehistoryPopup')"></h3> -->
+    </div>
+
+    <div id="visionPopup" class="popup">
+        <h2>Vision of Pro Spine</h2>
+        <p>Pro Spine envisions a future where spinal health is restored without surgery,
+            using advanced non-invasive techniques. Our goal is to bridge the gap between traditional physiotherapy and
+            surgical
+            interventions, offering cutting-edge treatments that ensure long-term relief and improved mobility. We
+            strive to become
+            a global leader in non-surgical spinal care, setting new benchmarks in patient recovery and well-being.
+            Through continuous innovation, expert care, and patient education, we aim to make spinal treatments more
+            accessible, affordable, and effective. Our commitment is to revolutionize spinal
+            healthcare, empowering
+            individuals to live pain-free, active, and healthier lives.</p>
+        <button onclick="closePopup('visionPopup')">Close</button>
+    </div>
+
+    <div id="missionPopup" class="popup">
+        <h2>Mission of Pro Spine</h2>
+        <p>Pro Spine is committed to redefining spinal care by providing
+            non-surgical, evidence-based treatments
+            that eliminate pain and restore mobility. Our mission is to bridge the gap between conventional
+            physiotherapy and invasive surgeries, offering a holistic, patient-centric
+            approach.
+            We integrate
+            advanced technology, manual therapy, and rehabilitation strategies to deliver
+            effective
+            and long-term
+            relief for spinal disorders. By focusing on continuous research, innovation, and patient
+            education,
+            we
+            aim to make high-quality spinal care accessible and affordable. Our goal is to
+            empower
+            individuals to
+            lead pain-free, active, and healthier lives, setting new standards in
+            spinal
+            healthcare excellence.</p>
+        <button onclick="closePopup('missionPopup')">Close</button>
+    </div>
+
+    <div id="historyPopup" class="popup popup2">
+        <h2>Pro Spine: From Vision to Reality</h2>
+        <p>
+            For years, spinal patients had limited options—either physiotherapy or high-risk spinal surgery. This gap
+            led me, Dr. Pranav Kumar, to seek a better solution.
+            With 21 years of experience and treating 50,000+ patients under Manipal Physiotherapy and Fitness Centre, my
+            passion for spine care deepened. Despite mastering Maitland Mobilization, Cyriax Therapy, Mulligan Concept,
+            and McKenzie Method, I found that conventional physiotherapy was sometimes insufficient for severe spinal
+            conditions.</p>
+        <h2>The Turning Point</h2>
+        <p> Spinal disorders often reached a stage where surgery seemed the only option. Recognizing the need for a
+            non-surgical alternative, I researched global advancements and discovered a revolutionary, non-invasive
+            technology. However, it was too expensive for the Indian market.
+            In 2023, an Indian company made this technology affordable, and by April 2024, I installed India’s 3rd and
+            Bihar’s 1st machine, marking the birth of Pro Spine.</p>
+        <h2>Birth of Pro Spine</h2>
+        <p> Pro Spine is not just about one machine—it is a comprehensive non-surgical spinal care protocol. It
+            integrates Shock Wave Therapy, Laser Therapy, Combination Therapy, and Advanced Manual Therapy Techniques.
+            This holistic approach has successfully treated conditions like disc herniation, degenerative disc disease,
+            facet joint syndrome, spondylolisthesis, and spinal canal stenosis.</p>
+        <h2>Transforming Lives</h2>
+        <p> With 100+ patients regaining spinal health without surgery, Pro Spine is pioneering Revolutionizing
+            Non-Surgical Spinal Care in India. Today, it stands as a trusted name in non-invasive spinal treatment,
+            reshaping the future of spinal healthcare.</p>
+        <h2>Pro Spine – A New Era in Spine Care.</h2>
+        <button onclick="closePopup('historyPopup')">Close</button>
+    </div>
+
+    <div id="morehistoryPopup" class="popup">
+        <h2>Birth of Pro Spine</h2>
+
+        <button onclick="closePopup('morehistoryPopup')">Close</button>
+
+    </div>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/+918002421212" target="_blank" class="whatsapp-float">
+        <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="WhatsApp">
+    </a>
+
+    <div class="overlay" id="overlay" onclick="closeAllPopups()"></div>
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-quote">
+                <h2>"Revolutionizing Non-Surgical Spinal Care"</h2>
+                <img src="image/logo.png" alt="Logo" class="logo">
+            </div>
+            <hr class="hr">
+            <div class="footer-sections">
+                <div class="about-section footer-section">
+                    <h3>About us</h3>
+                    <ul>
+                        <li><a href="#">Vision</a></li>
+                        <!-- <li><a href="#">People</a></li> -->
+                        <!-- <li><a href="#">Partners</a></li> -->
+                        <li><a href="#">Awards & Affiliations</a></li>
+                        <li><a href="testimonials.html">Testimonials</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><a href="#">Locations</a></li>
+                        <li><a href="#">Contacts</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Conditions We Treat</h3>
+                    <ul>
+                        <li><a href="conditions.html?condition=herniated-disc">Herniated Disc</a></li>
+                        <li><a href="conditions.html?condition=spondylolisthesis">Spondylolisthesis</a></li>
+                        <li><a href="conditions.html?condition=degenerative-disc">Degenerative Disc</a></li>
+                        <li><a href="conditions.html?condition=brachial-neuralgia">Brachial Neuralgia</a></li>
+                        <li><a href="conditions.html?condition=disc-prolapse">Disc Prolapse</a></li>
+                        <li><a href="conditions.html?condition=retrolisthesis">Retrolisthesis</a></li>
+                        <li><a href="conditions.html?condition=scoliosis">Scoliosis</a></li>
+                        <li><a href="conditions.html?condition=facet-joint-syndrome">Facet Joint Syndrome</a></li>
+                        <li><a href="conditions.html?condition=thecal-compression">Thecal Compression</a></li>
+                        <li><a href="treatment.html">See All →</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="prospineapproach.html">Why Pro Spine</a></li>
+                        <li><a href="#">Portfolio</a></li>
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">Carrier</a></li>
+                        <li><a href="#">Manipal Physiotherapy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © 2025, ProSpine. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="#">Terms & conditions</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+            </ul>
+            <div class="social-icons">
+                <a href="#"><img src="image/facebook-icon.png" alt="Facebook"></a>
+                <!-- <a href="#"><img src="image/twitter-icon.png" alt="Twitter"></a> -->
+                <a href="#"><img src="image/icons8-instagram-48.png" alt="Instagram"></a>
+            </div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+    <script>
+        function openPopup(id) {
+            document.getElementById(id).style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePopup(id) {
+            document.getElementById(id).style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function closeAllPopups() {
+            document.querySelectorAll('.popup').forEach(popup => popup.style.display = 'none');
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us - Pro Spine</title>
+  <link rel="icon" href="image/favicon.png" type="image/x-icon" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .icons {
+      display: flex;
+      /* flex-direction: column; */
+      align-items: center;
+      gap: 10px;
+      /* Space between items */
+      background: #f8f9fa5e;
+      /* Light grey background */
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      /* max-width: 400px; */
+      margin: 20px auto;
+    }
+
+    .icon {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #007bff;
+      /* Bootstrap blue */
+      font-size: 16px;
+      font-weight: 600;
+      padding: 10px;
+      width: 100%;
+      background: white;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .icon i {
+      margin-right: 10px;
+      font-size: 18px;
+      color: #007bff;
+    }
+
+    .icon:hover {
+      background: #007bff;
+      color: white;
+    }
+
+    .icon:hover i {
+      color: white;
+    }
+
+    @media screen and (max-width: 768px) {
+      .boox2 {
+        display: block;
+        width: 100%;
+        padding: 20px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .boox2 {
+        display: block;
+        width: 100%;
+        padding: 20px;
+      }
+
+      .btn3 {
+        padding: 5px 15px;
+        font-size: 11px;
+      }
+
+      .icons {
+        flex-direction: column;
+        width: 100%;
+        padding: 10px;
+      }
+
+      .icon {
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      .icon i {
+        font-size: 16px;
+      }
+    }
+
+
+    .form-group select {
+      width: 90%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+      margin-top: 10px;
+    }
+
+
+    .toast {
+      visibility: hidden;
+      /* min-width: 250px; */
+      /* margin-left: -125px; */
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 16px;
+      /* position: fixed; */
+      z-index: 9999;
+      left: 83%;
+      top: 16%;
+      font-size: 14px;
+      transition: all 0.5s ease;
+    }
+
+    .toast.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .toast.success {
+      background-color: #32df5a;
+    }
+
+    .toast.error {
+      background-color: #dc3545;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="image/logo.png" alt="Pro Physio Logo" class="logo" />
+    </div>
+
+    <nav>
+      <div class="nav-container">
+        <div class="hamburger" id="hamburger">&#9776;</div>
+        <div class="nav-links" id="navLinks">
+          <a href="index.html">Home</a>
+          <a href="aboutus.html">About Us</a>
+          <a href="treatment.html">Conditions We Treat</a>
+          <a href="services.html">Our Services</a>
+          <a href="team.html">Our Team</a>
+          <a href="testimonials.html">Testimonials</a>
+          <a href="events.html">Events</a>
+          <a href="prospineapproach.html">Why Pro Spine</a>
+          <a href="career.html">Career</a>
+          <a href="contact.html">Contact Us</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="sec2">
+    <div class="textcont">
+      <h2>Reach Out to Start Your Journey to Better Health</h2>
+      <p>
+        We’re here to help! Give us a call, or share your number, and we’ll
+        get in touch with you.
+      </p>
+      <br />
+      <button class="btn btn3" onclick="window.location.href='appointment.html';">
+        Book an Appointment
+      </button>
+    </div>
+  </section>
+  <section class="sec2 secs2">
+    <div class="textcont">
+      <h2>Reach Out to Start Your Journey to Better Health</h2>
+      <p>Have any doubts? Feel free to contact us</p>
+      <br />
+      <div class="icons">
+        <a href="mailto:prospine33@gmail.com" class="icon" title="Email Us"><i class="fas fa-envelope"></i> |
+          prospine33@gmail.com</a>
+        <a href="tel:+918002421212" class="icon" title="Call Us"><i class="fas fa-phone-alt"></i> | +91-800-242-1212</a>
+        <a href="https://maps.app.goo.gl/zfFGr3ShXtHJfHh57" target="_blank" class="icon" title="Find Us on the Map"><i
+            class="fas fa-map-marker-alt"></i> | SVN Road, Aadampur,
+          Bhagalpur</a>
+      </div>
+    </div>
+    <div class="info" style="margin: 0 auto;">
+      <div class="box2 boox2">
+        <h2>Request an Appointment</h2>
+        <p>
+          Enter your details and we will get back to you shortly. Or call
+          <span class="text">+918002421212</span> between 8 am to 8 pm.
+        </p>
+        <div id="toast" class="toast"></div>
+
+        <form id="inquiryForm">
+          <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required maxlength="10" />
+          </div>
+
+          <div class="form-group">
+            <label for="branch">Select Branch</label>
+            <select name="branch" id="branch" required>
+              <option value="">Select Branch</option>
+              <option value="bhagalpur_branch">Bhagalpur Branch</option>
+              <option value="siliguri_branch">Siliguri Branch</option>
+            </select>
+          </div>
+
+          <button type="submit" class="submit-btn btn">Submit</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <a href="https://wa.me/+918002421212" target="_blank" class="whatsapp-float">
+    <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="WhatsApp" />
+  </a>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-quote">
+        <h2>"Revolutionizing Non-Surgical Spinal Care"</h2>
+        <img src="image/logo.png" alt="Logo" class="logo" />
+      </div>
+      <hr class="hr" />
+      <div class="footer-sections">
+        <div class="about-section footer-section">
+          <h3>About us</h3>
+          <ul>
+            <li><a href="#">Vision</a></li>
+            <li><a href="#">People</a></li>
+            <li><a href="#">Partners</a></li>
+            <li><a href="#">Awards & Affiliations</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <ul>
+            <li><a href="#">Locations</a></li>
+            <li><a href="#">Contacts</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Conditions We Treat</h3>
+          <ul>
+            <li><a href="conditions.html?condition=herniated-disc">Herniated Disc</a></li>
+            <li><a href="conditions.html?condition=spondylolisthesis">Spondylolisthesis</a></li>
+            <li><a href="conditions.html?condition=degenerative-disc">Degenerative Disc</a></li>
+            <li><a href="conditions.html?condition=brachial-neuralgia">Brachial Neuralgia</a></li>
+            <li><a href="conditions.html?condition=disc-prolapse">Disc Prolapse</a></li>
+            <li><a href="conditions.html?condition=retrolisthesis">Retrolisthesis</a></li>
+            <li><a href="conditions.html?condition=scoliosis">Scoliosis</a></li>
+            <li><a href="conditions.html?condition=facet-joint-syndrome">Facet Joint Syndrome</a></li>
+            <li><a href="conditions.html?condition=thecal-compression">Thecal Compression</a></li>
+            <li><a href="treatment.html">See All →</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="prospineapproach.html">Why Pro Spine</a></li>
+            <li><a href="#">Portfolio</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Carrier</a></li>
+            <li><a href="#">Manipal Physiotherapy</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Copyright © 2025, ProSpine. All rights reserved.</p>
+      <ul class="footer-links">
+        <li><a href="#">Terms & conditions</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul>
+      <div class="social-icons">
+        <a href="#"><img src="image/facebook-icon.png" alt="Facebook" /></a>
+        <!-- <a href="#"><img src="image/twitter-icon.png" alt="Twitter"></a> -->
+        <a href="#"><img src="image/icons8-instagram-48.png" alt="Instagram" /></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+
+    document.getElementById("inquiryForm").addEventListener("submit", async function (e) {
+      e.preventDefault(); // stop normal form submit
+
+      const formData = new FormData(this);
+
+      try {
+        const response = await fetch("submit.php", {
+          method: "POST",
+          body: formData
+        });
+
+        const result = await response.text();
+        showToast(result, "success");
+
+        // Optional: reset form
+        this.reset();
+      } catch (error) {
+        showToast("Something went wrong. Please try again.", "error");
+      }
+    });
+
+    // Simple toast function
+    function showToast(message, type = "success") {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = "toast show " + type;
+
+      setTimeout(() => {
+        toast.className = "toast"; // hide after 3s
+      }, 3000);
+    }
+
+  </script>
+</body>
+
+</html>

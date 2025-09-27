@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Career - Pro Spine</title>
+  <link rel="icon" href="image/favicon.png" type="image/x-icon" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+        color: #333;
+      } */
+
+    .career-section {
+      padding: 60px 20px;
+      /* background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%); */
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .career-section h1 {
+      font-size: 2.5em;
+      color: #f27121;
+      margin-bottom: 10px;
+    }
+
+    .career-section .intro {
+      max-width: 800px;
+      margin: 0 auto 40px;
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+
+    .career-section .intro strong {
+      color: #e94057;
+    }
+
+    .why-choose {
+      width: 96%;
+      margin: 0 auto;
+      background: #1a1a1a;
+      color: white;
+      padding: 60px 20px;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      margin-bottom: 30px;
+      cursor: pointer;
+    }
+
+    .why-choose h2 {
+      font-size: 2em;
+      color: #f27121;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .reasons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .reason-card {
+      background: #ffffff05;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .reason-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .reason-card h3 {
+      color: #e94057;
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+
+    .reason-card p {
+      font-size: 1em;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    .career-paths {
+      width: 96%;
+      /* max-width: 1200px; */
+      margin: 0 auto;
+      background: #1a1a1a;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      padding: 60px 20px;
+      background: #ffffffa9;
+      margin-bottom: 30px;
+    }
+
+    .career-paths h2 {
+      font-size: 2em;
+      color: #f27121;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .paths-list {
+      max-width: 1080px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .paths-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .paths-list li {
+      font-size: 1.1em;
+      margin: 25px 0;
+      padding-left: 30px;
+      position: relative;
+    }
+
+    .paths-list li:before {
+      content: "➔";
+      color: #e94057;
+      position: absolute;
+      left: 0;
+    }
+
+    .apply-now {
+      padding: 60px 20px;
+      background: linear-gradient(135deg, #f27121, #e94057, #8a2387);
+      color: white;
+      text-align: center;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      /* cursor: pointer; */
+    }
+
+    .apply-now h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    .apply-now p {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      opacity: 0.8;
+    }
+
+    .apply-form {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .apply-form input,
+    .apply-form textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+
+    .apply-form button {
+      background: #fff;
+      color: #e94057;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .apply-form button:hover {
+      background: #f27121;
+      color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .career-section h1 {
+        font-size: 2em;
+      }
+
+      .reason-card {
+        margin: 0 10px;
+      }
+
+      .apply-form {
+        padding: 0 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="image/logo.png" alt="Pro Physio Logo" class="logo" />
+    </div>
+    <nav>
+      <div class="nav-container">
+        <div class="hamburger" id="hamburger">☰</div>
+        <div class="nav-links" id="navLinks">
+          <a href="index.html">Home</a>
+          <a href="aboutus.html">About Us</a>
+          <a href="treatment.html">Conditions We Treat</a>
+          <a href="services.html">Our Services</a>
+          <a href="team.html">Our Team</a>
+          <a href="testimonials.html">Testimonials</a>
+          <a href="events.html">Events</a>
+          <a href="prospineapproach.html">Why Pro Spine</a>
+          <a href="career.html">Career</a>
+          <a href="contact.html">Contact Us</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="career-section sec2 sec">
+    <h1>Join the Future of Non-Surgical Spinal Care with Pro Spine</h1>
+    <div class="intro">
+      At <strong>Pro Spine</strong>, we are revolutionizing spinal
+      rehabilitation through cutting-edge non-invasive therapies. As pioneers
+      in <strong>Non-Invasive Robotic Spinal Decompression Therapy</strong>,
+      <strong>Advanced Manual Therapy Techniques</strong>, and
+      <strong>Electrotherapy</strong>, we offer a dynamic platform for
+      professionals passionate about physiotherapy, ergonomics, and spinal
+      care.
+    </div>
+  </section>
+
+  <section class="why-choose">
+    <h2>Why Choose a Career at Pro Spine?</h2>
+    <div class="reasons">
+      <div class="reason-card">
+        <h3>1. Innovative Work Environment</h3>
+        <p>
+          Access the latest technology including
+          <strong>Spine 3D™ Analysis</strong>,
+          <strong>Robotic Spinal Decompression</strong>,
+          <strong>Shock Wave Therapy</strong>, and
+          <strong>Dual Frequency Ultrasound Therapy</strong>.
+        </p>
+      </div>
+      <div class="reason-card">
+        <h3>2. Professional Growth & Development</h3>
+        <p>
+          Continuous learning through <strong>Pro Spine Academy</strong> with
+          training in advanced techniques like
+          <strong>Maitland Mobilization</strong>,
+          <strong>McKenzie Method</strong>, and more.
+        </p>
+      </div>
+      <div class="reason-card">
+        <h3>3. Pro Spine Academy</h3>
+        <p>
+          A premier training institute led by
+          <strong>Dr. Pranav Kumar</strong>, offering hands-on workshops and
+          certifications in spinal rehabilitation and ergonomics.
+        </p>
+      </div>
+      <div class="reason-card">
+        <h3>4. Work with the Best</h3>
+        <p>
+          Join a team led by <strong>Dr. Pranav Kumar</strong>, a renowned
+          Physical Therapist and Ergonomist with over 20 years of experience.
+        </p>
+      </div>
+      <div class="reason-card">
+        <h3>5. Patient-Centric Approach</h3>
+        <p>
+          Focus on non-surgical, pain-free spinal care combining technology
+          and manual therapy for optimal patient recovery.
+        </p>
+      </div>
+      <div class="reason-card">
+        <h3>6. Expanding Opportunities</h3>
+        <p>
+          Grow with <strong>Pro Spine Bangalore</strong> and explore diverse
+          roles in physiotherapy, research, and healthcare management.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="career-paths">
+    <h2>Career Paths at Pro Spine</h2>
+    <div class="paths-list">
+      <ul>
+        <li>
+          <strong>Physiotherapists & Rehabilitation Specialists</strong> –
+          Work with cutting-edge spinal care technology.
+        </li>
+        <li>
+          <strong>Ergonomists & Workplace Wellness Consultants</strong> –
+          Prevent and manage work-related musculoskeletal issues.
+        </li>
+        <li>
+          <strong>Clinical Trainers & Educators</strong> – Contribute to skill
+          development through Pro Spine Academy.
+        </li>
+        <li>
+          <strong>Healthcare Administrators</strong> – Manage operations and
+          patient care services.
+        </li>
+        <li>
+          <strong>Research & Development Professionals</strong> – Innovate
+          non-surgical spinal care techniques.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="apply-now">
+    <h2>Join Us Today!</h2>
+    <p>
+      If you are passionate about transforming spinal care, apply now and be
+      part of <strong>Pro Spine’s</strong> journey!
+    </p>
+    <div class="apply-form">
+      <form id="applicationForm">
+        <input type="text" name="name" placeholder="Full Name" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="text" name="phone" placeholder="Phone Number" required />
+        <textarea name="message" rows="4" placeholder="Tell us about yourself" required></textarea>
+        <button type="submit">Apply Now</button>
+      </form>
+      <div id="formMessage" style="margin-top: 15px"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-quote">
+        <h2>"Revolutionizing Non-Surgical Spinal Care"</h2>
+        <img src="image/logo.png" alt="Logo" class="logo" />
+      </div>
+      <hr class="hr" />
+      <div class="footer-sections">
+        <div class="about-section footer-section">
+          <h3>About us</h3>
+          <ul>
+            <li><a href="#">Vision</a></li>
+            <li><a href="#">Awards & Affiliations</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <ul>
+            <li><a href="#">Locations</a></li>
+            <li><a href="#">Contacts</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Conditions We Treat</h3>
+          <ul>
+            <li><a href="conditions.html?condition=herniated-disc">Herniated Disc</a></li>
+            <li><a href="conditions.html?condition=spondylolisthesis">Spondylolisthesis</a></li>
+            <li><a href="conditions.html?condition=degenerative-disc">Degenerative Disc</a></li>
+            <li><a href="conditions.html?condition=brachial-neuralgia">Brachial Neuralgia</a></li>
+            <li><a href="conditions.html?condition=disc-prolapse">Disc Prolapse</a></li>
+            <li><a href="conditions.html?condition=retrolisthesis">Retrolisthesis</a></li>
+            <li><a href="conditions.html?condition=scoliosis">Scoliosis</a></li>
+            <li><a href="conditions.html?condition=facet-joint-syndrome">Facet Joint Syndrome</a></li>
+            <li><a href="conditions.html?condition=thecal-compression">Thecal Compression</a></li>
+            <li><a href="treatment.html">See All →</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="prospineapproach.html">Why Pro Spine</a></li>
+            <li><a href="#">Portfolio</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Career</a></li>
+            <li><a href="#">Manipal Physiotherapy</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Copyright © 2025, ProSpine. All rights reserved.</p>
+      <ul class="footer-links">
+        <li><a href="#">Terms & conditions</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul>
+      <div class="social-icons">
+        <a href="#"><img src="image/facebook-icon.png" alt="Facebook" /></a>
+        <a href="#"><img src="image/icons8-instagram-48.png" alt="Instagram" /></a>
+      </div>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/+918002421212" target="_blank" class="whatsapp-float">
+    <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="WhatsApp" />
+  </a>
+
+  <script src="script.js"></script>
+  <script>
+    document.getElementById("applicationForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      let formData = new FormData(this);
+
+      fetch("job_submit.php", {
+        method: "POST",
+        body: formData,
+      })
+        .then(res => res.json())
+        .then(data => {
+          showToast(data.message, data.status);
+          if (data.status === "success") {
+            document.getElementById("applicationForm").reset();
+          }
+        })
+        .catch(() => {
+          showToast("Something went wrong. Try again.", "error");
+        });
+    });
+
+    // Toast function
+    function showToast(message, type) {
+      let toast = document.createElement("div");
+      toast.innerText = message;
+      toast.style.position = "fixed";
+      toast.style.bottom = "20px";
+      toast.style.right = "20px";
+      toast.style.padding = "10px 20px";
+      toast.style.borderRadius = "5px";
+      toast.style.color = "#fff";
+      toast.style.zIndex = "9999";
+      toast.style.fontFamily = "Arial, sans-serif";
+
+      if (type === "success") {
+        toast.style.background = "green";
+      } else {
+        toast.style.background = "red";
+      }
+
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+  </script>
+
+</body>
+
+</html>

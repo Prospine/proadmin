@@ -157,6 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Successful login: fixate-resistant session
                 session_regenerate_id(true);
                 $_SESSION['uid']       = (int)$user['id'];
+                $_SESSION['username']  = $user['username'];
                 $_SESSION['role']      = $user['role'];
                 $_SESSION['branch_id'] = (int)$user['branch_id'];
                 $_SESSION['ua']        = hash('sha256', $_SERVER['HTTP_USER_AGENT'] ?? '');

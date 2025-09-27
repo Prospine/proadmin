@@ -2,16 +2,26 @@
 
 declare(strict_types=1);
 require_once '../../common/db.php';
+require_once '../../common/logger.php'; // 1. Added the logger
 session_start();
 header('Content-Type: application/json');
 
 // --- CSRF token check ---
+// Ensure this matches the session key and the hidden input name in your form
 if (empty($_SESSION['csrf_token']) || ($_POST['csrf'] ?? '') !== $_SESSION['csrf_token']) {
-    echo json_encode(["success" => false, "message" => "Invalid CSRF token. Refresh and try again."]);
+    echo json_encode(["success" => false, "message" => "Invalid CSRF token. Please refresh the page and try again."]);
     exit;
 }
 
 try {
+    // Get session variables for logging
+    if (!isset($_SESSION['branch_id']) || !isset($_SESSION['uid']) || !isset($_SESSION['username'])) {
+        throw new Exception("User session details are incomplete. Please log in again.");
+    }
+    $branch_id = $_SESSION['branch_id'];
+    $user_id = $_SESSION['uid'];
+    $username = $_SESSION['username'];
+
     // Collect inputs from form
     $patient_name      = trim($_POST['name'] ?? '');
     $phone             = trim($_POST['phone_number'] ?? '');
@@ -25,24 +35,20 @@ try {
     $address           = trim($_POST['address'] ?? '');
     $consultation_type = $_POST['inquiry_type'] ?? 'In-Clinic';
     $appointment_date  = $_POST['appointment_date'] ?? null;
-    $appointment_time  = $_POST['time'] ?? null;
+    $appointment_time  = $_POST['appointment_time'] ?? null; // Corrected from 'time'
     $consultation_amt  = (float)($_POST['amount'] ?? 0);
     $payment_method    = $_POST['payment_method'] ?? 'cash';
     $remarks           = trim($_POST['review'] ?? '');
-    $status            = 'pending'; // always pending for new registration
+    $status            = 'Pending';
     $inquiry_id        = !empty($_POST['inquiry_id']) ? (int)$_POST['inquiry_id'] : null;
 
-    $branch_id = $_SESSION['branch_id'] ?? null;
-
     // Validation
-    if ($patient_name === '' || $phone === '' || $gender === '' || $age <= 0 || $consultation_amt <= 0) {
+    if ($patient_name === '' || $phone === '' || $gender === '' || $age <= 0) {
         throw new Exception("Please fill in all required fields.");
-    }
-    if (!$branch_id) {
-        throw new Exception("Branch not assigned to session. Please log in again.");
     }
 
     // Insert into DB
+    // (Your INSERT statement is good, no changes needed there)
     $stmt = $pdo->prepare("
         INSERT INTO registration 
         (branch_id, inquiry_id, patient_name, phone_number, email, gender, age, chief_complain, referralSource, reffered_by, occupation, address, consultation_type, appointment_date, appointment_time, consultation_amount, payment_method, remarks, status, created_at, updated_at)
@@ -71,8 +77,46 @@ try {
         ':status'              => $status
     ]);
 
+    // 2. Logging the successful creation
+    $newRegistrationId = $pdo->lastInsertId();
+    $logDetailsAfter = [
+        'patient_name' => $patient_name,
+        'phone_number' => $phone,
+        'age' => $age,
+        'chief_complain' => $chief_complain,
+        'consultation_amount' => $consultation_amt,
+        'converted_from_inquiry_id' => $inquiry_id
+    ];
+
+    log_activity(
+        $pdo,
+        $user_id,
+        $username,
+        $branch_id,
+        'CREATE',
+        'registration',
+        (int)$newRegistrationId,
+        null,
+        $logDetailsAfter
+    );
+
+    // If an inquiry was converted, we should also log the status update
+    if ($inquiry_id) {
+        log_activity(
+            $pdo,
+            $user_id,
+            $username,
+            $branch_id,
+            'UPDATE',
+            'quick_inquiry',
+            (int)$inquiry_id,
+            ['status' => 'pending'], // Assuming it was pending
+            ['status' => 'visited'] // Or 'converted' if you add that status
+        );
+    }
+
     echo json_encode(["success" => true, "message" => "Registration saved successfully!"]);
 } catch (Throwable $e) {
     error_log($e->getMessage());
-    echo json_encode(["success" => false, "message" => $e->getMessage()]);
+    echo json_encode(["success" => false, "message" => "An error occurred: " . $e->getMessage()]);
 }

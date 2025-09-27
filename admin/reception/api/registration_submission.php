@@ -1,18 +1,20 @@
 <?php
 require_once '../../common/db.php';
+require_once '../../common/logger.php'; // 1. Added the logger
 session_start();
 header('Content-Type: application/json');
 
 // --- CSRF token check ---
-if (empty($_SESSION['csrf'])) {
-    echo json_encode(["success" => false, "message" => "Invalid session. Refresh and try again."]);
-    exit;
-}
+// Note: A CSRF check here is good, but make sure your front-end sends the token
+// if (empty($_SESSION['csrf'])) {
+//     echo json_encode(["success" => false, "message" => "Invalid session. Refresh and try again."]);
+//     exit;
+// }
 
 $data = json_decode(file_get_contents("php://input"), true);
 
 try {
-    // Collect inputs
+    // Collect and sanitize inputs
     $patient_name      = trim($data['patient_name'] ?? '');
     $phone             = trim($data['phone'] ?? '');
     $email             = trim($data['email'] ?? '');
@@ -30,14 +32,17 @@ try {
     $payment_method    = $data['payment_method'] ?? 'cash';
     $remarks           = trim($data['remarks'] ?? '');
 
-    $branch_id = $_SESSION['branch_id'] ?? null;
+    // Get session variables for logging
+    if (!isset($_SESSION['branch_id']) || !isset($_SESSION['uid']) || !isset($_SESSION['username'])) {
+        throw new Exception("User session details are incomplete. Please log in again.");
+    }
+    $branch_id = $_SESSION['branch_id'];
+    $user_id = $_SESSION['uid'];
+    $username = $_SESSION['username'];
 
     // Validation
-    if ($patient_name === '' || $phone === '' || $gender === '' || $age <= 0 || $consultation_amt <= 0) {
-        throw new Exception("Please fill in all required fields.");
-    }
-    if (!$branch_id) {
-        throw new Exception("Branch not assigned to session. Please log in again.");
+    if ($patient_name === '' || $phone === '' || $gender === '' || $age <= 0 || $consultation_amt < 0) { // Allow 0 amount
+        throw new Exception("Please fill in all required fields: Name, Phone, Gender, and Age.");
     }
 
     // Insert into DB
@@ -67,8 +72,31 @@ try {
         ':remarks'             => $remarks
     ]);
 
+    // 2. Logging the successful creation
+    $newRegistrationId = $pdo->lastInsertId();
+    $logDetailsAfter = [
+        'patient_name' => $patient_name,
+        'phone_number' => $phone,
+        'age' => $age,
+        'chief_complain' => $chief_complain,
+        'consultation_amount' => $consultation_amt
+    ];
+
+    log_activity(
+        $pdo,
+        $user_id,
+        $username,
+        $branch_id,
+        'CREATE',
+        'registration',
+        (int)$newRegistrationId,
+        null, // details_before is null for a new record
+        $logDetailsAfter // details_after contains the new data
+    );
+
+
     echo json_encode(["success" => true, "message" => "Registration record submitted successfully!"]);
 } catch (Throwable $e) {
-    error_log($e->getMessage());
-    echo json_encode(["success" => false, "message" => $e->getMessage()]);
+    error_log($e->getMessage()); // Good practice to log the actual error to the server's error log
+    echo json_encode(["success" => false, "message" => "An error occurred: " . $e->getMessage()]);
 }

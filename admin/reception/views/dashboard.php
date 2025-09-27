@@ -733,7 +733,7 @@ $success = false;
                     </div>
 
                     <div>
-                        <label>Receipt No *</label>
+                        <label>Receipt No </label>
                         <input type="text" name="receipt_no">
                     </div>
 
@@ -989,7 +989,10 @@ $success = false;
                         if (result.success) {
                             showToast(result.message || successMsg, "success");
                             this.reset();
-
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 3000);
+                            
                         } else {
                             showToast(result.message || "Submission failed.", "error");
                         }

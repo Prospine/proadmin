@@ -8,6 +8,7 @@ ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
 require_once '../../common/db.php';
+require_once '../../common/logger.php'; // 1. Added the logger
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -16,7 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
-    // ✅ Collect posted values
+    // Get session variables for logging
+    if (!isset($_SESSION['branch_id']) || !isset($_SESSION['uid']) || !isset($_SESSION['username'])) {
+        throw new Exception("User session details are incomplete. Please log in again.");
+    }
+    $branch_id = $_SESSION['branch_id'];
+    $user_id = $_SESSION['uid'];
+    $username = $_SESSION['username'];
+
+    // Collect posted values
     $inquiry_id          = $_POST['inquiry_id'] ?: null;
     $patient_name        = trim($_POST['name'] ?? '');
     $age                 = $_POST['age'] ?: null;
@@ -38,15 +47,13 @@ try {
     $due_amount          = is_numeric($_POST['due_amount'] ?? null) ? floatval($_POST['due_amount']) : 0;
     $discount            = is_numeric($_POST['discount'] ?? null) ? floatval($_POST['discount']) : 0;
     $payment_method      = $_POST['payment_method'] ?: null;
-    $branch_id           = $_SESSION['branch_id'] ?? 1;
 
-    // ✅ Required fields check
+    // Required fields check
     if (!$patient_name || !$phone_number || !$gender || !$test_name || !$visit_date || !$assigned_test_date || !$test_done_by || !$payment_method) {
-        echo json_encode(['success' => false, 'message' => 'Please fill all required fields']);
-        exit();
+        throw new Exception('Please fill all required fields');
     }
 
-    // ✅ Payment status logic
+    // Payment status logic
     $payment_status = 'pending';
     if ($due_amount == 0 && $total_amount > 0) {
         $payment_status = 'paid';
@@ -54,7 +61,7 @@ try {
         $payment_status = 'partial';
     }
 
-    // ✅ Insert query
+    // Insert query
     $stmt = $pdo->prepare("
         INSERT INTO tests (
             inquiry_id, patient_name, age, dob, gender, parents, relation,
@@ -95,6 +102,28 @@ try {
         ':payment_status'     => $payment_status,
         ':branch_id'          => $branch_id
     ]);
+
+    // 2. Logging the successful creation
+    $newTestId = $pdo->lastInsertId();
+    $logDetailsAfter = [
+        'patient_name' => $patient_name,
+        'test_name' => $test_name,
+        'assigned_test_date' => $assigned_test_date,
+        'total_amount' => $total_amount,
+        'payment_status' => $payment_status
+    ];
+
+    log_activity(
+        $pdo,
+        $user_id,
+        $username,
+        $branch_id,
+        'CREATE',
+        'tests',
+        (int)$newTestId,
+        null, // details_before is null for a new record
+        $logDetailsAfter // details_after contains the new data
+    );
 
     echo json_encode(['success' => true, 'message' => 'Test record added successfully!']);
 } catch (Throwable $e) {

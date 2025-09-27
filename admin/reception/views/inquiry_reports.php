@@ -24,45 +24,41 @@ if (!$branchId) {
 }
 
 // -------------------------
-// DYNAMIC SQL & DATA FETCHING
+// DYNAMIC SQL & DATA FETCHING FOR INQUIRIES
 // -------------------------
 
-function getTestData($pdo, $branchId, $filters)
+function getInquiryData($pdo, $branchId, $filters)
 {
-    // Base SQL query
+    // Base SQL query for the quick_inquiry table
     $sql = "SELECT 
-                t.assigned_test_date, t.patient_name, t.test_name, t.referred_by,
-                t.test_done_by, t.total_amount, t.advance_amount, t.due_amount, t.payment_status
-            FROM tests t";
+                i.created_at, i.name, i.age, i.gender, i.referralSource,
+                i.chief_complain, i.phone_number, i.status
+            FROM quick_inquiry i";
 
     // Prepare WHERE clauses and parameters
-    $whereClauses = ['t.branch_id = :branch_id'];
+    $whereClauses = ['i.branch_id = :branch_id'];
     $params = [':branch_id' => $branchId];
 
     // Dynamically add filters to the query
     if (!empty($filters['start_date'])) {
-        $whereClauses[] = 't.assigned_test_date >= :start_date';
+        $whereClauses[] = 'DATE(i.created_at) >= :start_date';
         $params[':start_date'] = $filters['start_date'];
     }
     if (!empty($filters['end_date'])) {
-        $whereClauses[] = 't.assigned_test_date <= :end_date';
+        $whereClauses[] = 'DATE(i.created_at) <= :end_date';
         $params[':end_date'] = $filters['end_date'];
     }
-    if (!empty($filters['test_name'])) {
-        $whereClauses[] = 't.test_name = :test_name';
-        $params[':test_name'] = $filters['test_name'];
+    if (!empty($filters['referralSource'])) {
+        $whereClauses[] = 'i.referralSource = :referralSource';
+        $params[':referralSource'] = $filters['referralSource'];
     }
-    if (!empty($filters['referred_by'])) {
-        $whereClauses[] = 't.referred_by = :referred_by';
-        $params[':referred_by'] = $filters['referred_by'];
+    if (!empty($filters['chief_complain'])) {
+        $whereClauses[] = 'i.chief_complain = :chief_complain';
+        $params[':chief_complain'] = $filters['chief_complain'];
     }
-    if (!empty($filters['test_done_by'])) {
-        $whereClauses[] = 't.test_done_by = :test_done_by';
-        $params[':test_done_by'] = $filters['test_done_by'];
-    }
-    if (!empty($filters['payment_status'])) {
-        $whereClauses[] = 't.payment_status = :payment_status';
-        $params[':payment_status'] = $filters['payment_status'];
+    if (!empty($filters['status'])) {
+        $whereClauses[] = 'i.status = :status';
+        $params[':status'] = $filters['status'];
     }
 
     // Combine WHERE clauses
@@ -70,7 +66,7 @@ function getTestData($pdo, $branchId, $filters)
         $sql .= " WHERE " . implode(' AND ', $whereClauses);
     }
 
-    $sql .= " ORDER BY t.assigned_test_date DESC";
+    $sql .= " ORDER BY i.created_at DESC";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
@@ -80,9 +76,9 @@ function getTestData($pdo, $branchId, $filters)
 // Check if this is a JavaScript fetch (AJAX) request
 if (isset($_GET['fetch'])) {
     try {
-        $tests = getTestData($pdo, $branchId, $_GET);
+        $inquiries = getInquiryData($pdo, $branchId, $_GET);
         header('Content-Type: application/json');
-        echo json_encode(['tests' => $tests]);
+        echo json_encode(['inquiries' => $inquiries]);
         exit();
     } catch (PDOException $e) {
         http_response_code(500);
@@ -94,14 +90,14 @@ if (isset($_GET['fetch'])) {
 
 // For initial page load, fetch data for filters and default view
 $filterOptions = [];
-$tests = [];
+$inquiries = [];
 $branchName = '';
 try {
     // Get distinct values for filter dropdowns
     $filterQueries = [
-        'test_names' => "SELECT DISTINCT test_name FROM tests WHERE branch_id = ? ORDER BY test_name",
-        'referred_by_list' => "SELECT DISTINCT referred_by FROM tests WHERE branch_id = ? AND referred_by IS NOT NULL AND referred_by != '' ORDER BY referred_by",
-        'test_done_by_list' => "SELECT DISTINCT test_done_by FROM tests WHERE branch_id = ? ORDER BY test_done_by"
+        'sources' => "SELECT DISTINCT referralSource FROM quick_inquiry WHERE branch_id = ? ORDER BY referralSource",
+        'complains' => "SELECT DISTINCT chief_complain FROM quick_inquiry WHERE branch_id = ? ORDER BY chief_complain",
+        'statuses' => "SELECT DISTINCT status FROM quick_inquiry WHERE branch_id = ? ORDER BY status"
     ];
 
     foreach ($filterQueries as $key => $query) {
@@ -109,7 +105,6 @@ try {
         $stmt->execute([$branchId]);
         $filterOptions[$key] = $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
-    $filterOptions['payment_statuses'] = ['pending', 'partial', 'paid', 'cancelled'];
 
     // Get initial data for the table
     $today = new DateTime();
@@ -117,7 +112,7 @@ try {
         'start_date' => $_GET['start_date'] ?? $today->format('Y-m-01'),
         'end_date' => $_GET['end_date'] ?? $today->format('Y-m-d')
     ];
-    $tests = getTestData($pdo, $branchId, $defaultFilters);
+    $inquiries = getInquiryData($pdo, $branchId, $defaultFilters);
 
     // Get branch name
     $stmtBranch = $pdo->prepare("SELECT branch_name FROM branches WHERE branch_id = :branch_id");
@@ -134,7 +129,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Reports</title>
+    <title>Inquiry Reports</title>
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/inquiry.css">
     <link rel="stylesheet" href="../css/reports.css">
@@ -190,12 +185,12 @@ try {
     <main class="main">
         <div class="dashboard-container">
             <div class="top-bar">
-                <h2>Test Reports</h2>
+                <h2>Inquiry Reports</h2>
                 <div class="toggle-container">
-                    <button class="toggle-btn active">Tests Report</button>
+                    <button class="toggle-btn" onclick="window.location.href = 'reports.php';">Tests Report</button>
                     <button class="toggle-btn" onclick="window.location.href = 'clinic_reports.php';">Registration Reports</button>
                     <button class="toggle-btn" onclick="window.location.href = 'patient_reports.php';">Patient Reports</button>
-                    <button class="toggle-btn" onclick="window.location.href = 'inquiry_reports.php';">Inquiry Reports</button>
+                    <button class="toggle-btn active">Inquiry Reports</button>
                 </div>
             </div>
 
@@ -208,27 +203,21 @@ try {
                         <input type="date" id="end_date" name="end_date" value="<?= htmlspecialchars($defaultFilters['end_date']) ?>">
                     </div>
                     <div>
-                        <select name="test_name" id="test_name">
-                            <option value="">All Test Names</option>
-                            <?php foreach ($filterOptions['test_names'] as $option) : ?>
-                                <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars($option) ?></option>
+                        <select name="referralSource" id="referralSource">
+                            <option value="">All Sources</option>
+                            <?php foreach ($filterOptions['sources'] as $option) : ?>
+                                <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $option))) ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <select name="referred_by" id="referred_by">
-                            <option value="">All Referrers</option>
-                            <?php foreach ($filterOptions['referred_by_list'] as $option) : ?>
-                                <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars($option) ?></option>
+                        <select name="chief_complain" id="chief_complain">
+                            <option value="">All Conditions</option>
+                            <?php foreach ($filterOptions['complains'] as $option) : ?>
+                                <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $option))) ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <select name="test_done_by" id="test_done_by">
-                            <option value="">All Performers</option>
-                            <?php foreach ($filterOptions['test_done_by_list'] as $option) : ?>
-                                <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars($option) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <select name="payment_status" id="payment_status">
-                            <option value="">All Payment Statuses</option>
-                            <?php foreach ($filterOptions['payment_statuses'] as $option) : ?>
+                        <select name="status" id="status">
+                            <option value="">All Statuses</option>
+                            <?php foreach ($filterOptions['statuses'] as $option) : ?>
                                 <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars(ucfirst($option)) ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -237,8 +226,8 @@ try {
                         <button type="button" id="apply-filter-btn" class="btn-filter">
                             <i class="fa-solid fa-filter"></i> Apply Filter
                         </button>
-                        <button type="button" id="apply-filter-btn" class="btn-filter" onclick="window.location.href='reports.php'">
-                            <i class="fa-solid fa-rotate-right"></i>Reset
+                        <button type="button" class="btn-filter" onclick="window.location.href='inquiry_reports.php'">
+                            <i class="fa-solid fa-rotate-right"></i> Reset
                         </button>
                     </div>
                 </form>
@@ -249,37 +238,35 @@ try {
 
         <div class="table-container modern-table">
             <div id="loader" class="loader" style="display: none;">Loading...</div>
-            <table id="testsReportTable">
+            <table id="inquiryReportTable">
                 <thead>
                     <tr>
-                        <th>Test Date</th>
-                        <th>Patient Name</th>
-                        <th>Test Name</th>
-                        <th>Referred By</th>
-                        <th>Performed By</th>
-                        <th>Amount</th>
-                        <th>Paid</th>
-                        <th>Due</th>
-                        <th>Payment Status</th>
+                        <th>Inquiry Date</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Source</th>
+                        <th>Condition</th>
+                        <th>Phone</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody id="report-tbody">
-                    <?php if (empty($tests)) : ?>
+                    <?php if (empty($inquiries)) : ?>
                         <tr>
-                            <td colspan="9" style="text-align: center;">No test records found for the default period.</td>
+                            <td colspan="8" style="text-align: center;">No inquiry records found for the selected period.</td>
                         </tr>
                     <?php else : ?>
-                        <?php foreach ($tests as $test) : ?>
+                        <?php foreach ($inquiries as $inquiry) : ?>
                             <tr>
-                                <td><?= htmlspecialchars($test['assigned_test_date']) ?></td>
-                                <td><?= htmlspecialchars($test['patient_name']) ?></td>
-                                <td><?= htmlspecialchars($test['test_name']) ?></td>
-                                <td><?= htmlspecialchars($test['referred_by']) ?></td>
-                                <td><?= htmlspecialchars($test['test_done_by']) ?></td>
-                                <td><?= number_format((float)$test['total_amount'], 2) ?></td>
-                                <td><?= number_format((float)$test['advance_amount'], 2) ?></td>
-                                <td><?= number_format((float)$test['due_amount'], 2) ?></td>
-                                <td><span class="status-pill status-<?= htmlspecialchars(strtolower($test['payment_status'])) ?>"><?= ucfirst(htmlspecialchars($test['payment_status'])) ?></span></td>
+                                <td><?= htmlspecialchars(date('Y-m-d', strtotime($inquiry['created_at']))) ?></td>
+                                <td><?= htmlspecialchars($inquiry['name']) ?></td>
+                                <td><?= htmlspecialchars((string)$inquiry['age']) ?></td>
+                                <td><?= htmlspecialchars($inquiry['gender']) ?></td>
+                                <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $inquiry['referralSource']))) ?></td>
+                                <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $inquiry['chief_complain']))) ?></td>
+                                <td><?= htmlspecialchars($inquiry['phone_number']) ?></td>
+                                <td><span class="status-pill status-<?= htmlspecialchars(strtolower($inquiry['status'])) ?>"><?= htmlspecialchars(ucfirst($inquiry['status'])) ?></span></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -291,7 +278,7 @@ try {
 
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
-    <script src="../js/reports.js"></script>
+    <script src="../js/inquiry_reports.js"></script>
 </body>
 
 </html>

@@ -1,5 +1,7 @@
 <?php
 require_once '../../common/db.php';
+require_once '../../common/logger.php';
+
 session_start();
 header('Content-Type: application/json');
 
@@ -10,11 +12,13 @@ try {
         throw new Exception("Required fields are missing.");
     }
 
-    // Get branch_id from session
-    if (!isset($_SESSION['branch_id'])) {
-        throw new Exception("Branch ID not found in session.");
+    // Get session variables for logging
+    if (!isset($_SESSION['branch_id']) || !isset($_SESSION['uid']) || !isset($_SESSION['username'])) {
+        throw new Exception("User session details are incomplete.");
     }
     $branch_id = $_SESSION['branch_id'];
+    $user_id = $_SESSION['uid'];
+    $username = $_SESSION['username'];
 
     $stmt = $pdo->prepare("
         INSERT INTO quick_inquiry 
@@ -34,7 +38,30 @@ try {
         $branch_id
     ]);
 
+    // 2. Logging the successful creation
+    $newInquiryId = $pdo->lastInsertId();
+    $logDetailsAfter = [
+        'name' => $data['patient_name'],
+        'age' => $data['age'],
+        'phone_number' => $data['phone'],
+        'referralSource' => $data['referralSource'] ?? 'self'
+    ];
+
+    log_activity(
+        $pdo,
+        $user_id,
+        $username,
+        $branch_id,
+        'CREATE',
+        'quick_inquiry',
+        (int)$newInquiryId,
+        null, // details_before is null for a new record
+        $logDetailsAfter // details_after contains the new data
+    );
+
+
     echo json_encode(["success" => true, "message" => "Inquiry saved successfully."]);
 } catch (Exception $e) {
+    // Note: Logging is not performed if an exception is caught before the DB insert.
     echo json_encode(["success" => false, "message" => $e->getMessage()]);
 }

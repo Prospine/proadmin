@@ -32,7 +32,7 @@ function getRegistrationData($pdo, $branchId, $filters)
     // Base SQL query for the registration table
     $sql = "SELECT 
                 r.appointment_date, r.patient_name, r.age, r.gender,
-                r.chief_complain, r.referralSource, r.consultation_type,
+                r.chief_complain, r.referralSource, r.reffered_by, r.consultation_type,
                 r.consultation_amount, r.payment_method, r.status
             FROM registration r";
 
@@ -56,6 +56,10 @@ function getRegistrationData($pdo, $branchId, $filters)
     if (!empty($filters['referralSource'])) {
         $whereClauses[] = 'r.referralSource = :referralSource';
         $params[':referralSource'] = $filters['referralSource'];
+    }
+    if (!empty($filters['reffered_by'])) {
+        $whereClauses[] = 'r.reffered_by = :reffered_by';
+        $params[':reffered_by'] = $filters['reffered_by'];
     }
     if (!empty($filters['consultation_type'])) {
         $whereClauses[] = 'r.consultation_type = :consultation_type';
@@ -103,6 +107,7 @@ try {
         'complains' => "SELECT DISTINCT chief_complain FROM registration WHERE branch_id = ? ORDER BY chief_complain",
         'sources' => "SELECT DISTINCT referralSource FROM registration WHERE branch_id = ? ORDER BY referralSource",
         'consultation_types' => "SELECT DISTINCT consultation_type FROM registration WHERE branch_id = ? ORDER BY consultation_type",
+        'reffered_by' => "SELECT DISTINCT reffered_by FROM registration WHERE branch_id = ? ORDER BY reffered_by",
         'statuses' => "SELECT DISTINCT status FROM registration WHERE branch_id = ? ORDER BY status"
     ];
 
@@ -221,6 +226,12 @@ try {
                                 <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $option))) ?></option>
                             <?php endforeach; ?>
                         </select>
+                        <select name="reffered_by" id="reffered_by">
+                            <option value="">All Referrals</option>
+                            <?php foreach ($filterOptions['reffered_by'] as $option) : ?>
+                                <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', ($option)))) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                         <select name="consultation_type" id="consultation_type">
                             <option value="">All Consultation Types</option>
                             <?php foreach ($filterOptions['consultation_types'] as $option) : ?>
@@ -255,9 +266,10 @@ try {
                             <th>Appt. Date</th>
                             <th>Patient Name</th>
                             <th>Age</th>
-                            <th>Gender</th>
+                            <!-- <th>Gender</th> -->
                             <th>Condition</th>
                             <th>Source</th>
+                            <th>Referred By</th>
                             <th>Consultation</th>
                             <th>Amount</th>
                             <th>Pay Mode</th>
@@ -275,9 +287,10 @@ try {
                                     <td><?= htmlspecialchars($reg['appointment_date']) ?></td>
                                     <td><?= htmlspecialchars($reg['patient_name']) ?></td>
                                     <td><?= htmlspecialchars((string)$reg['age']) ?></td>
-                                    <td><?= htmlspecialchars($reg['gender']) ?></td>
+                                    <!-- <td><?= htmlspecialchars($reg['gender']) ?></td> -->
                                     <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $reg['chief_complain']))) ?></td>
                                     <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $reg['referralSource']))) ?></td>
+                                    <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $reg['reffered_by']))) ?></td>
                                     <td><?= htmlspecialchars(ucfirst(str_replace('-', ' ', $reg['consultation_type']))) ?></td>
                                     <td><?= number_format((float)$reg['consultation_amount'], 2) ?></td>
                                     <td><?= htmlspecialchars(ucfirst($reg['payment_method'])) ?></td>

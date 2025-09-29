@@ -325,11 +325,20 @@ $success = false;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="../css/dashboard.css">
-    <!-- <link rel="stylesheet" href="../css/dark.css"> -->
+    <link rel="stylesheet" href="../css/chat.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
     <style>
+        .heaad {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
+        .icon-btn3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -354,10 +363,10 @@ $success = false;
             </div>
         </nav>
         <div class="nav-actions">
-            <div class="icon-btn" title="Settings"><?php echo $branchName; ?> Branch</div>
             <div class="icon-btn" id="theme-toggle">
                 <i id="theme-icon" class="fa-solid fa-moon"></i>
             </div>
+            <div class="inbox icon-btn icon-btn2" title="Inbox" onclick="openInbox()"><i class="fa-solid fa-inbox"></i></div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
         </div>
@@ -384,9 +393,44 @@ $success = false;
             </ul>
         </div>
     </div>
+
+    <div class="chat-inbox" id="myInbox">
+        <div class="chat-container">
+            <!-- Left Panel: User List -->
+            <div class="chat-sidebar">
+                <div class="chat-sidebar-header">
+                    <input type="text" id="chat-user-search" placeholder="Search users...">
+                    <span class="closebtn" onclick="closeInbox()">&times;</span>
+                </div>
+                <div class="chat-user-list" id="chat-user-list">
+                    <!-- User list will be populated by JavaScript -->
+                    <div class="chat-loader">Loading users...</div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Chat Interface -->
+            <div class="chat-main">
+                <div class="chat-header" id="chat-header">
+                    <!-- Chat partner's name will appear here -->
+                    <div class="chat-welcome-message">Select a user to start chatting</div>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <!-- Messages will be loaded here -->
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-message-input" placeholder="Type your message..." disabled>
+                    <button id="chat-send-btn" disabled><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <main>
         <div class="content">
-            <div class="card-header2"><?php echo $todayDisplay; ?></div>
+            <div class="heaad">
+                <div class="card-header2"><span id="datetime"><?php echo date('Y-m-d h:i:s A'); ?></span></div>
+                <div class="icon-btn icon-btn3" title="Branch" style="font-size: 14px;"><?php echo $branchName; ?> Branch</div>
+            </div>
             <div class="cards">
                 <div class="card">
                     <div class="card-header-flex">
@@ -402,8 +446,6 @@ $success = false;
                     <div class="card-body2">
                         <div class="card-title">Today's Appointments: <?php echo $todayAppointments; ?></div>
                         <div class="card-title">Today's Appointment Requests: <?php echo $todayAppointmentsReq; ?></div>
-                        <div class="card-sub">Total Appointments: <?php echo $totalAppointments; ?></div>
-                        <div class="card-sub">Total Appointments Requests: <?php echo $totalAppointmentsReq; ?></div>
                     </div>
                 </div>
                 <div class="card">
@@ -932,6 +974,13 @@ $success = false;
 
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
+
+    <script>
+        const currentUserId = <?= (int)($_SESSION['uid'] ?? 0) ?>;
+    </script>
+
+    <script src="../js/chat.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             // ==========================================================
@@ -992,7 +1041,7 @@ $success = false;
                             setTimeout(() => {
                                 window.location.reload();
                             }, 3000);
-                            
+
                         } else {
                             showToast(result.message || "Submission failed.", "error");
                         }
@@ -1009,9 +1058,7 @@ $success = false;
             attachFormHandler("uniqueInquiryForm", "../api/inquiry_submission.php", "Inquiry submitted successfully!");
             attachFormHandler("uniqueTestForm", "../api/inquiry_test_submission.php", "Test submitted successfully!");
             attachFormHandler("inquiryForm", "../api/registration_submission.php", "Registration submitted successfully!");
-            // ==========================================================
-            // 4. PHP Session-based Toast (Initial Load)
-            // ==========================================================
+        
             <?php if (isset($_SESSION['success'])): ?>
                 showToast("<?= htmlspecialchars($_SESSION['success']) ?>", 'success');
                 <?php unset($_SESSION['success']); ?>
@@ -1024,39 +1071,82 @@ $success = false;
                 unset($_SESSION['errors']); ?>
             <?php endif; ?>
 
-            // 4. Get Time slots
-
-
+            // ==========================================================
+            // 4. Time Slot Management (NOW DYNAMIC!)
+            // ==========================================================
+            const dateInput = document.querySelector("input[name='appointment_date']");
             const slotSelect = document.getElementById("appointment_time");
 
-            fetch("../api/get_slots.php")
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        data.slots.forEach(slot => {
-                            const opt = document.createElement("option");
-                            opt.value = slot.time;
-                            opt.textContent = slot.label;
-                            if (slot.disabled) {
-                                opt.disabled = true;
-                                opt.textContent += " (Booked)";
-                            }
-                            slotSelect.appendChild(opt);
-                        });
-                    } else {
-                        console.error(data.message);
-                    }
-                })
-                .catch(err => console.error("Error fetching slots:", err));
+            /**
+             * Fetches and populates time slots for a specific date.
+             * @param {string} dateString - The date in 'YYYY-MM-DD' format.
+             */
+            function fetchSlotsForDate(dateString) {
+                if (!dateString || !slotSelect) return; // Don't run if there's no date or select box
+
+                // Clear existing options and show a loading state
+                slotSelect.innerHTML = '<option>Loading slots...</option>';
+
+                // Fetch slots for the given date
+                fetch(`../api/get_slots.php?date=${dateString}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        // Clear the loading message
+                        slotSelect.innerHTML = '';
+
+                        if (data.success && data.slots.length > 0) {
+                            data.slots.forEach(slot => {
+                                const opt = document.createElement("option");
+                                opt.value = slot.time;
+                                opt.textContent = slot.label;
+                                if (slot.disabled) {
+                                    opt.disabled = true;
+                                    opt.textContent += " (Booked)";
+                                }
+                                slotSelect.appendChild(opt);
+                            });
+                        } else {
+                            // Handle cases with no slots or an error
+                            const errorOption = document.createElement("option");
+                            errorOption.textContent = data.message || "No slots available.";
+                            errorOption.disabled = true;
+                            slotSelect.appendChild(errorOption);
+                            console.error(data.message);
+                        }
+                    })
+                    .catch(err => {
+                        slotSelect.innerHTML = '<option>Error loading slots.</option>';
+                        console.error("Error fetching slots:", err);
+                    });
+            }
+
+            // --- Attach the Event Listener ---
+            // When the user picks a new date, re-fetch the slots.
+            dateInput.addEventListener('change', (event) => {
+                fetchSlotsForDate(event.target.value);
+            });
+
+            // --- Initial Load ---
+            // When the page first loads, set today's date and fetch slots for today.
+            const today = new Date().toISOString().split('T')[0]; // Gets today's date as 'YYYY-MM-DD'
+            dateInput.value = today; // Set the input to today by default
+            dateInput.min = today; // Optional: prevent booking for past dates
+            fetchSlotsForDate(today);
 
 
+            function updateDateTime() {
+                var now = new Date();
+                var datetimeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                document.getElementById('datetime').textContent = datetimeString;
+            }
+
+            setInterval(updateDateTime, 1000); // Update every second
             // ==========================================================
             // 5. Final touches
             // ==========================================================
             document.body.classList.add("loaded");
         });
     </script>
-
 </body>
 
 </html>

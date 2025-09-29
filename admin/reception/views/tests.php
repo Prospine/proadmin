@@ -144,7 +144,7 @@ try {
                             <tr>
                                 <td><?= (int)$row['test_id'] ?></td>
                                 <td><?= htmlspecialchars($row['patient_name']) ?></td>
-                                <td><?= htmlspecialchars($row['test_name']) ?></td>
+                                <td><?= htmlspecialchars(strtoupper(str_replace('_', ' ', (string) $row['test_name']))) ?></td>
                                 <td>₹<?= number_format((float)$row['total_amount'], 2) ?></td>
                                 <td>₹<?= number_format((float)$row['advance_amount'], 2) ?></td>
                                 <td>₹<?= number_format((float)$row['discount'], 2) ?></td>

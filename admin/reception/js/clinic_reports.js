@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     <td>${escapeHTML(reg.gender)}</td>
                                     <td>${ucfirst(escapeHTML(reg.chief_complain).replace(/_/g, ' '))}</td>
                                     <td>${ucfirst(escapeHTML(reg.referralSource).replace(/_/g, ' '))}</td>
+                                    <td>${ucfirst(escapeHTML(reg.reffered_by).replace(/_/g, ' '))}</td>
                                     <td>${ucfirst(escapeHTML(reg.consultation_type).replace(/-/g, ' '))}</td>
                                     <td>${parseFloat(reg.consultation_amount).toFixed(2)}</td>
                                     <td>${ucfirst(escapeHTML(reg.payment_method))}</td>

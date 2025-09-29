@@ -42,10 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $paid_to = trim($_POST['paid_to'] ?? '');
     $description = trim($_POST['description'] ?? '');
     $amount = filter_var($_POST['amount'], FILTER_VALIDATE_FLOAT);
+    $payment_method = trim($_POST['payment_method'] ?? '');
     $amount_in_words = trim($_POST['amount_in_words'] ?? '');
 
     // Validation
-    if (empty($voucher_no) || empty($expense_date) || empty($paid_to) || empty($description) || $amount === false || $amount <= 0) {
+    if (empty($voucher_no) || empty($expense_date) || empty($paid_to) || empty($description) || $amount === false || $amount <= 0 || empty($payment_method)) {
         $errors[] = "Please fill out all fields correctly. Amount must be greater than zero.";
     }
 
@@ -61,8 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->beginTransaction();
 
             $stmt = $pdo->prepare(
-                "INSERT INTO expenses (branch_id, user_id, voucher_no, expense_date, paid_to, description, amount, amount_in_words) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                "INSERT INTO expenses (branch_id, user_id, voucher_no, expense_date, paid_to, description, amount, amount_in_words, payment_method) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
             );
             $stmt->execute([
                 $branchId,
@@ -72,7 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $paid_to,
                 $description,
                 $amount,
-                $amount_in_words
+                $amount_in_words,
+                $payment_method
+
             ]);
             $newExpenseId = $pdo->lastInsertId();
 
@@ -81,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'voucher_no' => $voucher_no,
                 'paid_to' => $paid_to,
                 'amount' => $amount,
+                'payment_method' => $payment_method,
                 'status' => 'pending' // Initial status
             ];
             log_activity(
@@ -442,9 +446,22 @@ unset($_SESSION['errors'], $_SESSION['success']);
                             <label for="amount">Amount (₹) *</label>
                             <input type="number" id="amount" name="amount" step="0.01" min="0.01" required>
                         </div>
-                        <div class="form-group full-width">
+                        <div class="form-group">
                             <label for="amount_in_words">Amount in Words</label>
                             <input type="text" id="amount_in_words" name="amount_in_words" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="payment_method">Payment Method</label>
+                            <select id="payment_method" name="payment_method">
+                                <option value="cash">Cash</option>
+                                <option value="upi">UPI</option>
+                                <option value="cheque">Cheque</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="debit_card">Debit Card</option>
+                                <option value="net_banking">Net Banking</option>
+                                <option value="other">Other</option>
+                            </select>
                         </div>
                         <div class="form-group full-width">
                             <label for="description">Being (Description) *</label>
@@ -464,7 +481,10 @@ unset($_SESSION['errors'], $_SESSION['success']);
         <div class="dashboard-container">
             <div class="top-bar">
                 <h2>Manage Expenses</h2>
-                <button id="add-expense-btn" class="action-btn"><i class="fa fa-plus"></i> Add New Expense</button>
+                <div class="budget" style="display:flex; justify-content: space-between; width: 500px;">
+                    <p class="budget-text"> Budget Allocated Today : ₹1000</p>
+                    <button id="add-expense-btn" class="action-btn"><i class="fa fa-plus"></i> Add New Expense</button>
+                </div>
             </div>
 
             <?php if ($successMessage): ?>
@@ -491,6 +511,7 @@ unset($_SESSION['errors'], $_SESSION['success']);
                             <th>Description</th>
                             <th>Amount</th>
                             <th>Amount in Words</th>
+                            <th>Payment Method</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -508,6 +529,7 @@ unset($_SESSION['errors'], $_SESSION['success']);
                                     <td><?= htmlspecialchars($expense['description']) ?></td>
                                     <td><?= number_format((float)$expense['amount'], 2) ?></td>
                                     <td><?= htmlspecialchars($expense['amount_in_words']) ?></td>
+                                    <td><?= htmlspecialchars($expense['payment_method']) ?></td>
                                     <td><span class="status-pill status-<?= htmlspecialchars(strtolower($expense['status'])) ?>"><?= htmlspecialchars(ucfirst($expense['status'])) ?></span></td>
                                 </tr>
                             <?php endforeach; ?>

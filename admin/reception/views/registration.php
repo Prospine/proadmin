@@ -33,7 +33,7 @@ if (!$branchId) {
 try {
     // Fetch inquiries with prepared statement
     $stmt = $pdo->prepare("
-        SELECT registration_id, patient_name, phone_number, age, gender, chief_complain, consultation_amount, created_at, status 
+        SELECT registration_id, patient_name, phone_number, age, gender, chief_complain, reffered_by, consultation_amount, created_at, status 
         FROM registration 
         WHERE branch_id = :branch_id 
         ORDER BY created_at DESC
@@ -97,6 +97,11 @@ try {
             background-color: var(--card-bg2);
             color: var(--text-color);
         }
+
+        button {
+            position: relative;
+            width: auto;
+        }
     </style>
 </head>
 
@@ -156,9 +161,10 @@ try {
                         <tr>
                             <th data-key="id" class="sortable">ID <span class="sort-indicator"></span></th>
                             <th data-key="name" class="sortable">Name <span class="sort-indicator"></span></th>
-                            <th data-key="phone" class="sortable">Phone</th>
+                            <!-- <th data-key="phone" class="sortable">Phone</th> -->
                             <th data-key="age" class="sortable">Age</th>
                             <th data-key="gender" class="sortable">Gender</th>
+                            <th data-key="reffered_by" class="sortable">Reffered By</th>
                             <th data-key="conditionType" class="sortable">Condition Type</th>
                             <th data-key="consultation_amount" class="sortable">Amount</th>
                             <th data-key="created_at" class="sortable">Date</th>
@@ -173,9 +179,10 @@ try {
                                 <tr data-id="<?= htmlspecialchars((string) $row['registration_id'], ENT_QUOTES, 'UTF-8') ?>">
                                     <td><?= htmlspecialchars((string) $row['registration_id'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <td class="name"><?= htmlspecialchars($row['patient_name'], ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars($row['phone_number'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <!-- <td><?= htmlspecialchars($row['phone_number'], ENT_QUOTES, 'UTF-8') ?></td> -->
                                     <td><?= htmlspecialchars((string) $row['age'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <td><?= htmlspecialchars($row['gender'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><?= htmlspecialchars($row['reffered_by'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <td><?= htmlspecialchars($row['chief_complain'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <td class="numeric">₹ <?= htmlspecialchars((string) $row['consultation_amount'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <td><small><?= htmlspecialchars($row['created_at'], ENT_QUOTES, 'UTF-8') ?></small></td>
@@ -243,7 +250,7 @@ try {
                         <label class="treatment-option" data-cost="30000">
                             <input type="radio" name="treatmentType" value="package" required>
                             <div class="treatment-option-info">
-                                <h4>Package Treatment</h4>
+                                <h4>RSDT</h4>
                                 <p>₹30,000 for 21 days</p>
                             </div>
                         </label>

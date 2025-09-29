@@ -15,19 +15,33 @@ if (!isset($_SESSION['uid'], $_SESSION['branch_id'])) {
 }
 
 $branchId = $_SESSION['branch_id'];
-$today = date('Y-m-d');
+
+// --- MODIFICATION START ---
+// Get the date from the query parameter (e.g., ?date=2025-09-30).
+// If it's not provided, default to the current date.
+$selectedDate = $_GET['date'] ?? date('Y-m-d');
+
+// Basic validation to ensure it's a valid date format
+if (!DateTime::createFromFormat('Y-m-d', $selectedDate)) {
+    echo json_encode(['success' => false, 'message' => 'Invalid date format.']);
+    exit;
+}
+// --- MODIFICATION END ---
+
 
 try {
-    // Fetch filled slots for today (based on created_at date)
+    // Fetch filled slots for the SELECTED date.
+    // IMPORTANT: I've changed the query to check `appointment_date` instead of `created_at`.
+    // This is likely what you want. A registration created today could be for an appointment tomorrow.
     $stmt = $pdo->prepare("
         SELECT appointment_time 
         FROM registration 
-        WHERE DATE(created_at) = :today 
+        WHERE appointment_date = :selected_date -- Changed from DATE(created_at)
           AND branch_id = :branch_id
           AND appointment_time IS NOT NULL
     ");
     $stmt->execute([
-        ':today' => $today,
+        ':selected_date' => $selectedDate, // Changed from $today
         ':branch_id' => $branchId
     ]);
     $filledSlots = $stmt->fetchAll(PDO::FETCH_COLUMN);

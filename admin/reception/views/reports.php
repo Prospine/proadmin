@@ -273,9 +273,9 @@ try {
                             <tr>
                                 <td><?= htmlspecialchars($test['assigned_test_date']) ?></td>
                                 <td><?= htmlspecialchars($test['patient_name']) ?></td>
-                                <td><?= htmlspecialchars($test['test_name']) ?></td>
+                                <td><?= htmlspecialchars(strtoupper(str_replace('_', ' ', (string) $test['test_name']))) ?></td>
                                 <td><?= htmlspecialchars($test['referred_by']) ?></td>
-                                <td><?= htmlspecialchars($test['test_done_by']) ?></td>
+                                <td><?= htmlspecialchars(ucwords(str_replace('_', ' ', $test['test_done_by']))) ?></td>
                                 <td><?= number_format((float)$test['total_amount'], 2) ?></td>
                                 <td><?= number_format((float)$test['advance_amount'], 2) ?></td>
                                 <td><?= number_format((float)$test['due_amount'], 2) ?></td>

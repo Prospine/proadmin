@@ -219,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="info-item"><strong>Condition</strong><span>${safeText(data.chief_complain)}</span></div>
             <div class="info-item"><strong>Inquiry Type</strong><span>${safeText(data.consultation_type) || 'N/A'}</span></div>
             <div class="info-item"><strong>Source</strong><span>${safeText(data.referralSource) || 'N/A'}</span></div>
+            <div class="info-item"><strong>Referral By</strong><span>${safeText(data.reffered_by) || 'N/A'}</span></div>
             <div class="info-item"><strong>Consultation</strong><span>₹ ${safeText(data.consultation_amount)}</span></div>
             <div class="info-item"><strong>Payment</strong><span>${safeText(data.payment_method) || 'N/A'}</span></div>
             <div class="info-item"><strong>Doctor Notes</strong><span>${safeText(data.doctor_notes) || 'N/A'}</span></div>

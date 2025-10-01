@@ -32,7 +32,51 @@
     <div class="segment">
 
       <div class="log-entry">
-        <h2>v1.2.1 <span class="badge patch">Patch</span></h2>
+        <h2>v2.2.2 <span class="badge live">Feature</span></h2>
+        <div class="meta">
+          October 02, 2025 · New Feature & Critical Fixes ·
+          <a href="./views/schedule.php">View Feature</a>
+        </div>
+        <ul class="changes">
+          <li>
+            <span class="tag added">Added</span> <strong>Comprehensive Weekly Schedule Viewer:</strong> Implemented a
+            new, full-page scheduling interface to replace the basic dashboard widget. This provides staff with a
+            powerful tool for long-term planning and at-a-glance weekly availability.
+          </li>
+          <li>
+            <span class="tag improved">Improved</span> <strong>Intuitive 'Time-First' Layout:</strong> The schedule has
+            been pivoted to display time slots as rows and days of the week as columns. This new orientation is
+            optimized for a clinical workflow, making it easier to see how busy a specific day is and identify open
+            slots.
+          </li>
+          <li>
+            <span class="tag added">Added</span> <strong>Interactive Appointment Details:</strong> All appointments on
+            the schedule are now interactive. Clicking an appointment card opens a slide-out details drawer, which
+            fetches and displays critical patient information (UID, contact info, chief complaint, etc.) via a dedicated
+            API, enhancing staff efficiency.
+          </li>
+          <li>
+            <span class="tag fixed">Fixed</span> <strong>Critical Time Zone Discrepancy:</strong> Resolved a major bug
+            where the application would display the previous day's date after midnight IST due to the server running on
+            UTC. A global time zone setting (`Asia/Kolkata`) was implemented, ensuring date and time accuracy across the
+            entire platform and preventing future client-facing errors.
+          </li>
+          <li>
+            <span class="tag fixed">Fixed</span> <strong>Erratic Week Navigation:</strong> Corrected a flawed date
+            calculation that caused the "Previous Week" button to skip a full week when navigating from a Sunday. The
+            navigation logic is now explicit and reliable, providing a predictable user experience.
+          </li>
+          <li>
+            <span class="tag improved">Improved</span> <strong>Legacy Data Compatibility:</strong> The appointment
+            details API has been fortified with a fallback system. It can now fetch information for both modern patient
+            records using the new UID system and legacy records using their original registration ID, preventing errors
+            and ensuring a seamless experience for all data.
+          </li>
+        </ul>
+      </div>
+
+      <div class="log-entry">
+        <h2>v2.2.1 <span class="badge progress">Patch</span></h2>
         <div class="meta">
           September 30, 2025 · Features and Bug Fixes ·
           <a href="#">View Changes</a>

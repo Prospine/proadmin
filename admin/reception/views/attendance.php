@@ -85,276 +85,14 @@ try {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="../css/inquiry.css">
+    <link rel="stylesheet" href="../css/attendance.css">
 
     <style>
-        /* ---------- small page styles ---------- */
-        .date-picker-form {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 220px;
-        }
 
-        .date-picker-form label {
-            font-weight: 500;
-        }
-
-        .date-picker-form input[type="date"] {
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 16px;
-            font-size: 1rem;
-            box-shadow: none;
-        }
-
-        .dark-mode .date-picker-form input[type="date"] {
-            background-color: #333;
-            border-color: #555;
-            color: #fff;
-        }
-
-        /* ---------- Drawer & Calendar ---------- */
-        .drawer-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.45);
-            display: none;
-            /* toggled to flex when opening */
-            justify-content: flex-end;
-            z-index: 1200;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        .drawer-panel {
-            background: #fff;
-            width: 600px;
-            max-width: 95%;
-            height: 100%;
-            transform: translateX(100%);
-            /* hidden */
-            transition: transform 0.32s cubic-bezier(.2, .9, .2, 1);
-            display: flex;
-            flex-direction: column;
-            box-shadow: -18px 24px 60px rgba(11, 22, 40, 0.18);
-        }
-
-        .drawer-panel.is-open {
-            transform: translateX(0);
-        }
-
-        .drawer-header {
-            padding: 16px 20px;
-            background: #fafafa;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .drawer-header h2 {
-            margin: 0;
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #111827;
-        }
-
-        .drawer-close-btn {
-            background: #0f172a;
-            color: #fff;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .drawer-body {
-            padding: 18px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        /* Calendar header (month + nav) */
-        .calendar-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .month-nav {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .month-btn {
-            background: transparent;
-            border: 1px solid #e6e6e6;
-            padding: 6px 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            color: #000;
-        }
-
-        .month-label {
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        /* Calendar grid */
-        .calendar {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-            align-items: start;
-        }
-
-        .calendar .day-head {
-            font-size: 0.8rem;
-            text-align: center;
-            color: #6b7280;
-            font-weight: 600;
-        }
-
-        .date-cell {
-            height: 64px;
-            /* a little bigger */
-            min-height: 64px;
-            border-radius: 8px;
-            background: #f8fafc;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.12s ease, box-shadow 0.12s ease;
-            user-select: none;
-            position: relative;
-            padding: 6px;
-            font-weight: 600;
-            color: #0f172a;
-        }
-
-        .date-cell:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 18px rgba(13, 27, 41, 0.06);
-        }
-
-        .date-cell.empty {
-            background: transparent;
-            cursor: default;
-            box-shadow: none;
-            transform: none;
-        }
-
-        .date-cell .date-number {
-            font-size: 1rem;
-            line-height: 1;
-        }
-
-        .date-cell .date-sub {
-            font-size: 0.72rem;
-            color: #6b7280;
-            margin-top: 4px;
-            font-weight: 500;
-        }
-
-        .date-cell.attended {
-            background: linear-gradient(180deg, #ecfdf5, #bbf7d0);
-            border: 1px solid rgba(34, 197, 94, 0.18);
-            color: #064e3b;
-        }
-
-        .date-cell.selected {
-            outline: 3px solid rgba(37, 99, 235, 0.16);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.12);
-        }
-
-        /* Details box */
-        #attendance-date-details {
-            margin-top: 6px;
-            padding: 14px;
-            border-radius: 8px;
-            background: #fbfdff;
-            border: 1px solid #eef2ff;
-            display: none;
-        }
-
-        #attendance-date-details h3 {
-            margin: 0 0 8px 0;
-            font-size: 1rem;
-        }
-
-        #attendance-date-details p {
-            margin: 0;
-            color: #374151;
-            font-size: 0.95rem;
-        }
-
-        /* small responsive tweak */
-        @media (max-width: 640px) {
-            .drawer-panel {
-                width: 95%;
-            }
-
-            .date-cell {
-                height: 56px;
-            }
-        }
-
-        /* dark mode support */
-        body.dark .drawer-panel {
-            background: #3a3a3aff;
-            color: #e6eef8;
-        }
-
-        body.dark .drawer-header {
-            background: #071126;
-            border-bottom-color: #09203a;
-
-        }
-
-        body.dark .drawer-header h2 {
-            color: #fff;
-        }
-
-        body.dark .date-cell {
-            background: #071826;
-            color: #cfe7ff;
-        }
-
-        body.dark .date-cell.empty {
-            background: transparent;
-        }
-
-        body.dark .date-cell.attended {
-            background: linear-gradient(180deg, #042e1a, #0b5130);
-            color: #d2f8e2;
-            border-color: rgba(34, 197, 94, 0.08);
-        }
-
-        body.dark #attendance-date-details {
-            background: #061925;
-            border-color: #083046;
-            color: #d7e9ff;
-        }
-
-        body.dark #attendance-date-details p{
-            color: #ddd;
-        }
     </style>
 </head>
 
-<body>
+<body data-page-date="<?php echo htmlspecialchars($selectedDate); ?>">
     <header>
         <div class="logo-container">
             <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
@@ -492,6 +230,7 @@ try {
     </div>
     <script src="../js/dashboard.js"></script>
     <script src="../js/theme.js"></script>
+    <script src="../js/attendance.js"></script>
 
     <script>
         (function() {
@@ -639,7 +378,7 @@ try {
                     titleEl.textContent = 'Loading…';
                     openDrawer();
 
-                    const response = await fetch(`/proadmin/admin/reception/api/get_attendance_history.php?id=${encodeURIComponent(patientId)}`);
+                    const response = await fetch(`../api/get_attendance_history.php?id=${encodeURIComponent(patientId)}`);
                     if (!response.ok) throw new Error('Network response was not ok');
 
                     const data = await response.json();

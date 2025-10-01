@@ -119,9 +119,7 @@ async function fetchMessages(partnerId) {
     }
 }
 
-// 3. Render the messages in the chat window
 function renderMessages(messages) {
-    // We also need currentUserId here.
     chatMessagesContainer.innerHTML = '';
     if (messages.length === 0) {
         chatMessagesContainer.innerHTML = `<div class="chat-loader">No messages yet. Start the conversation!</div>`;
@@ -137,10 +135,20 @@ function renderMessages(messages) {
             minute: '2-digit'
         });
 
+        // ✅ Ticks (only for sender messages)
+        let ticks = '';
+        if (isSender) {
+            if (parseInt(msg.is_read) === 1) {
+                ticks = `<span class="ticks read">✔✔</span>`; // Blue double ticks
+            } else {
+                ticks = `<span class="ticks unread">✔</span>`; // Grey single tick
+            }
+        }
+
         messageElement.innerHTML = `
-<div class="message-bubble">${msg.message_text}</div>
-<div class="message-time">${time}</div>
-`;
+            <div class="message-bubble">${msg.message_text}</div>
+            <div class="message-time">${time} ${ticks}</div>
+        `;
         chatMessagesContainer.appendChild(messageElement);
     });
     chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;

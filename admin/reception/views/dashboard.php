@@ -328,18 +328,6 @@ $success = false;
     <link rel="stylesheet" href="../css/chat.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
-    <style>
-        .heaad {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .icon-btn3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-    </style>
 </head>
 
 <body>
@@ -350,7 +338,7 @@ $success = false;
 
         <nav>
             <div class="nav-links">
-                <a href="#" class="active">Dashboard</a>
+                <a href="dashboard.php" class="active">Dashboard</a>
                 <a href="inquiry.php">Inquiry</a>
                 <a href="registration.php">Registration</a>
                 <a href="patients.php">Patients</a>
@@ -412,7 +400,10 @@ $success = false;
             <div class="chat-main">
                 <div class="chat-header" id="chat-header">
                     <!-- Chat partner's name will appear here -->
-                    <div class="chat-welcome-message">Select a user to start chatting</div>
+                    <!-- <div class="chat-welcome-message">Select a user to start chatting</div> -->
+                    <div class="encryption-status">
+                        <i class="fa-solid fa-lock"></i> Messages are end-to-end encrypted
+                    </div>
                 </div>
                 <div class="chat-messages" id="chat-messages">
                     <!-- Messages will be loaded here -->
@@ -522,7 +513,7 @@ $success = false;
         <section class="schedule">
             <div class="schedule-header">
                 <h2>Schedule</h2>
-                <span class="arrow">↗</span>
+                <span class="arrow" onclick="window.location.href='schedule.php';">↗</span>
             </div>
 
             <div class="text">
@@ -550,8 +541,6 @@ $success = false;
                 <?php endif; ?>
             </div>
         </section>
-
-
 
         <section class="form">
             <div class="form-box2 form-wrapper">
@@ -1058,7 +1047,7 @@ $success = false;
             attachFormHandler("uniqueInquiryForm", "../api/inquiry_submission.php", "Inquiry submitted successfully!");
             attachFormHandler("uniqueTestForm", "../api/inquiry_test_submission.php", "Test submitted successfully!");
             attachFormHandler("inquiryForm", "../api/registration_submission.php", "Registration submitted successfully!");
-        
+
             <?php if (isset($_SESSION['success'])): ?>
                 showToast("<?= htmlspecialchars($_SESSION['success']) ?>", 'success');
                 <?php unset($_SESSION['success']); ?>

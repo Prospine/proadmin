@@ -272,6 +272,51 @@ body.dark .chat-input-area {
   margin-left: 5px;
 }
 
+.heaad {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icon-btn3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.encryption-status {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  /* Pill shape */
+  background-color: #e6f7ed;
+  /* Light green */
+  color: #1a7f37;
+  /* Dark green */
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid #b7e1c5;
+  margin-top: 5px;
+}
+
+.ticks {
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+.ticks.unread {
+  color: grey;
+  /* Single grey tick */
+}
+
+.ticks.read {
+  color: dodgerblue;
+  /* Double blue ticks */
+}
+
 /* ======================================== */
 /* RESPONSIVE MEDIA QUERIES                */
 /* ======================================== */

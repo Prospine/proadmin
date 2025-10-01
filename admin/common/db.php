@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+// Set the default timezone to India Standard Time for all date/time functions
+date_default_timezone_set('Asia/Kolkata');
+
+
 $DB_DSN  = 'mysql:host=localhost;dbname=prospine;charset=utf8mb4';
 $DB_USER = 'root';
 $DB_PASS = '';

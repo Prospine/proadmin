@@ -1,0 +1,382 @@
+/* ===== Modal Body ===== */
+.modal-body {
+  padding: 24px;
+  background: #f9fafb;
+  /* Light gray background */
+  border-radius: 12px;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+body.dark .modal-body {
+  background: #202020ff;
+  color: #fff;
+}
+
+/* ===== Form Grid: 2 inputs per row ===== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  /* border: 1px solid; */
+  width: 90%;
+}
+
+/* Full-width fields (like description) */
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+/* ===== Form Groups ===== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Labels ===== */
+.form-group label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+body.dark .form-group label {
+  color: #fff;
+}
+
+/* ===== Inputs & Textarea ===== */
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #fff;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Focus Effect */
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* ===== Button Styling ===== */
+.form-actions {
+  margin-top: 24px;
+  text-align: right;
+}
+
+.action-btn {
+  background: linear-gradient(135deg, #7e7e7eff, #000000ff);
+  color: #fff;
+  font-weight: 600;
+  /* padding: 5px 10px; */
+  width: 180px;
+  /* height: 30px; */
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+body.dark .action-btn {
+  background: linear-gradient(135deg, #dfdfdfff, #a0a0a0ff);
+  color: #000000ff;
+  font-weight: 600;
+}
+
+.action-btn:hover {
+  background: linear-gradient(135deg, #000000ff, #858585ff);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.4);
+}
+
+.action-btn:active {
+  transform: scale(0.97);
+}
+
+/* ===== Message styles for success/error alerts ===== */
+.message {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  color: #fff;
+}
+
+.message.success {
+  background-color: #28a745;
+}
+
+.message.error {
+  background-color: #dc3545;
+}
+
+/* ===== Modal Popup Styles ===== */
+.modal-overlay {
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 1.5rem 2rem;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s;
+}
+
+body.dark .modal-content {
+  background-color: #202020ff;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--secondary-text-color, #6b7280);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-modal-btn:hover {
+  color: var(--text-color, #111827);
+}
+
+body.dark .close-modal-btn:hover {
+  color: #000;
+}
+
+/* ===== Animation ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== Responsive: stack inputs on small screens ===== */
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Make action buttons in table more compact */
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: center;
+}
+
+.action-buttons .action-btn {
+  height: 30px;
+  padding: 6px 12px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.action-buttons .action-btn i {
+  margin-right: 5px;
+}
+
+/* Make view modal larger for details */
+.modal-content.large {
+  max-width: 800px;
+}
+
+/* Styling for the View Details Modal Body */
+#view-modal-body .view-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+#view-modal-body .view-item {
+  background-color: var(--background-color-light);
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+#view-modal-body .view-item.full-width {
+  grid-column: 1 / -1;
+}
+
+#view-modal-body .view-item strong {
+  display: block;
+  color: var(--primary-color);
+  margin-bottom: 6px;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+#view-modal-body .view-item span,
+#view-modal-body .view-item p {
+  font-size: 15px;
+  margin: 0;
+}
+
+/* Styling for the bill image preview */
+.view-section {
+  margin-top: 20px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 20px;
+}
+
+.view-section h4 {
+  margin: 0 0 15px 0;
+  color: var(--text-color);
+}
+
+.bill-image-preview {
+  max-width: 100%;
+  height: auto;
+  max-height: 400px;
+  /* Limit height */
+  display: block;
+  margin: 0 auto;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  object-fit: contain;
+  /* ensures image aspect ratio is maintained */
+}
+
+/* Styling for the top bar budget container */
+.budget-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.budget-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  background-color: var(--background-color-light);
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.budget-text .budget-text span.positive {
+  color: var(--color-success);
+  font-weight: bold;
+}
+
+.budget-text span.negative {
+  color: #dc3545;
+  /* A standard bootstrap danger red */
+  font-weight: bold;
+}
+
+.budget-warning {
+  width: auto;
+  border-radius: 8px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  text-align: center;
+  justify-content: center;
+  padding: 10px;
+  background-color: #ee394cff;
+  color: #fff;
+  /* A standard bootstrap danger red */
+  font-weight: 700;
+  font-size: 1rem;
+  /* margin: 0; */
+}
+
+/* --- NEW: Styling for the Image Preview Modal --- */
+
+.modal-overlay.image-modal {
+  background-color: rgba(0, 0, 0, 0.85);
+  /* Darker overlay for focus */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.image-modal #modal-image-content {
+  display: block;
+  max-width: 90vw;
+  /* 90% of viewport width */
+  max-height: 90vh;
+  /* 90% of viewport height */
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  /* Maintain aspect ratio */
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.image-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  font-size: 40px;
+  color: white;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  text-shadow: 0 0 10px black;
+}
+
+.image-close-btn:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+/* Add a pointer cursor to the thumbnail to show it's clickable */
+.bill-image-preview {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bill-image-preview:hover {
+  transform: scale(1.03);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}

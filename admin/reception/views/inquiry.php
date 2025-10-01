@@ -405,14 +405,14 @@ ORDER BY created_at DESC
                                 <option value="Virtual/Online">Virtual/Online</option>
                             </select>
                         </div>
-                        <div class="detail-item">
+                        <div>
                             <label>Appointment Date</label>
                             <input type="date" name="appointment_date">
                         </div>
+
                         <div class="select-wrapper">
                             <label>Time Slot *</label>
                             <select name="appointment_time" id="appointment_time" required>
-
                             </select>
                         </div>
                     </div>
@@ -607,6 +607,67 @@ ORDER BY created_at DESC
                 }
             })
             .catch(err => console.error("Error fetching slots:", err));
+
+        // ==========================================================
+        // 4. Time Slot Management (NOW DYNAMIC!)
+        // ==========================================================
+        const dateInput = document.querySelector("input[name='appointment_date']");
+
+        /**
+         * Fetches and populates time slots for a specific date.
+         * @param {string} dateString - The date in 'YYYY-MM-DD' format.
+         */
+        function fetchSlotsForDate(dateString) {
+            if (!dateString || !slotSelect) return; // Don't run if there's no date or select box
+
+            // Clear existing options and show a loading state
+            slotSelect.innerHTML = '<option>Loading slots...</option>';
+
+            // Fetch slots for the given date
+            fetch(`../api/get_slots.php?date=${dateString}`)
+                .then(res => res.json())
+                .then(data => {
+                    // Clear the loading message
+                    slotSelect.innerHTML = '';
+
+                    if (data.success && data.slots.length > 0) {
+                        data.slots.forEach(slot => {
+                            const opt = document.createElement("option");
+                            opt.value = slot.time;
+                            opt.textContent = slot.label;
+                            if (slot.disabled) {
+                                opt.disabled = true;
+                                opt.textContent += " (Booked)";
+                            }
+                            slotSelect.appendChild(opt);
+                        });
+                    } else {
+                        // Handle cases with no slots or an error
+                        const errorOption = document.createElement("option");
+                        errorOption.textContent = data.message || "No slots available.";
+                        errorOption.disabled = true;
+                        slotSelect.appendChild(errorOption);
+                        console.error(data.message);
+                    }
+                })
+                .catch(err => {
+                    slotSelect.innerHTML = '<option>Error loading slots.</option>';
+                    console.error("Error fetching slots:", err);
+                });
+        }
+
+        // --- Attach the Event Listener ---
+        // When the user picks a new date, re-fetch the slots.
+        dateInput.addEventListener('change', (event) => {
+            fetchSlotsForDate(event.target.value);
+        });
+
+        // --- Initial Load ---
+        // When the page first loads, set today's date and fetch slots for today.
+        const today = new Date().toISOString().split('T')[0]; // Gets today's date as 'YYYY-MM-DD'
+        dateInput.value = today; // Set the input to today by default
+        dateInput.min = today; // Optional: prevent booking for past dates
+        fetchSlotsForDate(today);
     </script>
 </body>
 

@@ -1,0 +1,316 @@
+/* --- Styles now use variables from dashboard.css and support the new layout --- */
+body {
+  background-color: var(--bg-secondary);
+}
+
+.main {
+  padding-top: 20px;
+}
+
+.schedule-container {
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.schedule-nav {
+  display: flex;
+  gap: 10px;
+}
+
+.schedule-nav a {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--color-accent);
+  color: var(--text-on-accent);
+  border-radius: var(--border-radius-nav);
+  text-decoration: none;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.schedule-nav a:hover {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.schedule-nav a.today-btn {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.schedule-nav a.today-btn:hover {
+  background-color: var(--color-accent);
+  color: var(--text-on-accent);
+  border-color: var(--text-on-accent);
+}
+
+.schedule-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.schedule-grid-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--border-color-primary);
+  border-radius: var(--border-radius-card);
+  background-color: var(--bg-primary);
+  box-shadow: var(--shadow-md);
+  padding: 10px;
+}
+
+.schedule-grid {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  min-width: 1200px;
+  /* Still useful for smaller screens */
+}
+
+.schedule-grid th,
+.schedule-grid td {
+  border: 1px solid var(--border-color-primary);
+  padding: 4px;
+  text-align: center;
+  vertical-align: top;
+  /* Changed to top for better alignment */
+  font-size: 0.9rem;
+  height: 30px;
+  /* Give cells a consistent height */
+}
+
+.schedule-grid thead th {
+  background-color: var(--bg-tertiary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 12px 8px;
+}
+
+/* NEW STYLES FOR PIVOTED TABLE */
+.time-header-col {
+  width: 150px;
+  font-weight: 600;
+}
+
+.date-header-col {
+  width: 1fr;
+  /* Let the date columns be flexible */
+}
+
+.time-row-col {
+  font-weight: 600;
+  font-size: 0.85rem;
+  background-color: var(--bg-tertiary);
+}
+
+.appointment-card {
+  padding: 8px;
+  /* Slightly smaller padding */
+  border-radius: var(--border-radius-btn);
+  margin: 0;
+  text-align: left;
+  font-size: 0.8rem;
+  color: #fff;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  border-left: 4px solid rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.appointment-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.appointment-uid {
+  font-weight: bold;
+  opacity: 0.8;
+  font-size: 0.7rem;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.appointment-card.pending {
+  background-color: var(--status-pending);
+  border-left-color: #d68910;
+}
+
+.appointment-card.consulted {
+  background-color: var(--status-consulted);
+  border-left-color: #239b56;
+}
+
+.appointment-card.closed {
+  background-color: var(--status-cancelled);
+  border-left-color: #c0392b;
+}
+
+/* NEW: Highlight the whole "today" column */
+.schedule-grid .is-today {
+  background-color: #e7f3ff;
+}
+
+body.dark .schedule-grid .is-today {
+  background-color: #2a3a5e;
+}
+
+.schedule-grid th.is-today {
+  color: var(--color-primary);
+  border-bottom: 3px solid var(--color-primary);
+}
+
+/* ========= NEW: APPOINTMENT DRAWER STYLES ========= */
+
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none;
+  /* Initially hidden */
+  justify-content: flex-end;
+  /* Align panel to the right */
+  z-index: 1000;
+}
+
+.drawer-panel {
+  width: 100%;
+  max-width: 450px;
+  /* Drawer width */
+  height: 100%;
+  background-color: var(--bg-primary);
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  /* Start off-screen */
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-panel.is-open {
+  transform: translateX(0);
+  /* Slide in */
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-color-primary);
+  flex-shrink: 0;
+}
+
+.drawer-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.drawer-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.drawer-close:hover {
+  opacity: 1;
+}
+
+.drawer-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.drawer-loader,
+.drawer-error {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.drawer-error {
+  color: var(--color-error);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.detail-item {
+  background-color: var(--bg-secondary);
+  padding: 16px;
+  border-radius: var(--border-radius-btn);
+  border: 1px solid var(--border-color-primary);
+}
+
+.detail-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.detail-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.detail-value {
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* For the status pill inside the drawer */
+.detail-value .pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--border-radius-pill);
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+.detail-value .pill.pending {
+  background-color: var(--status-pending);
+}
+
+.detail-value .pill.consulted {
+  background-color: var(--status-consulted);
+}
+
+.detail-value .pill.closed {
+  background-color: var(--status-cancelled);
+}

@@ -31,14 +31,34 @@ if (!$branchId) {
 }
 
 try {
-    // Fetch inquiries with prepared statement
+    // --- MODIFIED QUERY ---
+    // We now JOIN with the patient_master table to fetch the patient_uid.
+    // A LEFT JOIN is used to ensure that even old registration records
+    // without a master_patient_id will still be displayed.
     $stmt = $pdo->prepare("
-        SELECT registration_id, patient_name, phone_number, age, gender, chief_complain, reffered_by, consultation_amount, created_at, status 
-        FROM registration 
-        WHERE branch_id = :branch_id 
-        ORDER BY created_at DESC
+        SELECT
+            reg.registration_id,
+            reg.patient_name,
+            reg.phone_number,
+            reg.age,
+            reg.gender,
+            reg.chief_complain,
+            reg.reffered_by,
+            reg.consultation_amount,
+            reg.created_at,
+            reg.status,
+            pm.patient_uid -- Here is our shiny new UID!
+        FROM
+            registration AS reg
+        LEFT JOIN
+            patient_master AS pm ON reg.master_patient_id = pm.master_patient_id
+        WHERE
+            reg.branch_id = :branch_id
+        ORDER BY
+            reg.created_at DESC
     ");
     $stmt->execute([':branch_id' => $branchId]);
+    // The $inquiries variable will now contain the 'patient_uid' for each record
     $inquiries = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     //branch name
@@ -176,8 +196,8 @@ try {
                     <tbody>
                         <?php if (!empty($inquiries)): ?>
                             <?php foreach ($inquiries as $row): ?>
-                                <tr data-id="<?= htmlspecialchars((string) $row['registration_id'], ENT_QUOTES, 'UTF-8') ?>">
-                                    <td><?= htmlspecialchars((string) $row['registration_id'], ENT_QUOTES, 'UTF-8') ?></td>
+                                <tr data-id="<?= htmlspecialchars((string) $row['patient_uid'], ENT_QUOTES, 'UTF-8') ?>">
+                                    <td><?= htmlspecialchars($row['patient_uid'] ?? 'N/A') ?></td>
                                     <td class="name"><?= htmlspecialchars($row['patient_name'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <!-- <td><?= htmlspecialchars($row['phone_number'], ENT_QUOTES, 'UTF-8') ?></td> -->
                                     <td><?= htmlspecialchars((string) $row['age'], ENT_QUOTES, 'UTF-8') ?></td>

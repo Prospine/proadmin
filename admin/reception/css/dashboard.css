@@ -194,7 +194,7 @@ body.dark .form-row label {
 }
 body.dark .submit-btn {
   background-color: var(--color-accent);
-  color: var(--text-body);
+  color: var(--color-accent-text);
 }
 body.dark .menu,
 body.dark .notification {
@@ -457,6 +457,7 @@ nav {
   border-radius: var(--border-radius-round);
   cursor: pointer;
   transition: transform var(--transition-fast);
+  text-decoration: none;
 }
 .arrow:hover {
   transform: rotate(45deg);
@@ -559,6 +560,12 @@ nav {
   color: var(--text-primary);
   box-shadow: var(--shadow-event);
 }
+
+body.dark .event {
+  background: var(--bg-tertiary);
+  color: var(--color-accent-text);
+}
+
 .event-title {
   font-weight: 600;
   margin-bottom: 4px;
@@ -1129,7 +1136,7 @@ button:hover,
     /* align-items: flex-start; */
   }
 
-  nav{
+  nav {
     width: 600px;
   }
 

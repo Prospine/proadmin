@@ -26,7 +26,6 @@ body.dark {
   --drawer-bg: #121212; /* background.paper */
 }
 
-
 .main {
   background-color: #ffffffa5;
   width: 98%;
@@ -84,7 +83,6 @@ body.dark {
   vertical-align: middle;
   font-size: 0.95rem;
   color: #333;
-  border-radius: 20px;
 }
 
 /* === Pills for Status === */

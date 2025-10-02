@@ -1,28 +1,3 @@
-// --- TOAST NOTIFICATION SCRIPT (Kept as is) ---
-function showToast(message, type = 'success') {
-    const container = document.getElementById('toast-container');
-    if (!container) return;
-
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-
-    container.appendChild(toast);
-
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10);
-
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => {
-            container.removeChild(toast);
-        }, 500);
-    }, 5000);
-}
-
-
-// All your event listeners will now be inside this single DOMContentLoaded event.
 document.addEventListener("DOMContentLoaded", () => {
     // --- TABLE TOGGLE LOGIC ---
     const quickBtn = document.getElementById('quickBtn');
@@ -92,35 +67,33 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Toast helper
-function showToast(message, type = 'success') {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerText = message;
-
-    container.appendChild(toast);
-
-    // trigger animation
-    setTimeout(() => toast.classList.add('show'), 100);
-
-    // auto remove after 3s
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     // Expose PHP CSRF token to JS safely (escaped server-side).
-    const CSRF_TOKEN = "<?= htmlspecialchars($csrf ?? $_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>";
-
     const drawer = document.getElementById('rightDrawer');
     const drawerTitle = document.getElementById('drawerTitle');
     const closeBtn = drawer.querySelector('.close-drawer');
     const quickForm = document.getElementById('quickForm');
     const testForm = document.getElementById('testForm');
     const inquiryIdInput = document.getElementById('inquiry_id'); // hidden input
+
+    // Consolidated Toast helper
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerText = message;
+
+        container.appendChild(toast);
+
+        setTimeout(() => toast.classList.add('show'), 100);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
 
     function openDrawer(inquiryId, rowData) {
         // set inquiry id in dataset + hidden input
@@ -143,12 +116,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // universal fill: sets form field values from object keys that match input/select/textarea names
     function fillForm(form, data) {
-        if (!form || !data) return;
-        const csrfInput = form.querySelector('input[name="csrf"]');
-        if (csrfInput) csrfInput.value = CSRF_TOKEN;
-
+        if (!form || !data) return; 
         form.querySelectorAll('[name]').forEach(el => {
             const key = el.getAttribute('name');
+            if (key === 'csrf') return; // *** IMPORTANT: Do not overwrite the CSRF token! ***
             if (Object.prototype.hasOwnProperty.call(data, key)) {
                 el.value = data[key] == null ? '' : data[key];
             }
@@ -226,12 +197,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Example submit handler for quickForm
     quickForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const formData = new FormData(quickForm);
-        formData.append('type', 'quick'); // still fine
+        const formData = new URLSearchParams(new FormData(quickForm));
+        formData.append('type', 'quick');
 
         try {
             const res = await fetch('../api/insert_inquiry_reg.php', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
                 body: formData
             });
             const j = await res.json();
@@ -250,13 +224,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // testForm submit handler (similar)
     testForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const formData = new FormData(testForm);
+        const formData = new URLSearchParams(new FormData(testForm));
         formData.append('id', testForm.dataset.inquiryId || '');
         formData.append('type', 'test');
 
         try {
             const res = await fetch('../api/insert_inquiry_test.php', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
                 body: formData
             });
             const j = await res.json();

@@ -61,10 +61,12 @@ try {
     // The $inquiries variable will now contain the 'patient_uid' for each record
     $inquiries = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    //branch name
-    $stmt = $pdo->prepare("SELECT branch_name FROM branches WHERE branch_id = :branch_id");
-    $stmt->execute(['branch_id' => $branchId]);
-    $branchName = $stmt->fetch()['branch_name'] ?? '';
+    // Branch name
+    $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
+    $stmtBranch->execute([':branch_id' => $branchId]);
+    $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
+    $branchName = $branchDetails['branch_name'];
+    
 } catch (PDOException $e) {
     error_log("Error fetching Registration Details: " . $e->getMessage());
     die("Error fetching Registration Details. Please try again later.");
@@ -127,7 +129,14 @@ try {
 
 <body>
     <header>
-        <div class="logo-container"> <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
+        <div class="logo-container">
+            <div class="logo">
+                <?php if (!empty($branchDetails['logo_primary_path'])): ?>
+                    <img src="/proadmin/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                <?php else: ?>
+                    <div class="logo-placeholder">Primary Logo N/A</div>
+                <?php endif; ?>
+            </div>
         </div>
         <nav>
             <div class="nav-links">

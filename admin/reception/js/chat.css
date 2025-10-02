@@ -3,7 +3,7 @@
   --border-color: #e0e0e0;
   --secondary-bg-color: #f1f3f5;
   --secondary-text-color: #868e96;
-  --text-color: #000000;
+  --text-color: #212529;
   --primary-color: #007bff;
   --primary-text-color: #ffffff;
 }
@@ -60,18 +60,14 @@ body.dark .chat-inbox {
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
-  gap: 10px; /* Add space between elements */
 }
 
 .chat-sidebar-header .closebtn {
-  font-size: 1.5rem; /* Slightly smaller for better fit */
+  font-size: 2rem;
   cursor: pointer;
   color: var(--secondary-text-color);
-  padding: 0 5px; /* Add some padding */
-  line-height: 1;
-  order: 3; /* Ensure it's the last item */
-  margin: 0; /* Reset margins */
-  margin-top: 4px;
+  margin-right: 10px;
+  margin-top: 10px;
 }
 
 #chat-user-search {
@@ -251,14 +247,9 @@ body.dark .chat-input-area {
 }
 
 .chat-message.sent .message-bubble {
-  background-color: var(--text-color);
+  background-color: var(--primary-color);
   color: var(--primary-text-color);
   border-bottom-right-radius: 4px;
-}
-
-body.dark .chat-message.sent .message-bubble {
-  background-color: var(--primary-text-color);
-  color: #000;
 }
 
 .chat-message.sent .message-time {
@@ -316,13 +307,16 @@ body.dark .chat-message.sent .message-bubble {
   margin-left: 5px;
 }
 
-.ticks.unread {
-  color: rgb(162, 162, 162);
-  /* Single grey tick */
+.ticks.unread { /* Sent, but not read */
+  color: var(--secondary-text-color);
 }
 
-.ticks.read {
-  color: dodgerblue;
+.ticks.unread .fa-check:last-child {
+  display: none; /* Hide the second tick for unread messages */
+}
+
+.ticks.read { /* Sent AND read */
+  color: #4fc3f7; /* A nice light blue for read receipts */
 }
 
 /* ======================================== */

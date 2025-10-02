@@ -42,9 +42,10 @@ try {
     $today = date('Y-m-d');
 
     // Branch name
-    $stmt = $pdo->prepare("SELECT branch_name FROM branches WHERE branch_id = :branch_id");
-    $stmt->execute(['branch_id' => $branchId]);
-    $branchName = $stmt->fetch()['branch_name'] ?? '';
+    $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
+    $stmtBranch->execute([':branch_id' => $branchId]);
+    $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
+    $branchName = $branchDetails['branch_name'];
 
     // --- Appointments ---
     $stmt = $pdo->prepare("SELECT COUNT(*) AS count 
@@ -328,12 +329,81 @@ $success = false;
     <link rel="stylesheet" href="../css/chat.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
+
+    <style>
+        .chat-sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            /* Add some space between items */
+        }
+
+        #chat-user-search {
+            flex-grow: 1;
+            /* Allow search to take up available space */
+        }
+
+        .chat-header-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .chat-header-btn:hover:not(:disabled) {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Cooldown / Disabled State */
+        .chat-header-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        /* Spinning animation for the icon */
+        .chat-header-btn.loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .logo img {
+            max-width: 100%;
+            max-height: 80px;
+            object-fit: contain;
+            cursor: auto;
+        }
+    </style>
 </head>
 
 <body>
     <header>
         <div class="logo-container">
-            <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
+            <div class="logo">
+                <?php if (!empty($branchDetails['logo_primary_path'])): ?>
+                    <img src="/proadmin/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                <?php else: ?>
+                    <div class="logo-placeholder">Primary Logo N/A</div>
+                <?php endif; ?>
+            </div>
         </div>
 
         <nav>
@@ -351,21 +421,19 @@ $success = false;
             </div>
         </nav>
         <div class="nav-actions">
-            <div class="icon-btn" id="theme-toggle">
-                <i id="theme-icon" class="fa-solid fa-moon"></i>
-            </div>
+            <div class="icon-btn" id="theme-toggle"> <i id="theme-icon" class="fa-solid fa-moon"></i> </div>
             <div class="inbox icon-btn icon-btn2" title="Inbox" onclick="openInbox()"><i class="fa-solid fa-inbox"></i></div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
         </div>
     </header>
     <div class="menu" id="myMenu">
-        <span class="closebtn" onclick="closeForm()">&times;</span>
         <div class="popup">
+            <span class="closebtn" onclick="closeForm()">&times;</span>
             <ul>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="logout.php">Logout</a></li>
+                <li><a href="#"><i class="fa-solid fa-user-circle"></i> Profile</a></li>
+                <li><a href="#"><i class="fa-solid fa-cog"></i> Settings</a></li>
+                <li class="logout"><a href="logout.php"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
     </div>
@@ -388,6 +456,9 @@ $success = false;
             <div class="chat-sidebar">
                 <div class="chat-sidebar-header">
                     <input type="text" id="chat-user-search" placeholder="Search users...">
+                    <button id="chat-refresh-btn" class="chat-header-btn" title="Refresh Chat" disabled>
+                        <i class="fa-solid fa-sync"></i>
+                    </button>
                     <span class="closebtn" onclick="closeInbox()">&times;</span>
                 </div>
                 <div class="chat-user-list" id="chat-user-list">
@@ -398,15 +469,14 @@ $success = false;
 
             <!-- Right Panel: Chat Interface -->
             <div class="chat-main">
-                <div class="chat-header" id="chat-header">
+                <div class="chat-header" id="chat-header"></div>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="chat-welcome-message">Select a user to start chatting</div>
                     <!-- Chat partner's name will appear here -->
                     <!-- <div class="chat-welcome-message">Select a user to start chatting</div> -->
                     <div class="encryption-status">
                         <i class="fa-solid fa-lock"></i> Messages are end-to-end encrypted
                     </div>
-                </div>
-                <div class="chat-messages" id="chat-messages">
-                    <!-- Messages will be loaded here -->
                 </div>
                 <div class="chat-input-area">
                     <input type="text" id="chat-message-input" placeholder="Type your message..." disabled>

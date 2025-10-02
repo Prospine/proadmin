@@ -426,10 +426,9 @@ ORDER BY created_at DESC
 
 
             <!-- Test Inquiry Form -->
-            <!-- Test Inquiry Form -->
             <form id="testForm" class="inquiry-form hidden" method="POST" action="../api/test_submission.php">
                 <!-- CSRF Token -->
-                <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
+                <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf ?? $_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                 <input type="hidden" name="inquiry_id" id="inquiry_id" value="">
 
                 <!-- Patient Information -->

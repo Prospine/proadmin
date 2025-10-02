@@ -11,6 +11,14 @@ require_once '../../common/db.php';
 require_once '../../common/logger.php'; // 1. Added the logger
 header('Content-Type: application/json');
 
+// --- CSRF token check --- 
+if (empty($_SESSION['csrf_token']) || empty($_POST['csrf']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf'])) {
+    http_response_code(403);
+    echo json_encode(["success" => false, "message" => "Invalid CSRF token. Please refresh and try again."]);
+    exit;
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
     exit();

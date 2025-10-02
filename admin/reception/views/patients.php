@@ -300,8 +300,8 @@ try {
                 <h2>Patient Profile</h2>
                 <div class="but">
 
-                    <button onclick="window.location.href='patients_bill.php?patient_id=' + document.querySelector('.action-btn').dataset.id">Print Bill</button>
-                    <button onclick="window.location.href='patients_profile.php?patient_id=' + document.querySelector('.action-btn').dataset.id">View Profile</button>
+                    <button id="drawerPrintBillBtn">Print Bill</button>
+                    <button id="drawerViewProfileBtn">View Profile</button>
                     <button id="closeDrawer" class="drawer-close-btn">&times;</button>
                 </div>
             </div>
@@ -372,6 +372,27 @@ try {
     <script src="../js/dashboard.js"></script>
     <script src="../js/patients.js"></script>
     <script src="../js/addattendance.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const printBillBtn = document.getElementById('drawerPrintBillBtn');
+            const viewProfileBtn = document.getElementById('drawerViewProfileBtn');
+
+            // Use event delegation on the table to handle clicks on "View" buttons
+            document.getElementById('patientsTable').addEventListener('click', function(event) {
+                // Check if a "View" button was clicked
+                if (event.target && event.target.matches('button.action-btn')) {
+                    const patientId = event.target.dataset.id;
+
+                    // Update the onclick actions for the drawer buttons
+                    if (patientId) {
+                        printBillBtn.onclick = () => window.location.href = `patients_bill.php?patient_id=${patientId}`;
+                        viewProfileBtn.onclick = () => window.location.href = `patients_profile.php?patient_id=${patientId}`;
+                    }
+                }
+            });
+        });
+    </script>
 
 </body>
 

@@ -32,12 +32,18 @@ try {
     $treatmentType   = $data['treatmentType'];
     $treatmentDays   = isset($data['treatmentDays']) ? (int)$data['treatmentDays'] : null;
     $totalAmount     = (float)$data['totalCost'];
-    $discount        = isset($data['discount']) ? (float)$data['discount'] : 0;
     $advancePayment  = isset($data['advancePayment']) ? (float)$data['advancePayment'] : 0;
     $dueAmount       = isset($data['dueAmount']) ? (float)$data['dueAmount'] : 0;
     $startDate       = $data['startDate'];
     $endDate         = $data['endDate'];
     $paymentMethod   = $data['payment_method'] ?? null;
+    
+    // --- NEW: Handle discount and approver ---
+    $discount = isset($data['discount']) ? (float)$data['discount'] : 0;
+    $discountApprovedBy = !empty($data['discount_approved_by']) ? (int)$data['discount_approved_by'] : null;
+    if ($discount > 0 && $discountApprovedBy === null) {
+        throw new Exception('"Discount Approved By" is required when a discount is applied.');
+    }
 
     // 2️⃣ Treatment cost logic
     $treatmentCostPerDay = null;
@@ -58,8 +64,8 @@ try {
     // Insert into patients table
     $stmt = $pdo->prepare("
         INSERT INTO patients 
-        (registration_id, branch_id, treatment_type, treatment_cost_per_day, package_cost, treatment_days, total_amount, payment_method, discount_percentage, advance_payment, due_amount, start_date, end_date)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (registration_id, branch_id, treatment_type, treatment_cost_per_day, package_cost, treatment_days, total_amount, payment_method, discount_percentage, discount_approved_by, advance_payment, due_amount, start_date, end_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
     $stmt->execute([
         $registrationId,
@@ -71,6 +77,7 @@ try {
         $totalAmount,
         $paymentMethod,
         $discount,
+        $discountApprovedBy,
         $advancePayment,
         $dueAmount,
         $startDate,

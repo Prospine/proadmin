@@ -113,6 +113,18 @@ ORDER BY created_at DESC
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="../css/inquiry.css">
+
+    <style>
+        .toggle-container {
+            width: auto;
+        }
+
+        .wrapper {
+            display: flex;
+            width: auto;
+            gap: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -123,8 +135,8 @@ ORDER BY created_at DESC
             <div class="nav-links"> <a href="dashboard.php">Dashboard</a>
                 <a href="inquiry.php" class="active">Inquiry</a>
                 <a href="registration.php">Registration</a>
-                <a href="patients.php">Patients</a>
                 <a href="appointments.php">Appointments</a>
+                <a href="patients.php">Patients</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php">Attendance</a>
                 <a href="tests.php">Tests</a>
@@ -162,10 +174,51 @@ ORDER BY created_at DESC
         <div class="dashboard-container">
             <div class="top-bar">
                 <h2>Inquiry</h2>
-                <div class="toggle-container"> <button id="quickBtn" class="toggle-btn active">Quick Inquiry</button>
-                    <button id="testBtn" class="toggle-btn">Test Inquiry</button>
+
+                <div class="wrapper">
+                    <!-- NEW: Filter and Search Bar -->
+                    <div class="filter-bar">
+                        <div class="search-container">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search by name, phone, complain, etc...">
+                        </div>
+
+                        <!-- Filters for Quick Inquiry Table -->
+                        <div id="quickInquiryFilters" class="filter-options">
+                            <select id="quickStatusFilter">
+                                <option value="">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="visited">Visited</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+
+                        <!-- Filters for Test Inquiry Table -->
+                        <div id="testInquiryFilters" class="filter-options hidden">
+                            <select id="testStatusFilter">
+                                <option value="">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="visited">Visited</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="toggle-container">
+                        <button id="quickBtn" class="toggle-btn active">Quick Inquiry</button>
+                        <button id="testBtn" class="toggle-btn">Test Inquiry</button>
+                    </div>
+
+                    <div class="toggle-container">
+                        <button class="toggle-btn" onclick="window.location.href = 'online_inquiry.php';">Online Inquiry</button>
+                        <button class="toggle-btn" onclick="window.location.href = 'online_inquiry_booked.php';">Online Inquiry Booked</button>
+                    </div>
                 </div>
-            </div> <!-- Quick Inquiry Table -->
+            </div>
+
+
+
+            <!-- Quick Inquiry Table -->
             <div id="quickTable" class="table-container modern-table">
                 <table>
                     <thead>
@@ -210,7 +263,7 @@ ORDER BY created_at DESC
                                             data-type="quick"> View </button> </td>
                                 </tr> <?php endforeach; ?> <?php else: ?>
                             <tr>
-                                <td colspan="11">No Quick Inquiry found</td>
+                                <td colspan="12">No Quick Inquiry found</td>
                             </tr> <?php endif; ?>
                     </tbody>
                 </table>
@@ -252,7 +305,7 @@ ORDER BY created_at DESC
                                             data-type="test"> View </button> </td>
                                 </tr> <?php endforeach; ?> <?php else: ?>
                             <tr>
-                                <td colspan="8">No Test Inquiry found</td>
+                                <td colspan="9">No Test Inquiry found</td>
                             </tr> <?php endif; ?>
                     </tbody>
                 </table>

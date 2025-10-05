@@ -391,6 +391,8 @@ $success = false;
             object-fit: contain;
             cursor: auto;
         }
+
+      
     </style>
 </head>
 
@@ -408,16 +410,16 @@ $success = false;
 
         <nav>
             <div class="nav-links">
-                <a href="dashboard.php" class="active">Dashboard</a>
-                <a href="inquiry.php">Inquiry</a>
-                <a href="registration.php">Registration</a>
-                <a href="patients.php">Patients</a>
-                <a href="appointments.php">Appointments</a>
-                <a href="billing.php">Billing</a>
-                <a href="attendance.php">Attendance</a>
-                <a href="tests.php">Tests</a>
-                <a href="reports.php">Reports</a>
-                <a href="expenses.php">Expenses</a>
+                <a href="dashboard.php" class="active"><i class="fa-solid fa-tachometer-alt"></i><span>Dashboard</span></a>
+                <a href="inquiry.php"><i class="fa-solid fa-magnifying-glass"></i><span>Inquiry</span></a>
+                <a href="registration.php"><i class="fa-solid fa-user-plus"></i><span>Registration</span></a>
+                <a href="appointments.php"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></a>
+                <a href="patients.php"><i class="fa-solid fa-users"></i><span>Patients</span></a>
+                <a href="billing.php"><i class="fa-solid fa-file-invoice-dollar"></i><span>Billing</span></a>
+                <a href="attendance.php"><i class="fa-solid fa-user-check"></i><span>Attendance</span></a>
+                <a href="tests.php"><i class="fa-solid fa-vial"></i><span>Tests</span></a>
+                <a href="reports.php"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
+                <a href="expenses.php"><i class="fa-solid fa-money-bill-wave"></i><span>Expenses</span></a>
             </div>
         </nav>
         <div class="nav-actions">
@@ -425,6 +427,10 @@ $success = false;
             <div class="inbox icon-btn icon-btn2" title="Inbox" onclick="openInbox()"><i class="fa-solid fa-inbox"></i></div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
+        </div>
+        <!-- Hamburger Menu Icon (for mobile) -->
+        <div class="hamburger-menu" id="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
         </div>
     </header>
     <div class="menu" id="myMenu">
@@ -559,20 +565,22 @@ $success = false;
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card spcard2">
                     <div class="card-header-flex">
                         <div class="card-header">
                             <h2><i class="fa-solid fa-file-invoice-dollar"></i> Payments</h2>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="card-title">Payment Received Today: ₹<?= number_format($todayPaid, 2) ?></div>
-                        <div class="card-sub">Total Payment Received: ₹<?= number_format($totalPaid, 2) ?></div>
-                    </div>
+                    <div class="spcard">
+                        <div class="card-body">
+                            <div class="card-title">Payment Received Today: ₹<?= number_format($todayPaid, 2) ?></div>
+                            <div class="card-sub">Total Payment Received: ₹<?= number_format($totalPaid, 2) ?></div>
+                        </div>
 
-                    <div class="card-body2">
-                        <div class="card-title">Total Dues Today : ₹<?= number_format($todayDues, 2) ?></div>
-                        <div class="card-sub">Total Dues Amount: ₹<?= number_format($totalDues, 2) ?></div>
+                        <div class="card-body2">
+                            <div class="card-title">Total Dues Today : ₹<?= number_format($todayDues, 2) ?></div>
+                            <div class="card-sub">Total Dues Amount: ₹<?= number_format($totalDues, 2) ?></div>
+                        </div>
                     </div>
                 </div>
 
@@ -1204,6 +1212,31 @@ $success = false;
             // 5. Final touches
             // ==========================================================
             document.body.classList.add("loaded");
+        });
+
+        // Hamburger Menu Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.getElementById('hamburger-menu');
+            const nav = document.querySelector('nav');
+
+            if (hamburger && nav) {
+                hamburger.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    const isOpening = !nav.classList.contains('open');
+                    if (isOpening) {
+                        nav.style.display = 'flex'; // Set display before animation
+                        setTimeout(() => nav.classList.add('open'), 10); // Allow repaint
+                    } else {
+                        nav.classList.remove('open');
+                    }
+                });
+
+                document.addEventListener('click', function(event) {
+                    if (nav.classList.contains('open') && !nav.contains(event.target)) {
+                        nav.classList.remove('open');
+                    }
+                });
+            }
         });
     </script>
 </body>

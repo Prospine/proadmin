@@ -11,6 +11,7 @@ body {
   width: 100%;
   padding: 0 20px;
   box-sizing: border-box;
+  margin-bottom: 20px;
 }
 
 .schedule-header {
@@ -86,7 +87,7 @@ body {
   vertical-align: top;
   /* Changed to top for better alignment */
   font-size: 0.9rem;
-  height: 30px;
+  height: 40px;
   /* Give cells a consistent height */
 }
 

@@ -1,5 +1,106 @@
 (function () {
-    // --- Get the initial date from the HTML data attribute ---
+    /* ------------------------------
+       NEW: Table Search, Filter & Sort Logic
+    ------------------------------ */
+    const searchInput = document.getElementById('searchInput');
+    const treatmentFilter = document.getElementById('treatmentFilter');
+    const sortDirectionBtn = document.getElementById('sortDirectionBtn');
+    const tableBody = document.getElementById('attendanceTableBody');
+    const tableHeaders = document.querySelectorAll('.modern-table th.sortable');
+
+    let currentSort = {
+        key: 'id', // Default sort
+        direction: 'desc' // Default direction
+    };
+
+    const processTable = () => {
+        if (!tableBody) return;
+
+        const searchTerm = searchInput.value.toLowerCase();
+        const treatmentValue = treatmentFilter.value.toLowerCase();
+        const rows = Array.from(tableBody.querySelectorAll('tr'));
+        let visibleRows = 0;
+
+        // --- Filtering ---
+        rows.forEach(row => {
+            if (row.querySelector('td[colspan]')) {
+                row.style.display = 'none';
+                return;
+            }
+
+            const rowText = row.textContent.toLowerCase();
+            const treatmentCell = row.querySelector('td:nth-child(3)');
+            const rowTreatment = treatmentCell ? treatmentCell.textContent.trim().toLowerCase() : '';
+
+            const matchesSearch = rowText.includes(searchTerm);
+            const matchesTreatment = treatmentValue ? rowTreatment === treatmentValue : true;
+
+            if (matchesSearch && matchesTreatment) {
+                row.style.display = '';
+                visibleRows++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // --- Sorting ---
+        const visibleTableRows = rows.filter(row => row.style.display !== 'none');
+        visibleTableRows.sort((a, b) => {
+            const key = currentSort.key;
+            const direction = currentSort.direction === 'asc' ? 1 : -1;
+            const headerIndex = Array.from(tableHeaders).findIndex(th => th.dataset.key === key);
+            if (headerIndex === -1) return 0;
+
+            let valA = a.cells[headerIndex]?.textContent.trim().toLowerCase() || '';
+            let valB = b.cells[headerIndex]?.textContent.trim().toLowerCase() || '';
+
+            if (valA < valB) return -1 * direction;
+            if (valA > valB) return 1 * direction;
+            return 0;
+        });
+
+        // Re-append sorted rows and handle no results
+        visibleTableRows.forEach(row => tableBody.appendChild(row));
+
+        let noResultsRow = tableBody.querySelector('.no-results-row');
+        if (visibleRows === 0) {
+            if (!noResultsRow) {
+                noResultsRow = tableBody.insertRow();
+                noResultsRow.className = 'no-results-row';
+                const cell = noResultsRow.insertCell();
+                cell.colSpan = tableHeaders.length + 3; // Adjust colspan
+                cell.textContent = 'No attendance records match your criteria.';
+                cell.style.textAlign = 'center';
+            }
+        } else if (noResultsRow) {
+            noResultsRow.remove();
+        }
+    };
+
+    // Attach event listeners
+    if (searchInput) searchInput.addEventListener('input', processTable);
+    if (treatmentFilter) treatmentFilter.addEventListener('change', processTable);
+    if (sortDirectionBtn) {
+        sortDirectionBtn.addEventListener('click', () => {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            processTable();
+        });
+    }
+
+    tableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const key = header.dataset.key;
+            currentSort.key = key;
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            tableHeaders.forEach(th => th.classList.remove('sort-asc', 'sort-desc'));
+            header.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+            processTable();
+        });
+    });
+
+    /* ------------------------------
+       Drawer & Calendar Logic
+    ------------------------------ */
     // MODIFIED: This is the new way to get the date from the PHP file.
     const pageDateElement = document.body;
     const DEFAULT_PAGE_DATE = pageDateElement.dataset.pageDate || new Date().toISOString().slice(0, 10);

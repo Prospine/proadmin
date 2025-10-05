@@ -31,6 +31,20 @@ if (!$branchId) {
 }
 
 try {
+    // --- NEW: Fetch distinct values for filters ---
+    $filterOptions = [];
+    $filterQueries = [
+        'test_names' => "SELECT DISTINCT test_name FROM tests WHERE branch_id = ? ORDER BY test_name",
+        'payment_statuses' => "SELECT DISTINCT payment_status FROM tests WHERE branch_id = ? ORDER BY payment_status",
+        'test_statuses' => "SELECT DISTINCT test_status FROM tests WHERE branch_id = ? ORDER BY test_status",
+    ];
+
+    foreach ($filterQueries as $key => $query) {
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([$branchId]);
+        $filterOptions[$key] = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
     // Fetch all tests for the branch
     $stmt = $pdo->prepare("
     SELECT 
@@ -67,7 +81,78 @@ try {
     <link rel="stylesheet" href="../css/test.css">
 
     <style>
+        /* === Filter & Search Bar === */
+        .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            /* border: 1px solid; */
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            background: none;
+            border-radius: 0.75rem;
+        }
 
+        .search-container {
+            flex: 1 1 200px;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-container .fa-search {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.6rem 2.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-options select,
+        .sort-btn {
+            width: 180px;
+            padding: 0.6rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #ddd;
+            background: #fff;
+            color: #000;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .sort-btn{
+            width: 80px;
+            /* border-radius: 50%; */
+        }
+
+        body.dark .filter-bar {
+            background: var(--card-bg);
+        }
+
+        body.dark .search-container input,
+        body.dark .filter-options select,
+        body.dark .sort-btn {
+            background: var(--card-bg3);
+            border-color: var(--border-color);
+            color: var(--text-color);
+        }
     </style>
 
 </head>
@@ -82,8 +167,8 @@ try {
                 <a href="dashboard.php">Dashboard</a>
                 <a href="inquiry.php">Inquiry</a>
                 <a href="registration.php">Registration</a>
-                <a href="patients.php">Patients</a>
                 <a href="appointments.php">Appointments</a>
+                <a href="patients.php">Patients</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php">Attendance</a>
                 <a href="tests.php" class="active">Tests</a>
@@ -121,33 +206,62 @@ try {
 
     <main class="main">
         <div class="dashboard-container">
-            <h2>Tests Overview</h2>
+            <div class="top-bar">
+                <h2>Tests Overview</h2>
+
+                <!-- NEW: Filter and Search Bar -->
+                <div class="filter-bar">
+                    <div class="search-container">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by Patient Name, Test Name...">
+                    </div>
+                    <div class="filter-options">
+                        <select id="testNameFilter">
+                            <option value="">All Tests</option>
+                            <?php foreach ($filterOptions['test_names'] as $option): ?>
+                                <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars(strtoupper($option)) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <select id="paymentStatusFilter">
+                            <option value="">All Payment Statuses</option>
+                            <?php foreach ($filterOptions['payment_statuses'] as $option): ?>
+                                <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars(ucfirst($option)) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <select id="testStatusFilter">
+                            <option value="">All Test Statuses</option>
+                            <?php foreach ($filterOptions['test_statuses'] as $option): ?>
+                                <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars(ucfirst($option)) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button id="sortDirectionBtn" class="sort-btn" title="Toggle Sort Direction">
+                            <i class="fa-solid fa-sort"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
             <!-- Table -->
             <div class="table-container modern-table">
                 <table>
                     <thead>
                         <tr>
-                            <th>Test ID</th>
-                            <th>Name</th>
-                            <th>Test Name</th>
-                            <th>Total Amount</th>
-                            <th>Paid Amount</th>
-                            <th>Discount</th>
-                            <th>Due Amount</th>
-                            <th>Payment Status</th>
-                            <th>Test Status</th>
+                            <th data-key="id" class="sortable">Test ID</th>
+                            <th data-key="name" class="sortable">Name</th>
+                            <th data-key="test_name" class="sortable">Test Name</th>
+                            <th data-key="due" class="sortable numeric">Due Amount</th>
+                            <th data-key="payment_status">Payment Status</th>
+                            <th data-key="test_status">Test Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="testsTableBody">
                         <?php foreach ($tests as $row): ?>
                             <tr>
                                 <td><?= (int)$row['test_id'] ?></td>
                                 <td><?= htmlspecialchars($row['patient_name']) ?></td>
                                 <td><?= htmlspecialchars(strtoupper(str_replace('_', ' ', (string) $row['test_name']))) ?></td>
-                                <td>₹<?= number_format((float)$row['total_amount'], 2) ?></td>
-                                <td>₹<?= number_format((float)$row['advance_amount'], 2) ?></td>
-                                <td>₹<?= number_format((float)$row['discount'], 2) ?></td>
                                 <td>₹<?= number_format((float)$row['due_amount'], 2) ?></td>
                                 <td>
                                     <span class="pill <?php echo strtolower($row['payment_status']); ?>">

@@ -88,7 +88,9 @@ try {
     <link rel="stylesheet" href="../css/attendance.css">
 
     <style>
-
+        #formm {
+            
+        }
     </style>
 </head>
 
@@ -102,8 +104,8 @@ try {
                 <a href="dashboard.php">Dashboard</a>
                 <a href="inquiry.php">Inquiry</a>
                 <a href="registration.php">Registration</a>
-                <a href="patients.php">Patients</a>
                 <a href="appointments.php">Appointments</a>
+                <a href="patients.php">Patients</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php" class="active">Attendance</a>
                 <a href="tests.php">Tests</a>
@@ -142,25 +144,47 @@ try {
         <div class="dashboard-container">
             <div class="top-bar">
                 <h2>Attendance for <?php echo htmlspecialchars(date('d M Y', strtotime($selectedDate))); ?></h2>
-                <form method="GET" action="" class="date-picker-form">
-                    <label for="date-picker">View Another Date:</label>
-                    <input type="date" id="date-picker" name="date" value="<?php echo htmlspecialchars($selectedDate); ?>" onchange="this.form.submit()">
-                </form>
+
+                <!-- UNIFIED CONTROL BAR -->
+                <div class="filter-bar">
+                    <div class="search-container">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by Patient Name or ID...">
+                    </div>
+                    <div class="filter-options">
+                        <select id="treatmentFilter">
+                            <option value="">All Treatments</option>
+                            <option value="daily">Daily</option>
+                            <option value="advance">Advance</option>
+                            <option value="package">Package</option>
+                        </select>
+                    </div>
+
+                    <button id="sortDirectionBtn" class="sort-btn" title="Toggle Sort Direction">
+                        <i class="fa-solid fa-sort"></i>
+                    </button>
+
+                    <form method="GET" action="" class="date-picker-form" id="formm">
+                        <input type="date" id="date-picker" name="date" value="<?php echo htmlspecialchars($selectedDate); ?>">
+                        <button type="submit" class="btn-go">Go</button>
+                    </form>
+                </div>
             </div>
+
 
             <div class="table-container modern-table">
                 <table>
                     <thead>
                         <tr>
-                            <th>Patient ID</th>
-                            <th>Patient Name</th>
-                            <th>Treatment Type</th>
-                            <th>Progress (Days)</th>
-                            <th>Remarks</th>
+                            <th data-key="id" class="sortable">Patient ID</th>
+                            <th data-key="name" class="sortable">Patient Name</th>
+                            <th data-key="treatment" class="sortable">Treatment Type</th>
+                            <th data-key="progress">Progress (Days)</th>
+                            <th data-key="remarks">Remarks</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="attendanceTableBody">
                         <?php if (!empty($attendance_records)) : ?>
                             <?php foreach ($attendance_records as $row) : ?>
                                 <tr>

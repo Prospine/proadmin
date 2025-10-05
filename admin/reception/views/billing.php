@@ -77,7 +77,71 @@ try {
     <link rel="stylesheet" href="../css/inquiry.css">
     <link rel="stylesheet" href="../css/billings.css">
     <style>
+        /* === Filter & Search Bar === */
+        .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            max-width: 800px;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            background: none;
+            border-radius: 0.75rem;
+        }
 
+        .search-container {
+            flex: 1 1 300px;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-container .fa-search {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-options select,
+        .sort-btn {
+            padding: 0.6rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #ddd;
+            background: #fff;
+            color: #000;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        body.dark .filter-bar {
+            background: var(--card-bg);
+        }
+
+        body.dark .search-container input,
+        body.dark .filter-options select,
+        body.dark .sort-btn {
+            background: var(--card-bg3);
+            border-color: var(--border-color);
+            color: var(--text-color);
+        }
     </style>
 </head>
 
@@ -91,8 +155,8 @@ try {
                 <a href="dashboard.php">Dashboard</a>
                 <a href="inquiry.php">Inquiry</a>
                 <a href="registration.php">Registration</a>
-                <a href="patients.php">Patients</a>
                 <a href="appointments.php">Appointments</a>
+                <a href="patients.php">Patients</a>
                 <a href="billing.php" class="active">Billing</a>
                 <a href="attendance.php">Attendance</a>
                 <a href="tests.php">Tests</a>
@@ -130,21 +194,43 @@ try {
         <div class="dashboard-container">
             <div class="top-bar">
                 <h2>Billing Overview</h2>
+                
+                <!-- NEW: Filter and Search Bar -->
+                <div class="filter-bar">
+                    <div class="search-container">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by Patient Name or ID...">
+                    </div>
+    
+                    <div class="filter-options">
+                        <select id="statusFilter">
+                            <option value="">All Statuses</option>
+                            <option value="active">Active</option>
+                            <option value="completed">Completed</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <button id="sortDirectionBtn" class="sort-btn" title="Toggle Sort Direction">
+                        <i class="fa-solid fa-sort"></i>
+                    </button>
+                </div>
             </div>
+
+
             <div class="table-container modern-table">
                 <table>
                     <thead>
                         <tr>
-                            <th>Patient ID</th>
-                            <th>Patient Name</th>
-                            <th class="numeric">Total Bill</th>
-                            <th class="numeric">Total Paid</th>
-                            <th class="numeric">Outstanding Due</th>
-                            <th>Status</th>
+                            <th data-key="id" class="sortable">Patient ID</th>
+                            <th data-key="name" class="sortable">Patient Name</th>
+                            <th data-key="bill" class="sortable numeric">Total Bill</th>
+                            <th data-key="paid" class="sortable numeric">Total Paid</th>
+                            <th data-key="due" class="sortable numeric">Expected Due Amount</th>
+                            <th data-key="status">Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="billingTableBody">
                         <?php if (!empty($patients)) : ?>
                             <?php foreach ($patients as $row) : ?>
                                 <?php

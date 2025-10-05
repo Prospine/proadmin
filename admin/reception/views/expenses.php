@@ -231,9 +231,7 @@ unset($_SESSION['errors'], $_SESSION['success']);
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../css/expenses.css">
-    <style>
-    
-    </style>
+
 </head>
 
 <body>
@@ -242,7 +240,17 @@ unset($_SESSION['errors'], $_SESSION['success']);
         <div class="logo-container"><img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
         </div>
         <nav>
-            <div class="nav-links"><a href="dashboard.php">Dashboard</a><a href="inquiry.php">Inquiry</a><a href="registration.php">Registration</a><a href="patients.php">Patients</a><a href="appointments.php">Appointments</a><a href="billing.php">Billing</a><a href="attendance.php">Attendance</a><a href="tests.php">Tests</a><a href="reports.php">Reports</a><a href="expenses.php" class="active">Expenses</a>
+            <div class="nav-links">
+                <a href="dashboard.php">Dashboard</a>
+                <a href="inquiry.php">Inquiry</a>
+                <a href="registration.php">Registration</a>
+                <a href="appointments.php">Appointments</a>
+                <a href="patients.php">Patients</a>
+                <a href="billing.php">Billing</a>
+                <a href="attendance.php">Attendance</a>
+                <a href="tests.php">Tests</a>
+                <a href="reports.php">Reports</a>
+                <a href="expenses.php" class="active">Expenses</a>
             </div>
         </nav>
         <div class="nav-actions">

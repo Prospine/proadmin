@@ -31,6 +31,26 @@ if (!$branchId) {
 }
 
 try {
+    // --- NEW: Fetch distinct values for filter dropdowns ---
+    $filterOptions = [];
+    $filterQueries = [
+        'referred_by' => "SELECT DISTINCT reffered_by FROM registration WHERE branch_id = :branch_id AND reffered_by IS NOT NULL AND reffered_by != '' ORDER BY reffered_by",
+        'conditions' => "SELECT DISTINCT chief_complain FROM registration WHERE branch_id = :branch_id AND chief_complain IS NOT NULL AND chief_complain != '' ORDER BY chief_complain",
+    ];
+
+    // --- NEW: Fetch users for the 'Approved By' dropdown ---
+    $stmtUsers = $pdo->prepare("SELECT id, username FROM users WHERE branch_id = :branch_id AND role != 'superadmin' ORDER BY username");
+    $stmtUsers->execute([':branch_id' => $branchId]);
+    $branchUsers = $stmtUsers->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($filterQueries as $key => $query) {
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([':branch_id' => $branchId]);
+        // Use FETCH_COLUMN to get a simple array of values
+        $filterOptions[$key] = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+
     // --- MODIFIED QUERY ---
     // We now JOIN with the patient_master table to fetch the patient_uid.
     // A LEFT JOIN is used to ensure that even old registration records
@@ -66,7 +86,6 @@ try {
     $stmtBranch->execute([':branch_id' => $branchId]);
     $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
     $branchName = $branchDetails['branch_name'];
-    
 } catch (PDOException $e) {
     error_log("Error fetching Registration Details: " . $e->getMessage());
     die("Error fetching Registration Details. Please try again later.");
@@ -143,8 +162,8 @@ try {
                 <a href="dashboard.php">Dashboard</a>
                 <a href="inquiry.php">Inquiry</a>
                 <a class="active" href="registration.php">Registration</a>
-                <a href="patients.php">Patients</a>
                 <a href="appointments.php">Appointments</a>
+                <a href="patients.php">Patients</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php">Attendance</a>
                 <a href="tests.php">Tests</a>
@@ -183,26 +202,68 @@ try {
         <div class="dashboard-container">
             <div class="top-bar">
                 <h2>Registration</h2>
+
+                <!-- NEW: Filter and Search Bar -->
+                <div class="filter-bar">
+                    <div class="search-container">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by name, ID, condition, etc...">
+                    </div>
+
+                    <div class="filter-options">
+                        <select id="statusFilter">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="consulted">Consulted</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                        <select id="genderFilter">
+                            <option value="">All Genders</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <select id="referredByFilter">
+                            <option value="">All Referrers</option>
+                            <?php foreach ($filterOptions['referred_by'] as $referrer): ?>
+                                <option value="<?= htmlspecialchars($referrer) ?>"><?= htmlspecialchars($referrer) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <select id="conditionFilter">
+                            <option value="">All Conditions</option>
+                            <?php foreach ($filterOptions['conditions'] as $condition): ?>
+                                <option value="<?= htmlspecialchars($condition) ?>"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $condition))) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button id="sortDirectionBtn" class="sort-btn" title="Toggle Sort Direction">
+                            <i class="fa-solid fa-sort"></i>
+                        </button>
+                    </div>
+                    <button class="sort-btn" onclick="window.location.reload();">
+                        <i class="fa-solid fa-rotate"></i>&nbsp; <span>Reset</span>
+                    </button>
+                </div>
             </div>
+
+
             <div id="quickTable" class="table-container modern-table">
                 <table>
                     <thead>
                         <tr>
-                            <th data-key="id" class="sortable">ID <span class="sort-indicator"></span></th>
-                            <th data-key="name" class="sortable">Name <span class="sort-indicator"></span></th>
+                            <th data-key="patient_uid" class="sortable">ID <span class="sort-indicator"></span></th>
+                            <th data-key="patient_name" class="sortable">Name <span class="sort-indicator"></span></th>
                             <!-- <th data-key="phone" class="sortable">Phone</th> -->
                             <th data-key="age" class="sortable">Age</th>
                             <th data-key="gender" class="sortable">Gender</th>
                             <th data-key="reffered_by" class="sortable">Reffered By</th>
-                            <th data-key="conditionType" class="sortable">Condition Type</th>
-                            <th data-key="consultation_amount" class="sortable">Amount</th>
+                            <th data-key="chief_complain" class="sortable">Condition Type</th>
+                            <th data-key="consultation_amount" class="sortable numeric">Amount</th>
                             <th data-key="created_at" class="sortable">Date</th>
                             <th data-key="status">Status</th>
                             <th>Update Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="registrationTableBody">
                         <?php if (!empty($inquiries)): ?>
                             <?php foreach ($inquiries as $row): ?>
                                 <tr data-id="<?= htmlspecialchars((string) $row['patient_uid'], ENT_QUOTES, 'UTF-8') ?>">
@@ -308,6 +369,15 @@ try {
                         <div class="form-group">
                             <label for="discount">Discount (%)</label>
                             <input type="number" id="discount" name="discount" min="0" max="100" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="discountApprovedBy">Discount Approved By</label>
+                            <select id="discountApprovedBy" name="discount_approved_by">
+                                <option value="">Not Required</option>
+                                <?php foreach ($branchUsers as $user): ?>
+                                    <option value="<?= $user['id'] ?>"><?= htmlspecialchars($user['username']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
 
                         <div class="form-group">

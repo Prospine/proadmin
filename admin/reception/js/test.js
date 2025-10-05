@@ -1,6 +1,133 @@
 const drawer = document.getElementById('test-drawer');
 const drawerContent = drawer.querySelector('.drawer-content');
 
+document.addEventListener('DOMContentLoaded', () => {
+    /* ------------------------------
+       NEW: Table Search, Filter & Sort Logic
+    ------------------------------ */
+    const searchInput = document.getElementById('searchInput');
+    const testNameFilter = document.getElementById('testNameFilter');
+    const paymentStatusFilter = document.getElementById('paymentStatusFilter');
+    const testStatusFilter = document.getElementById('testStatusFilter');
+    const sortDirectionBtn = document.getElementById('sortDirectionBtn');
+    const tableBody = document.getElementById('testsTableBody');
+    const tableHeaders = document.querySelectorAll('.modern-table th.sortable');
+
+    let currentSort = {
+        key: 'id', // Default sort
+        direction: 'desc' // Default direction
+    };
+
+    const processTable = () => {
+        if (!tableBody) return;
+
+        const searchTerm = searchInput.value.toLowerCase();
+        const testNameValue = testNameFilter.value.toLowerCase();
+        const paymentStatusValue = paymentStatusFilter.value.toLowerCase();
+        const testStatusValue = testStatusFilter.value.toLowerCase();
+        const rows = Array.from(tableBody.querySelectorAll('tr'));
+        let visibleRows = 0;
+
+        // --- Filtering ---
+        rows.forEach(row => {
+            if (row.querySelector('td[colspan]')) {
+                row.style.display = 'none';
+                return;
+            }
+
+            const rowText = row.textContent.toLowerCase();
+            const testNameCell = row.querySelector('td:nth-child(3)');
+            const paymentStatusCell = row.querySelector('td:nth-child(5) .pill');
+            const testStatusCell = row.querySelector('td:nth-child(6) .pill');
+
+            const rowTestName = testNameCell ? testNameCell.textContent.trim().toLowerCase() : '';
+            const rowPaymentStatus = paymentStatusCell ? paymentStatusCell.textContent.trim().toLowerCase() : '';
+            const rowTestStatus = testStatusCell ? testStatusCell.textContent.trim().toLowerCase() : '';
+
+            const matchesSearch = rowText.includes(searchTerm);
+            const matchesTestName = testNameValue ? rowTestName === testNameValue : true;
+            const matchesPaymentStatus = paymentStatusValue ? rowPaymentStatus === paymentStatusValue : true;
+            const matchesTestStatus = testStatusValue ? rowTestStatus === testStatusValue : true;
+
+            if (matchesSearch && matchesTestName && matchesPaymentStatus && matchesTestStatus) {
+                row.style.display = '';
+                visibleRows++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // --- Sorting ---
+        const visibleTableRows = rows.filter(row => row.style.display !== 'none');
+        visibleTableRows.sort((a, b) => {
+            const key = currentSort.key;
+            const direction = currentSort.direction === 'asc' ? 1 : -1;
+            const headerIndex = Array.from(tableHeaders).findIndex(th => th.dataset.key === key);
+            if (headerIndex === -1) return 0;
+
+            let valA = a.cells[headerIndex]?.textContent.trim() || '';
+            let valB = b.cells[headerIndex]?.textContent.trim() || '';
+
+            const isNumeric = tableHeaders[headerIndex].classList.contains('numeric');
+            if (isNumeric) {
+                valA = parseFloat(valA.replace(/[^0-9.-]+/g, "")) || 0;
+                valB = parseFloat(valB.replace(/[^0-9.-]+/g, "")) || 0;
+            } else {
+                valA = valA.toLowerCase();
+                valB = valB.toLowerCase();
+            }
+
+            if (valA < valB) return -1 * direction;
+            if (valA > valB) return 1 * direction;
+            return 0;
+        });
+
+        // Re-append sorted rows and handle no results
+        visibleTableRows.forEach(row => tableBody.appendChild(row));
+
+        let noResultsRow = tableBody.querySelector('.no-results-row');
+        if (visibleRows === 0) {
+            if (!noResultsRow) {
+                noResultsRow = tableBody.insertRow();
+                noResultsRow.className = 'no-results-row';
+                const cell = noResultsRow.insertCell();
+                cell.colSpan = tableHeaders.length + 1;
+                cell.textContent = 'No tests match your criteria.';
+                cell.style.textAlign = 'center';
+            }
+        } else if (noResultsRow) {
+            noResultsRow.remove();
+        }
+    };
+
+    // Attach event listeners
+    [searchInput, testNameFilter, paymentStatusFilter, testStatusFilter].forEach(el => {
+        if (el) el.addEventListener('input', processTable);
+    });
+
+    if (sortDirectionBtn) {
+        sortDirectionBtn.addEventListener('click', () => {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            processTable();
+        });
+    }
+
+    tableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const key = header.dataset.key;
+            if (currentSort.key === key) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.key = key;
+                currentSort.direction = 'desc';
+            }
+            tableHeaders.forEach(th => th.classList.remove('sort-asc', 'sort-desc'));
+            header.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+            processTable();
+        });
+    });
+});
+
 // Toast function
 function showToast(message, type = "success") {
     const toast = document.createElement("div");

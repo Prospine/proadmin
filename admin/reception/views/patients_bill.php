@@ -407,8 +407,8 @@ $today = date("d-m-Y");
                 <a href="dashboard.php">Dashboard</a>
                 <a href="inquiry.php">Inquiry</a>
                 <a href="registration.php">Registration</a>
-                <a href="patients.php" class="active">Patients</a>
                 <a href="appointments.php">Appointments</a>
+                <a href="patients.php" class="active">Patients</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php">Attendance</a>
                 <a href="tests.php">Tests</a>

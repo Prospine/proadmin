@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     /* ------------------------------
+
        Utilities
     ------------------------------ */
     const $ = (sel, ctx = document) => ctx.querySelector(sel);
@@ -32,6 +33,163 @@ document.addEventListener('DOMContentLoaded', () => {
             toast.addEventListener('transitionend', () => toastContainer.removeChild(toast), { once: true });
         }, 3000);
     };
+
+    /* ------------------------------
+       NEW: Table Search & Filter Logic
+    ------------------------------ */
+    const searchInput = $('#searchInput');
+    const statusFilter = $('#statusFilter');
+    const genderFilter = $('#genderFilter');
+    const referredByFilter = $('#referredByFilter');
+    const conditionFilter = $('#conditionFilter');
+    const sortDirectionBtn = $('#sortDirectionBtn');
+    const tableBody = $('#registrationTableBody');
+    const tableHeaders = $$('th.sortable');
+
+    let currentSort = {
+        key: 'created_at', // Default sort
+        direction: 'desc' // Default direction
+    };
+
+    const processTable = () => {
+        if (!tableBody) return;
+
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusValue = statusFilter.value.toLowerCase();
+        const genderValue = genderFilter.value.toLowerCase();
+        const referredByValue = referredByFilter.value.toLowerCase();
+        const conditionValue = conditionFilter.value.toLowerCase();
+        const rows = $$('tr', tableBody);
+        let visibleRows = 0;
+
+        rows.forEach(row => {
+            // Hide "no data" rows during filtering
+            if (row.querySelector('td[colspan]')) {
+                row.style.display = 'none';
+                return;
+            }
+
+            const rowText = row.textContent.toLowerCase();
+            const statusCell = row.querySelector('.pill');
+            const genderCell = row.querySelector('td:nth-child(4)'); // 4th column is Gender
+            const referredByCell = row.querySelector('td:nth-child(5)'); // 5th column is Referred By
+            const conditionCell = row.querySelector('td:nth-child(6)'); // 6th column is Condition
+
+            const rowStatus = statusCell ? statusCell.textContent.trim().toLowerCase() : '';
+            const rowGender = genderCell ? genderCell.textContent.trim().toLowerCase() : '';
+            const rowReferredBy = referredByCell ? referredByCell.textContent.trim().toLowerCase() : '';
+            const rowCondition = conditionCell ? conditionCell.textContent.trim().toLowerCase() : '';
+
+            // Match conditions
+            const matchesSearch = rowText.includes(searchTerm);
+            const matchesStatus = statusValue ? rowStatus === statusValue : true;
+            const matchesGender = genderValue ? rowGender === genderValue : true;
+            const matchesReferredBy = referredByValue ? rowReferredBy === referredByValue : true;
+            const matchesCondition = conditionValue ? rowCondition === conditionValue : true;
+
+            if (matchesSearch && matchesStatus && matchesGender && matchesReferredBy && matchesCondition) {
+                row.style.display = '';
+                visibleRows++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Handle "no results" message
+        let noResultsRow = $('.no-results-row', tableBody);
+        if (visibleRows === 0) {
+            if (!noResultsRow) {
+                noResultsRow = tableBody.insertRow();
+                noResultsRow.className = 'no-results-row';
+                const cell = noResultsRow.insertCell();
+                const colSpan = tableBody.closest('table').querySelector('thead th').length;
+                cell.colSpan = colSpan;
+                cell.textContent = 'No registrations match your search criteria.';
+                cell.style.textAlign = 'center';
+            }
+        } else {
+            if (noResultsRow) {
+                noResultsRow.remove();
+            }
+        }
+
+        // --- NEW: Sorting Logic ---
+        const visibleTableRows = $$('tr:not([style*="display: none"])', tableBody);
+
+        visibleTableRows.sort((a, b) => {
+            const key = currentSort.key;
+            const direction = currentSort.direction === 'asc' ? 1 : -1;
+
+            // Find the correct cell based on the data-key of the header
+            const headerIndex = tableHeaders.findIndex(th => th.dataset.key === key);
+            if (headerIndex === -1) return 0;
+
+            let valA = a.cells[headerIndex]?.textContent.trim() || '';
+            let valB = b.cells[headerIndex]?.textContent.trim() || '';
+
+            // Handle numeric/date/currency sorting
+            const isNumeric = tableHeaders[headerIndex].classList.contains('numeric');
+            const isDate = key === 'created_at';
+
+            if (isNumeric) {
+                valA = parseFloat(valA.replace(/[^0-9.-]+/g, "")) || 0;
+                valB = parseFloat(valB.replace(/[^0-9.-]+/g, "")) || 0;
+            } else if (isDate) {
+                valA = new Date(valA).getTime() || 0;
+                valB = new Date(valB).getTime() || 0;
+            } else {
+                valA = valA.toLowerCase();
+                valB = valB.toLowerCase();
+            }
+
+            if (valA < valB) return -1 * direction;
+            if (valA > valB) return 1 * direction;
+            return 0;
+        });
+
+        // Re-append sorted rows
+        visibleTableRows.forEach(row => tableBody.appendChild(row));
+    };
+
+    // --- NEW: Sorting Event Listeners ---
+    tableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const key = header.dataset.key;
+
+            // If same header, toggle direction. Otherwise, set to default 'desc'.
+            if (currentSort.key === key) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.key = key;
+                currentSort.direction = 'desc';
+            }
+
+            // Update sort indicators
+            tableHeaders.forEach(th => th.classList.remove('sort-asc', 'sort-desc'));
+            header.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+
+            processTable(); // Re-run filtering and sorting
+        });
+    });
+
+    if (sortDirectionBtn) {
+        sortDirectionBtn.addEventListener('click', () => {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            // Update active header indicator
+            const activeHeader = $(`th[data-key="${currentSort.key}"]`);
+            if (activeHeader) {
+                activeHeader.classList.toggle('sort-asc');
+                activeHeader.classList.toggle('sort-desc');
+            }
+            processTable();
+        });
+    }
+
+    // Attach event listeners if filter elements exist
+    [searchInput, statusFilter, genderFilter, referredByFilter, conditionFilter].forEach(el => {
+        if (el) el.addEventListener('input', processTable);
+    });
+
 
     /* ------------------------------
        Ensure single drawer container
@@ -75,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const discountInput = $('#discount', addDrawer);
     const advancePaymentInput = $('#advancePayment', addDrawer);
     const totalCostInput = $('#totalCost', addDrawer);
+    const discountApprovedByInput = $('#discountApprovedBy', addDrawer);
     const dueAmountInput = $('#dueAmount', addDrawer);
     const treatmentOptions = $$('input[name="treatmentType"]', addDrawer); // might be empty
 
@@ -338,13 +497,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedTreatmentCost = 0;
 
     const updateCalculations = () => {
-        if (!treatmentDaysInput || !discountInput || !advancePaymentInput || !totalCostInput || !dueAmountInput) return;
+        if (!treatmentDaysInput || !discountInput || !advancePaymentInput || !totalCostInput || !dueAmountInput || !discountApprovedByInput) return;
         const days = parseInt(treatmentDaysInput.value) || 0;
         const discount = parseFloat(discountInput.value) || 0;
         const advancePayment = parseFloat(advancePaymentInput.value) || 0;
         const totalCost = selectedTreatmentCost === 30000 ? 30000 : selectedTreatmentCost * days;
         const finalCost = totalCost * (1 - discount / 100);
         const dueAmount = finalCost - advancePayment;
+
+        // NEW: Make 'Approved By' required if there is a discount
+        discountApprovedByInput.required = (discount > 0);
+
         totalCostInput.value = isFinite(finalCost) ? finalCost.toFixed(2) : '';
         dueAmountInput.value = isFinite(dueAmount) ? dueAmount.toFixed(2) : '';
     };

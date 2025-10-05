@@ -90,8 +90,8 @@ try {
 
 // --- Define the Time Slots for the Grid (No changes needed here) ---
 $timeSlots = [];
-$startTime = new DateTime('09:00');
-$endTime = new DateTime('18:30');
+$startTime = new DateTime('11:00');
+$endTime = new DateTime('19:00');
 $interval = new DateInterval('PT30M');
 $period = new DatePeriod($startTime, $interval, $endTime);
 foreach ($period as $dt) {
@@ -120,8 +120,8 @@ foreach ($period as $dt) {
                 <a href="dashboard.php">Dashboard</a>
                 <a href="inquiry.php">Inquiry</a>
                 <a href="registration.php">Registration</a>
-                <a href="patients.php">Patients</a>
                 <a href="appointments.php">Appointments</a>
+                <a href="patients.php">Patients</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php">Attendance</a>
                 <a href="tests.php">Tests</a>

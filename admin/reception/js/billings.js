@@ -1,4 +1,105 @@
 document.addEventListener("DOMContentLoaded", () => {
+    /* ------------------------------
+       NEW: Table Search, Filter & Sort Logic
+    ------------------------------ */
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const sortDirectionBtn = document.getElementById('sortDirectionBtn');
+    const tableBody = document.getElementById('billingTableBody');
+    const tableHeaders = document.querySelectorAll('.modern-table th.sortable');
+
+    let currentSort = {
+        key: 'id', // Default sort
+        direction: 'desc' // Default direction
+    };
+
+    const processTable = () => {
+        if (!tableBody) return;
+
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusValue = statusFilter.value.toLowerCase();
+        const rows = Array.from(tableBody.querySelectorAll('tr'));
+        let visibleRows = 0;
+
+        // --- Filtering ---
+        rows.forEach(row => {
+            if (row.querySelector('td[colspan]')) {
+                row.style.display = 'none';
+                return;
+            }
+
+            const rowText = row.textContent.toLowerCase();
+            const statusCell = row.querySelector('.pill');
+            const rowStatus = statusCell ? statusCell.textContent.trim().toLowerCase() : '';
+
+            const matchesSearch = rowText.includes(searchTerm);
+            const matchesStatus = statusValue ? rowStatus === statusValue : true;
+
+            if (matchesSearch && matchesStatus) {
+                row.style.display = '';
+                visibleRows++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // --- Sorting ---
+        const visibleTableRows = rows.filter(row => row.style.display !== 'none');
+        visibleTableRows.sort((a, b) => {
+            const key = currentSort.key;
+            const direction = currentSort.direction === 'asc' ? 1 : -1;
+            const headerIndex = Array.from(tableHeaders).findIndex(th => th.dataset.key === key);
+            if (headerIndex === -1) return 0;
+
+            let valA = a.cells[headerIndex]?.textContent.trim() || '';
+            let valB = b.cells[headerIndex]?.textContent.trim() || '';
+
+            const isNumeric = tableHeaders[headerIndex].classList.contains('numeric');
+
+            if (isNumeric) {
+                valA = parseFloat(valA.replace(/[^0-9.-]+/g, "")) || 0;
+                valB = parseFloat(valB.replace(/[^0-9.-]+/g, "")) || 0;
+            } else {
+                valA = valA.toLowerCase();
+                valB = valB.toLowerCase();
+            }
+
+            if (valA < valB) return -1 * direction;
+            if (valA > valB) return 1 * direction;
+            return 0;
+        });
+
+        // Re-append sorted rows and handle no results
+        visibleTableRows.forEach(row => tableBody.appendChild(row));
+
+        let noResultsRow = tableBody.querySelector('.no-results-row');
+        if (visibleRows === 0) {
+            if (!noResultsRow) {
+                noResultsRow = tableBody.insertRow();
+                noResultsRow.className = 'no-results-row';
+                const cell = noResultsRow.insertCell();
+                cell.colSpan = tableHeaders.length + 2; // +2 for non-sortable action columns
+                cell.textContent = 'No billing records match your criteria.';
+                cell.style.textAlign = 'center';
+            }
+        } else if (noResultsRow) {
+            noResultsRow.remove();
+        }
+    };
+
+    // Attach event listeners
+    if (searchInput) searchInput.addEventListener('input', processTable);
+    if (statusFilter) statusFilter.addEventListener('change', processTable);
+    if (sortDirectionBtn) {
+        sortDirectionBtn.addEventListener('click', () => {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            processTable();
+        });
+    }
+
+    /* ------------------------------
+       Drawer Logic
+    ------------------------------ */
     const drawerOverlay = document.getElementById("drawer-overlay");
     const drawerPanel = document.getElementById("drawer-panel");
     const drawerHeader = document.getElementById("drawer-patient-name");
@@ -96,5 +197,21 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target === drawerOverlay) {
             closeDrawer();
         }
+    });
+
+    // --- Sorting Event Listeners ---
+    tableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const key = header.dataset.key;
+            if (currentSort.key === key) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.key = key;
+                currentSort.direction = 'desc';
+            }
+            tableHeaders.forEach(th => th.classList.remove('sort-asc', 'sort-desc'));
+            header.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+            processTable();
+        });
     });
 });

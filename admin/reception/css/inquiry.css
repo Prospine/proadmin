@@ -164,6 +164,62 @@ body.dark {
   border: 1px solid #25252530;
 }
 
+/* === Filter & Search Bar === */
+.filter-bar {
+  display: flex;
+  width: 800px;
+  display: flex; /* This will be inside a .wrapper flexbox */
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  /* background: #f1f1f1; */
+  border-radius: 0.75rem;
+  flex-grow: 1; /* Allow the filter bar to take available space in the wrapper */
+}
+
+.search-container {
+  flex-grow: 1;
+  flex: 1 1 300px; /* Allow search to grow and shrink, with a base width */
+  min-width: 250px; /* Prevent it from becoming too small */
+  position: relative;
+}
+
+.search-container .fa-search {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 0.8rem 1rem 0.6rem 2.5rem; /* left padding for icon */
+  padding: 0.6rem 1rem 0.6rem 2.5rem; /* left padding for icon */
+  border-radius: 1rem;
+  border: 1px solid #ddd;
+  font-size: 0.9rem;
+}
+
+.filter-options select {
+  margin-top: 10px;
+  /* margin-top: 10px; */ /* This was causing misalignment */
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 0.9rem;
+}
+
+
+body.dark .search-container input,
+body.dark .filter-options select {
+  background: var(--card-bg3);
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+
 .hidden {
   display: none !important;
 }

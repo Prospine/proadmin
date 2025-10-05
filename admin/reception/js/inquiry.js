@@ -1,16 +1,92 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // --- TABLE TOGGLE LOGIC ---
+    // --- ELEMENT REFERENCES ---
     const quickBtn = document.getElementById('quickBtn');
     const testBtn = document.getElementById('testBtn');
     const quickTable = document.getElementById('quickTable');
     const testTable = document.getElementById('testTable');
+    const searchInput = document.getElementById('searchInput');
+    const quickInquiryFilters = document.getElementById('quickInquiryFilters');
+    const testInquiryFilters = document.getElementById('testInquiryFilters');
+    const quickStatusFilter = document.getElementById('quickStatusFilter');
 
+    // --- CORE FILTERING FUNCTION ---
+    const filterTable = () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        let activeTableBody, statusFilter;
+
+        // Determine which table and filters are active
+        if (!quickTable.classList.contains('hidden')) {
+            activeTableBody = quickTable.querySelector('tbody');
+            statusFilter = quickStatusFilter.value;
+        } else {
+            activeTableBody = testTable.querySelector('tbody');
+            // In the future, you would get the test status filter value here
+            // statusFilter = document.getElementById('testStatusFilter').value;
+            statusFilter = ''; // No status filter for test table yet
+        }
+
+        if (!activeTableBody) return;
+
+        const rows = activeTableBody.querySelectorAll('tr');
+        let visibleRows = 0;
+
+        rows.forEach(row => {
+            // Hide the "No data" row if it exists
+            if (row.querySelector('td[colspan]')) {
+                row.style.display = 'none';
+                return;
+            }
+
+            const rowText = row.textContent.toLowerCase();
+            const statusCell = row.querySelector('.pill');
+            const rowStatus = statusCell ? statusCell.textContent.trim().toLowerCase() : '';
+
+            // Match conditions
+            const matchesSearch = rowText.includes(searchTerm);
+            const matchesStatus = statusFilter ? rowStatus === statusFilter : true;
+
+            if (matchesSearch && matchesStatus) {
+                row.style.display = '';
+                visibleRows++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Show a "no results" message if no rows are visible
+        const noResultsRow = activeTableBody.querySelector('.no-results-row');
+        if (visibleRows === 0) {
+            if (!noResultsRow) {
+                const newRow = activeTableBody.insertRow();
+                newRow.className = 'no-results-row';
+                const cell = newRow.insertCell();
+                cell.colSpan = activeTableBody.closest('table').querySelector('thead th').length;
+                cell.textContent = 'No inquiries match your search criteria.';
+                cell.style.textAlign = 'center';
+            }
+        } else {
+            if (noResultsRow) {
+                noResultsRow.remove();
+            }
+        }
+    };
+
+    // --- TABLE TOGGLE LOGIC ---
     if (quickBtn && testBtn && quickTable && testTable) {
         quickBtn.addEventListener('click', () => {
             quickBtn.classList.add('active');
             testBtn.classList.remove('active');
             quickTable.classList.remove('hidden');
             testTable.classList.add('hidden');
+
+            // Toggle filters
+            quickInquiryFilters.classList.remove('hidden');
+            testInquiryFilters.classList.add('hidden');
+
+            // Reset and apply filters for the new table
+            searchInput.value = '';
+            quickStatusFilter.value = '';
+            filterTable();
         });
 
         testBtn.addEventListener('click', () => {
@@ -18,8 +94,22 @@ document.addEventListener("DOMContentLoaded", () => {
             quickBtn.classList.remove('active');
             testTable.classList.remove('hidden');
             quickTable.classList.add('hidden');
+
+            // Toggle filters
+            testInquiryFilters.classList.remove('hidden');
+            quickInquiryFilters.classList.add('hidden');
+
+            // Reset and apply filters for the new table
+            searchInput.value = '';
+            // testStatusFilter.value = ''; // For future use
+            filterTable();
         });
     }
+
+    // --- EVENT LISTENERS FOR FILTERS ---
+    searchInput.addEventListener('input', filterTable);
+    quickStatusFilter.addEventListener('change', filterTable);
+    // document.getElementById('testStatusFilter').addEventListener('change', filterTable); // For future use
 
     // --- STATUS UPDATE LOGIC ---
     document.querySelectorAll("table select").forEach(select => {

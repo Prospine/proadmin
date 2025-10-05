@@ -57,7 +57,7 @@ try {
     $stmt->execute([':branch_id' => $branchId]);
     $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-   // Branch name
+    // Branch name
     $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
     $stmtBranch->execute([':branch_id' => $branchId]);
     $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
@@ -215,6 +215,12 @@ try {
             color: #222;
             word-wrap: break-word;
         }
+
+        .wrapper {
+            display: flex;
+            width: auto;
+            gap: 10px;
+        }
     </style>
 </head>
 
@@ -224,10 +230,10 @@ try {
         <nav>
             <div class="nav-links">
                 <a href="dashboard.php">Dashboard</a>
-                <a href="inquiry.php">Inquiry</a>
+                <a href="inquiry.php" class="active">Inquiry</a>
                 <a href="registration.php">Registration</a>
+                <a href="appointments.php">Appointments</a>
                 <a href="patients.php">Patients</a>
-                <a href="appointments.php" class="active">Appointments</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php">Attendance</a>
                 <a href="tests.php">Tests</a>
@@ -266,10 +272,16 @@ try {
     <main class="main">
         <div class="dashboard-container">
             <div class="top-bar">
-                <h2>Appointments</h2>
-                <div class="toggle-container">
-                    <button class="toggle-btn" onclick="window.location.href = 'appointments.php';">Appointments Requests</button>
-                    <button class="toggle-btn active" onclick="window.location.href = 'appointmentss.php';">Appointments Booked</button>
+                <h2>Inquiry</h2>
+                <div class="wrapper">
+                    <div class="toggle-container">
+                        <button class="toggle-btn" onclick="window.location.href = 'inquiry.php';">Quick Inquiry</button>
+                        <button id="testBtn" class="toggle-btn" onclick="window.location.href = 'inquiry.php';">Test Inquiry</button>
+                    </div>
+                    <div class="toggle-container">
+                        <button class="toggle-btn" onclick="window.location.href = 'online_inquiry.php';">Online Inquiry</button>
+                        <button class="toggle-btn active" onclick="window.location.href = 'online_inquiry_booked.php';">Online Inquiry Booked</button>
+                    </div>
                 </div>
             </div>
 

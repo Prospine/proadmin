@@ -274,8 +274,8 @@ function errorPage(string $title, string $message): string
                 <a href="dashboard.php">Dashboard</a>
                 <a href="inquiry.php">Inquiry</a>
                 <a href="registration.php">Registration</a>
-                <a class="active" href="patients.php">Patients</a>
                 <a href="appointments.php">Appointments</a>
+                <a class="active" href="patients.php">Patients</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php">Attendance</a>
                 <a href="tests.php">Tests</a>

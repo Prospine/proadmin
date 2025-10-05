@@ -27,6 +27,22 @@ if (!$branchId) {
 }
 
 try {
+    // --- NEW: Fetch distinct values for filter dropdowns ---
+    $filterOptions = [];
+    $filterQueries = [
+        'doctors' => "SELECT DISTINCT assigned_doctor FROM patients WHERE branch_id = :branch_id AND assigned_doctor IS NOT NULL AND assigned_doctor != '' ORDER BY assigned_doctor",
+        'treatments' => "SELECT DISTINCT treatment_type FROM patients WHERE branch_id = :branch_id AND treatment_type IS NOT NULL AND treatment_type != '' ORDER BY treatment_type",
+        'statuses' => "SELECT DISTINCT status FROM patients WHERE branch_id = :branch_id AND status IS NOT NULL AND status != '' ORDER BY status",
+    ];
+
+    foreach ($filterQueries as $key => $query) {
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([':branch_id' => $branchId]);
+        // Use FETCH_COLUMN to get a simple array of values
+        $filterOptions[$key] = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+
     // Fetch all necessary patient data, including costs and payments
     $stmt = $pdo->prepare("
         SELECT
@@ -154,8 +170,8 @@ try {
                 <a href="dashboard.php">Dashboard</a>
                 <a href="inquiry.php">Inquiry</a>
                 <a href="registration.php">Registration</a>
-                <a class="active" href="patients.php">Patients</a>
                 <a href="appointments.php">Appointments</a>
+                <a class="active" href="patients.php">Patients</a>
                 <a href="billing.php">Billing</a>
                 <a href="attendance.php">Attendance</a>
                 <a href="tests.php">Tests</a>
@@ -194,30 +210,61 @@ try {
         <div class="dashboard-container">
             <div class="top-bar">
                 <h2>Patients</h2>
+                <!-- NEW: Filter and Search Bar -->
+                <div class="filter-bar">
+                    <div class="search-container">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by name, ID, condition, etc...">
+                    </div>
+
+                    <div class="filter-options">
+                        <select id="doctorFilter">
+                            <option value="">All Doctors</option>
+                            <?php foreach ($filterOptions['doctors'] as $doctor): ?>
+                                <option value="<?= htmlspecialchars($doctor) ?>"><?= htmlspecialchars($doctor) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <select id="treatmentFilter">
+                            <option value="">All Treatments</option>
+                            <?php foreach ($filterOptions['treatments'] as $treatment): ?>
+                                <option value="<?= htmlspecialchars($treatment) ?>"><?= htmlspecialchars(ucfirst($treatment)) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <select id="statusFilter">
+                            <option value="">All Statuses</option>
+                            <?php foreach ($filterOptions['statuses'] as $status): ?>
+                                <option value="<?= htmlspecialchars($status) ?>"><?= htmlspecialchars(ucfirst($status)) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button id="sortDirectionBtn" class="sort-btn" title="Toggle Sort Direction">
+                            <i class="fa-solid fa-sort"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="table-container modern-table">
                 <table id="patientsTable">
                     <thead>
                         <tr>
-                            <th data-key="id" class="sortable">ID <span class="sort-indicator"></span></th>
-                            <th data-key="name" class="sortable">Name <span class="sort-indicator"></span></th>
-                            <th data-key="age" class="sortable">Age</th>
-                            <th data-key="doctor" class="sortable">Assigned Doctor</th>
-                            <th data-key="condition" class="sortable">Condition</th>
-                            <th data-key="treatment" class="sortable">Treatment Type</th>
+                            <th data-key="patient_id" class="sortable">ID <span class="sort-indicator"></span></th>
+                            <th data-key="patient_name" class="sortable">Name <span class="sort-indicator"></span></th>
+                            <th data-key="patient_age" class="sortable">Age</th>
+                            <th data-key="assigned_doctor" class="sortable">Assigned Doctor</th>
+                            <th data-key="patient_condition" class="sortable">Condition</th>
+                            <th data-key="treatment_type" class="sortable">Treatment Type</th>
                             <!-- <th data-key="days" class="sortable">Days</th> -->
-                            <th data-key="days" class="sortable">Attendance</th>
+                            <th data-key="attendance_count" class="sortable">Attendance</th>
                             <!-- <th data-key="cost" class="sortable numeric">Total Amount</th> -->
-                            <th data-key="advance" class="sortable numeric">Amount Paid</th>
+                            <th data-key="advance_payment" class="sortable numeric">Amount Paid</th>
                             <!-- <th data-key="due" class="sortable numeric">Due Amount</th> -->
-                            <th data-key="period">Treatment Period</th>
-                            <th data-key="status">Status</th>
+                            <th data-key="start_date" class="sortable">Treatment Period</th>
+                            <th data-key="patient_status">Status</th>
                             <th>Mark Attendance</th>
                             <th>Token</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="patientsTableBody">
                         <?php if (!empty($patients)): ?>
                             <?php foreach ($patients as $row):
                                 $pid = (int) ($row['patient_id'] ?? 0);

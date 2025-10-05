@@ -30,6 +30,114 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => toast.remove(), 3000);
     };
 
+    /* ------------------------------
+       NEW: Table Search, Filter & Sort Logic
+    ------------------------------ */
+    const searchInput = document.getElementById('searchInput');
+    const doctorFilter = document.getElementById('doctorFilter');
+    const treatmentFilter = document.getElementById('treatmentFilter');
+    const statusFilter = document.getElementById('statusFilter');
+    const sortDirectionBtn = document.getElementById('sortDirectionBtn');
+    const tableBody = document.getElementById('patientsTableBody');
+    const tableHeaders = document.querySelectorAll('#patientsTable th.sortable');
+
+    let currentSort = {
+        key: 'patient_id', // Default sort
+        direction: 'desc' // Default direction
+    };
+
+    const processTable = () => {
+        if (!tableBody) return;
+
+        const searchTerm = searchInput.value.toLowerCase();
+        const doctorValue = doctorFilter.value.toLowerCase();
+        const treatmentValue = treatmentFilter.value.toLowerCase();
+        const statusValue = statusFilter.value.toLowerCase();
+        const rows = Array.from(tableBody.querySelectorAll('tr'));
+        let visibleRows = 0;
+
+        // --- Filtering ---
+        rows.forEach(row => {
+            if (row.querySelector('td[colspan]')) {
+                row.style.display = 'none';
+                return;
+            }
+
+            const rowText = row.textContent.toLowerCase();
+            const doctorCell = row.querySelector('td:nth-child(4)');
+            const treatmentCell = row.querySelector('td:nth-child(6)');
+            const statusCell = row.querySelector('td:nth-child(10) .status-active, td:nth-child(10) .status-inactive, td:nth-child(10) .status-completed');
+
+            const rowDoctor = doctorCell ? doctorCell.textContent.trim().toLowerCase() : '';
+            const rowTreatment = treatmentCell ? treatmentCell.textContent.trim().toLowerCase() : '';
+            const rowStatus = statusCell ? statusCell.textContent.trim().toLowerCase() : '';
+
+            const matchesSearch = rowText.includes(searchTerm);
+            const matchesDoctor = doctorValue ? rowDoctor === doctorValue : true;
+            const matchesTreatment = treatmentValue ? rowTreatment === treatmentValue : true;
+            const matchesStatus = statusValue ? rowStatus === statusValue : true;
+
+            if (matchesSearch && matchesDoctor && matchesTreatment && matchesStatus) {
+                row.style.display = '';
+                visibleRows++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // --- Sorting ---
+        const visibleTableRows = rows.filter(row => row.style.display !== 'none');
+        visibleTableRows.sort((a, b) => {
+            const key = currentSort.key;
+            const direction = currentSort.direction === 'asc' ? 1 : -1;
+            const headerIndex = Array.from(tableHeaders).findIndex(th => th.dataset.key === key);
+            if (headerIndex === -1) return 0;
+
+            let valA = a.cells[headerIndex]?.textContent.trim() || '';
+            let valB = b.cells[headerIndex]?.textContent.trim() || '';
+
+            const isNumeric = tableHeaders[headerIndex].classList.contains('numeric');
+            const isDate = key === 'start_date';
+
+            if (isNumeric) {
+                valA = parseFloat(valA.replace(/[^0-9.-]+/g, "")) || 0;
+                valB = parseFloat(valB.replace(/[^0-9.-]+/g, "")) || 0;
+            } else if (isDate) {
+                valA = new Date(valA.split('Start: ')[1]).getTime() || 0;
+                valB = new Date(valB.split('Start: ')[1]).getTime() || 0;
+            } else {
+                valA = valA.toLowerCase();
+                valB = valB.toLowerCase();
+            }
+
+            if (valA < valB) return -1 * direction;
+            if (valA > valB) return 1 * direction;
+            return 0;
+        });
+
+        // Re-append sorted rows and handle no results
+        visibleTableRows.forEach(row => tableBody.appendChild(row));
+
+        let noResultsRow = tableBody.querySelector('.no-results-row');
+        if (visibleRows === 0) {
+            if (!noResultsRow) {
+                noResultsRow = tableBody.insertRow();
+                noResultsRow.className = 'no-results-row';
+                const cell = noResultsRow.insertCell();
+                cell.colSpan = tableHeaders.length + 3; // +3 for non-sortable action columns
+                cell.textContent = 'No patients match your criteria.';
+                cell.style.textAlign = 'center';
+            }
+        } else if (noResultsRow) {
+            noResultsRow.remove();
+        }
+    };
+
+    // Attach event listeners
+    [searchInput, doctorFilter, treatmentFilter, statusFilter].forEach(el => {
+        if (el) el.addEventListener('input', processTable);
+    });
+
     // Navigation
     const navBacksBtn = document.getElementById('navBacks');
     const navForwardsBtn = document.getElementById('navForwards');
@@ -105,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="info-item"><span class="label">Package Cost</span><span class="value">₹${numberFormat(data.package_cost ?? 0)}</span></div>
         <div class="info-item"><span class="label">Total Amount</span><span class="value">₹${numberFormat(data.total_amount ?? 0)}</span></div>
         <div class="info-item"><span class="label">Discount</span><span class="value">${data.discount_percentage ?? 0}%</span></div>
-        <div class="info-item"><span class="label">Due Amount</span><span class="value">₹${numberFormat(data.due_amount ?? 0)}</span></div>
+        <div class="info-item"><span class="label">Expected Due Amount</span><span class="value">₹${numberFormat(data.due_amount ?? 0)}</span></div>
         <div class="info-item"><span class="label">Treatment Payment Method</span><span class="value">${ucFirst(data.treatment_payment_method ?? 'N/A')}</span></div>
     </div>
 </div>
@@ -181,6 +289,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         });
     });
+
+    // --- Sorting Event Listeners ---
+    tableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const key = header.dataset.key;
+            if (currentSort.key === key) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.key = key;
+                currentSort.direction = 'desc';
+            }
+            tableHeaders.forEach(th => th.classList.remove('sort-asc', 'sort-desc'));
+            header.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+            processTable();
+        });
+    });
+
+    if (sortDirectionBtn) {
+        sortDirectionBtn.addEventListener('click', () => {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            processTable();
+        });
+    }
     
     // When print button is clicked
     document.querySelectorAll(".action-btn2").forEach(btn => {

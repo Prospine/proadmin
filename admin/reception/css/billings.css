@@ -1,3 +1,4 @@
+
 .drawer-overlay {
   position: fixed;
   top: 0;
@@ -171,6 +172,27 @@ body.dark .payment-item ul li {
   padding: 10px 20px;
   border-radius: 12px;
 }
+
+/* Sort indicators in table headers */
+.modern-table th.sortable {
+  cursor: pointer;
+  position: relative;
+  padding-right: 20px;
+}
+
+.modern-table th.sortable::after {
+  content: " \2195"; /* Up-down arrow */
+  position: absolute;
+  right: 8px;
+  opacity: 0.3;
+}
+
+.modern-table th.sort-asc::after,
+.modern-table th.sort-desc::after {
+  opacity: 1;
+}
+.modern-table th.sort-asc::after { content: " \2191"; } /* Up arrow */
+.modern-table th.sort-desc::after { content: " \2193"; } /* Down arrow */
 
 .pill.inactive {
   background: #bc0505;

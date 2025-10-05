@@ -118,10 +118,8 @@ body.dark {
 }
 
 /* ======================================== */
-/* BEGIN ORIGINAL CSS (WITH ENHANCEMENTS)  */
+/* DARK THEME SPECIFIC SELECTORS           */
 /* ======================================== */
-
-/* Dark Theme Specific Selectors (As per original file) */
 body.dark nav {
   background-color: var(--bg-nav);
   color: var(--text-body);
@@ -232,6 +230,18 @@ body.dark .tab-btn.active {
   background: var(--color-accent);
   color: var(--text-on-accent);
 }
+body.dark .event {
+  background: var(--bg-tertiary);
+  color: #fff;
+}
+body.dark .hamburger-menu {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* ======================================== */
+/* BASE STYLES (DESKTOP DEFAULT)           */
+/* ======================================== */
 
 /* Base Body */
 body {
@@ -269,7 +279,6 @@ header {
 }
 
 nav {
-  /* flex-grow: 1; */
   min-width: 300px;
   margin-left: 20px;
   background-color: var(--bg-nav);
@@ -293,6 +302,11 @@ nav {
   border-radius: var(--border-radius-card); /* 20px */
   transition: var(--transition-medium);
   font-size: 14px;
+}
+
+.nav-links a i {
+  display: none; /* Hide icons on desktop by default */
+  font-size: 1.1em; /* Keep font size for mobile */
 }
 
 .nav-links a:hover {
@@ -576,11 +590,6 @@ nav {
   box-shadow: var(--shadow-event);
 }
 
-body.dark .event {
-  background: var(--bg-tertiary);
-  color: var(--color-accent-text);
-}
-
 .event-title {
   font-weight: 600;
   margin-bottom: 4px;
@@ -824,9 +833,6 @@ button:hover,
   cursor: pointer;
   font-size: 16px;
 }
-.submit-btn:hover {
-  background: var(--color-accent-hover);
-}
 
 /* Popups & Notifications */
 .notification-count {
@@ -980,7 +986,7 @@ button:hover,
   line-height: 1.4;
 }
 
-/* Toasts (as per original) */
+/* Toasts */
 #toast-container {
   position: fixed;
   top: 22px;
@@ -1072,6 +1078,19 @@ button:hover,
 }
 
 /* ======================================== */
+/* HAMBURGER & MOBILE NAV DRAWER           */
+/* ======================================== */
+.hamburger-menu {
+  display: none; /* Hidden by default on desktop */
+  cursor: pointer;
+  font-size: 1.6rem; /* Reduced icon size */
+  color: var(--text-primary);
+  z-index: 1001; /* Above the nav */
+  background-color: transparent; /* Removed background */
+  margin-left: 16px; /* Keep spacing */
+}
+
+/* ======================================== */
 /* ANIMATIONS DEFINITIONS                  */
 /* ======================================== */
 @keyframes slideInUp {
@@ -1123,51 +1142,510 @@ button:hover,
 /* RESPONSIVE MEDIA QUERIES                */
 /* ======================================== */
 
-/* For Small Laptops and Large Tablets */
+/* Small Laptops (max-width: 1200px) */
 @media (max-width: 1200px) {
   header {
     padding: 12px 16px;
+  }
+  nav {
+    max-width: 100%;
+    padding: 4px;
+  }
+  .nav-links {
+    gap: 12px;
   }
   .nav-links a {
     padding: 8px 12px;
     font-size: 13px;
   }
-  .main2 {
-    flex-direction: column; /* Stack main sections */
-    align-items: center; /* Center the stacked items */
+  .logo {
+    width: 140px;
   }
-  .schedule,
-  .form,
+  .content {
+    padding: 8px;
+    width: 98%;
+  }
+  .cards {
+    gap: 8px;
+  }
+  .card {
+    min-width: 250px;
+    height: 240px;
+    padding: 4px 0;
+    margin: 4px;
+  }
+  .card-header2 {
+    padding: 4px 16px;
+  }
+  .card-header h2 {
+    font-size: 0.95em;
+    margin-left: 12px;
+  }
+  .card-body,
+  .card-body2 {
+    padding: 12px;
+    height: 55px;
+  }
+  .card-title {
+    font-size: 0.95em;
+  }
+  .card-sub {
+    font-size: 0.85em;
+  }
+  .main2 {
+    gap: 4px;
+    padding: 0 0.5%;
+  }
+  .schedule {
+    flex-basis: 280px;
+    width: 280px;
+    padding: 16px;
+    margin: 8px 4px;
+  }
+  .schedule-header h2 {
+    font-size: 18px;
+  }
+  .arrow {
+    padding: 8px;
+    width: 22px;
+    height: 22px;
+  }
+  .days {
+    font-size: 14px;
+    gap: 10px;
+  }
+  .days .day {
+    padding: 6px 10px;
+  }
+  .timeline {
+    padding-left: 60px;
+  }
+  .time-slot .time {
+    left: -60px;
+    font-size: 14px;
+    width: 90px;
+  }
+  .circle {
+    width: 20px;
+    height: 20px;
+    left: -30px;
+    font-size: 10px;
+    margin: 18px 60px;
+  }
+  .time-slot::before {
+    left: -18px;
+  }
+  .event {
+    width: 220px;
+    margin-left: 60px;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  .event-time {
+    font-size: 11px;
+  }
+  .form {
+    flex-basis: 550px;
+    width: 620px;
+    padding: 8px;
+    margin: 8px 4px;
+  }
   .form-box {
-    width: 95%; /* Take up more width when stacked */
-    margin: 10px auto;
+    flex-basis: 350px;
+    width: 500px;
+    padding: 25px;
+    margin: 8px 4px;
+  }
+  form {
+    gap: 10px;
+  }
+  label {
+    font-size: 12px;
+  }
+  input,
+  select,
+  textarea {
+    padding: 10px;
+    font-size: 13px;
+  }
+  button {
+    padding: 10px 14px;
+    font-size: 15px;
+  }
+  .slider-toggle {
+    width: 220px;
+    height: 36px;
+  }
+  .slider-toggle button {
+    font-size: 15px;
+  }
+  .form-tabs {
+    gap: 8px;
+  }
+  .tab-btn {
+    padding: 8px;
+    font-size: 15px;
+  }
+  .form-row {
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .form-row > div {
+    min-width: 180px;
+  }
+  .form-row label {
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+  .form-row input,
+  .form-row select,
+  .form-row textarea {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .form-row textarea {
+    height: 70px;
+  }
+  .submit-btn {
+    padding: 10px;
+    font-size: 15px;
+  }
+  .menu,
+  .notification {
+    top: 70px;
+    right: 12px;
+    width: 220px;
+  }
+  .notification {
+    width: 280px;
+  }
+  .menu-header {
+    padding: 14px;
+  }
+  .menu-header h3 {
+    font-size: 0.95rem;
+  }
+  .menu-header p {
+    font-size: 0.8rem;
+  }
+  .popup ul li a {
+    padding: 10px 14px;
+    font-size: 14px;
+    gap: 10px;
+  }
+  .popup ul li a i {
+    width: 18px;
+  }
+  .notification-header {
+    padding: 8px 16px;
+  }
+  .notification-header h3 {
+    font-size: 15px;
+  }
+  .notification-item {
+    padding: 10px 16px;
+  }
+  .notification-title {
+    font-size: 13px;
+  }
+  .notification-message {
+    font-size: 12px;
+  }
+  #toast-container {
+    top: 20px;
+    right: 20px;
+    width: 350px;
+  }
+  .toast {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .text h2 {
+    font-size: 0.95em;
   }
 }
 
-/* For Tablets */
+/* Tablets and Large Mobiles (max-width: 1024px) */
 @media (max-width: 1024px) {
   body {
     font-size: 14px; /* Slightly smaller base font */
   }
-  .cards {
-    flex-direction: column; /* Stack cards vertically */
-  }
-  .card {
-    flex-basis: auto; /* Reset basis */
-    width: auto;
-  }
-  nav {
-    display: none;
-  }
   header {
-    justify-content: space-between;
+    padding: 10px 14px;
+    flex-wrap: nowrap;
   }
   .logo-container {
     flex-grow: 1;
   }
+  .logo {
+    width: 130px;
+  }
+  .hamburger-menu {
+    margin-top: 4px;
+    margin-left: -10px;
+    margin-right: 20px;
+    display: block; /* Show on tablet and mobile */
+    font-size: 28px;
+  }
+  nav {
+    position: absolute;
+    top: 85px;
+    right: 16px;
+    min-width: 170px;
+    width: 170px;
+    height: auto;
+    background-color: var(--bg-primary) !important;
+    box-shadow: var(--shadow-popup);
+    border-radius: var(--border-radius-popup);
+    border: 1px solid var(--border-color-primary);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 1000;
+    padding: 10px;
+    display: none;
+    flex-direction: column;
+    margin-left: 0;
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  nav.open {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .nav-links {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 10px;
+  }
+  .nav-links a {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+  .nav-links a span {
+    display: inline;
+  }
+  .nav-links a i {
+    display: inline-block;
+    margin-right: 12px;
+  }
+  .nav-actions {
+    flex-direction: row;
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+  }
+  .content {
+    /* margin: 8px; */
+    padding: 10px;
+    width: 96%;
+  }
+  .cards {
+    gap: 6px;
+    justify-content: space-between;
+  }
+  .card {
+    flex-grow: 1;
+    min-width: 240px;
+    height: auto;
+  }
+  .spcard {
+    display: flex;
+    width: 100%;
+    min-height: 100%;
+    justify-content: space-between;
+  }
+  .spcard .card-body,
+  .spcard .card-body2 {
+    width: 100%;
+    /* height: auto; */
+    padding: 10px;
+  }
+  .main2 {
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+  }
+  .schedule,
+  .form,
+  .form-box {
+    width: 94%;
+    /* margin: 10px auto; */
+    padding: 5px 15px;
+  }
+  .schedule-header h2 {
+    font-size: 17px;
+  }
+  .arrow {
+    width: 20px;
+    height: 20px;
+    padding: 6px;
+  }
+  .days {
+    font-size: 13px;
+    gap: 8px;
+  }
+  .days .day {
+    padding: 5px 8px;
+  }
+  .timeline {
+    padding-left: 50px;
+  }
+  .time-slot .time {
+    left: -50px;
+    font-size: 13px;
+    width: 80px;
+  }
+  .circle {
+    width: 18px;
+    height: 18px;
+    left: -25px;
+    font-size: 9px;
+    margin: 16px 50px;
+  }
+  .time-slot::before {
+    left: -16px;
+  }
+  .event {
+    width: 200px;
+    margin-left: 50px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  .event-time {
+    font-size: 10px;
+  }
+  .form {
+    width: 98%;
+    padding: 6px 20px;
+  }
+  .form-box {
+    width: 100%;
+    min-width: 750px;
+    padding: 20px;
+  }
+  form {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  label {
+    font-size: 11px;
+  }
+  input,
+  select,
+  textarea {
+    padding: 8px;
+    font-size: 12px;
+  }
+  button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  .slider-toggle {
+    width: 200px;
+    height: 34px;
+  }
+  .slider-toggle button {
+    font-size: 14px;
+  }
+  .form-tabs {
+    gap: 6px;
+  }
+  .tab-btn {
+    padding: 6px;
+    font-size: 14px;
+  }
+  .form-row {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .form-row > div {
+    min-width: 160px;
+  }
+  .form-row label {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  .form-row input,
+  .form-row select,
+  .form-row textarea {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .form-row textarea {
+    height: 60px;
+  }
+  .submit-btn {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .menu,
+  .notification {
+    top: 80px;
+    right: 10px;
+    width: 200px;
+  }
+  .notification {
+    /* margin-top: 10px; */
+    width: 260px;
+  }
+  .menu-header {
+    padding: 12px;
+  }
+  .menu-header h3 {
+    font-size: 0.9rem;
+  }
+  .menu-header p {
+    font-size: 0.75rem;
+  }
+  .popup ul li a {
+    padding: 8px 12px;
+    font-size: 13px;
+    gap: 8px;
+  }
+  .popup ul li a i {
+    width: 16px;
+  }
+  .notification-header {
+    padding: 6px 14px;
+  }
+  .notification-header h3 {
+    font-size: 14px;
+  }
+  .notification-item {
+    padding: 8px 14px;
+  }
+  .notification-title {
+    font-size: 12px;
+  }
+  .notification-message {
+    font-size: 11px;
+  }
+  #toast-container {
+    top: 18px;
+    right: 18px;
+    width: 320px;
+  }
+  .toast {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .text {
+    margin-top: -15px;
+    padding: 2px 8px;
+  }
+  .text h2 {
+    font-size: 0.9em;
+    margin-bottom: 12px;
+  }
 }
 
-/* For Mobile Phones */
+/* Mobile Phones (max-width: 767px) */
 @media (max-width: 767px) {
   body {
     font-size: 13px;
@@ -1175,47 +1653,302 @@ button:hover,
   header {
     padding: 10px;
     flex-wrap: nowrap;
-    /* flex-direction: column; */
-    /* align-items: flex-start; */
   }
-
-  nav {
-    width: 600px;
-  }
-
   .logo {
     width: 120px;
   }
-  .nav-actions {
-    margin-top: 10px;
-    width: 100%;
-    /* justify-content: space-around; */
+  .hamburger-menu {
+    font-size: 24px;
+    margin-left: -5px;
+    margin-right: 15px;
   }
-  .content,
-  .main2 {
-    width: 100%;
+  nav {
+    top: 70px;
+    right: 10px;
+    width: 160px;
+    padding: 8px;
+  }
+  .nav-links {
+    padding: 15px;
+    gap: 8px;
+  }
+  .nav-links a {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .nav-links a i {
+    margin-right: 10px;
+  }
+  .nav-actions {
+    padding: 15px;
+  }
+  .icon-btn2 {
+    width: 32px;
+    height: 32px;
+  }
+  .profile {
+    width: 32px;
+    height: 32px;
+  }
+  .content {
     padding: 5px;
-    box-sizing: border-box;
+    width: 100%;
+    border-radius: 20px;
+  }
+  .cards {
+    gap: 5px;
+    flex-direction: column;
   }
   .card {
-    height: auto; /* Let card height be determined by content */
+    min-width: 100%;
+    height: auto;
+    margin: 5px 0;
+    padding: 5px 0;
+  }
+  .card-header2 {
+    padding: 5px 15px;
+  }
+  .card-header h2 {
+    font-size: 0.9em;
+    margin-left: 10px;
+  }
+  .card-body,
+  .card-body2 {
+    padding: 10px;
+    height: auto;
+  }
+  .card-title {
+    font-size: 0.9em;
+  }
+  .card-sub {
+    font-size: 0.8em;
+  }
+  .spcard2 {
+    height: auto;
+  }
+  .spcard {
+    flex-direction: column;
   }
   .main2 {
+    gap: 5px;
     padding: 0;
   }
-  .schedule,
-  .form,
+  .schedule {
+    width: 98%;
+    padding: 15px;
+    margin: 5px auto;
+  }
+  .schedule-header h2 {
+    font-size: 16px;
+  }
+  .arrow {
+    width: 18px;
+    height: 18px;
+    padding: 5px;
+    margin-top: -8px;
+  }
+  .days {
+    font-size: 12px;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .days .day {
+    padding: 4px 6px;
+    flex: 1 1 45%;
+  }
+  .timeline {
+    padding-left: 40px;
+  }
+  .time-slot {
+    margin-bottom: 20px;
+  }
+  .time-slot .time {
+    left: -40px;
+    font-size: 12px;
+    width: 70px;
+    margin: 15px 0;
+  }
+  .circle {
+    width: 16px;
+    height: 16px;
+    left: -20px;
+    font-size: 8px;
+    margin: 15px 40px;
+  }
+  .time-slot::before {
+    left: -14px;
+    top: 18px;
+  }
+  .event {
+    width: 100%;
+    margin-left: 40px;
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  .event-title {
+    margin-bottom: 2px;
+  }
+  .event-time {
+    font-size: 9px;
+  }
+  .form {
+    width: 98%;
+    padding: 5px;
+    margin: 5px auto;
+  }
   .form-box {
     width: 98%;
     padding: 15px;
     margin: 5px auto;
   }
-  form {
-    grid-template-columns: 1fr; /* Single column layout for forms */
-  }
   .quick-view-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+    padding: 5px;
+  }
+  form {
+    grid-template-columns: 1fr; /* Single column layout for forms */
+    gap: 6px;
+  }
+  label {
+    font-size: 10px;
+    margin-bottom: 3px;
+  }
+  input,
+  select,
+  textarea {
+    padding: 6px;
+    font-size: 11px;
+    border-radius: 20px;
+  }
+  textarea {
+    height: 50px;
+  }
+  button {
+    margin: 5px auto;
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  .slider-toggle {
+    width: 180px;
+    height: 32px;
+    margin-top: 5px;
+  }
+  .slider-toggle button {
+    font-size: 13px;
+    padding: 1px 0;
+  }
+  .form-wrapper {
+    width: 100%;
+    min-height: 250px;
+  }
+  .form-tabs {
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  .tab-btn {
+    padding: 5px;
+    font-size: 13px;
+    border-radius: 20px;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .form-row > div {
+    min-width: 100%;
+  }
+  .form-row label {
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+  .form-row input,
+  .form-row select,
+  .form-row textarea {
+    padding: 6px 8px;
+    font-size: 11px;
+    border-radius: 20px;
+  }
+  .form-row textarea {
+    height: 50px;
+  }
+  .submit-btn {
+    width: 100%;
+    padding: 6px;
+    font-size: 13px;
+    border-radius: 20px;
+  }
+  .menu,
+  .notification {
+    top: 50px;
+    right: 8px;
+    width: 180px;
+  }
+  .notification {
+    width: 240px;
+  }
+  .closebtn {
+    top: 8px;
+    right: 8px;
+    font-size: 1.2rem;
+  }
+  .menu-header {
+    padding: 10px;
+  }
+  .menu-header h3 {
+    font-size: 0.85rem;
+  }
+  .menu-header p {
+    font-size: 0.7rem;
+  }
+  .popup ul {
+    margin: 5px 0;
+  }
+  .popup ul li a {
+    padding: 6px 10px;
+    font-size: 12px;
+    gap: 6px;
+  }
+  .popup ul li a i {
+    width: 14px;
+  }
+  .notification-header {
+    padding: 5px 12px;
+  }
+  .notification-header h3 {
+    font-size: 13px;
+  }
+  .notification-list {
+    max-height: 250px;
+  }
+  .notification-item {
+    padding: 6px 12px;
+  }
+  .notification-title {
+    font-size: 11px;
+  }
+  .notification-message {
+    font-size: 10px;
+  }
+  #toast-container {
+    top: 15px;
+    right: 15px;
+    width: calc(100% - 30px);
+    max-width: 300px;
+  }
+  .toast {
+    padding: 6px 8px;
+    font-size: 11px;
+    border-radius: 10px;
+  }
+  .text {
+    margin-top: -10px;
+    padding: 2px 6px;
+  }
+  .text h2 {
+    font-size: 0.85em;
+    margin-bottom: 10px;
   }
 }

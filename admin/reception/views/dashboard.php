@@ -397,6 +397,18 @@ $success = false;
 </head>
 
 <body>
+    <!-- Mobile Blocker Overlay -->
+    <div class="mobile-blocker">
+        <div class="mobile-blocker-popup">
+            <i class="fa-solid fa-mobile-screen-button popup-icon"></i>
+            <h2>Mobile View Not Supported</h2>
+            <p>The admin panel is designed for desktop use. For the best experience on your mobile device, please download our dedicated application.</p>
+            <a href="/proadmin/download-app/index.html" class="mobile-download-btn">
+                <i class="fa-solid fa-download"></i> Download App
+            </a>
+        </div>
+    </div>
+
     <header>
         <div class="logo-container">
             <div class="logo">

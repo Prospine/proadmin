@@ -94,7 +94,7 @@ h2 {
 /* Downloads layout */
 .downloads {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 40px;
   margin-top: 40px;
 }
@@ -111,6 +111,11 @@ h2 {
 
 .download-card h3 {
   margin-bottom: 20px;
+  font-size: 1.8rem;
+}
+
+.download-card h3 i {
+  margin-right: 8px;
   font-size: 1.8rem;
 }
 
@@ -182,10 +187,100 @@ h2 {
   pointer-events: none;
 }
 
+.android {
+  background: linear-gradient(135deg, #3ddc84, #2ca063);
+  color: white;
+}
+
+.android .btn {
+  background: #ccc;
+  color: #444;
+  pointer-events: none;
+}
+
+.ios {
+  background: linear-gradient(135deg, #f0f0f0, #b0b0b0);
+  color: #333;
+}
+
+.ios .btn {
+  background: #ccc;
+  color: #444;
+  pointer-events: none;
+}
+
 footer {
   text-align: center;
   padding: 50px;
   margin-top: 80px;
   font-size: 0.9rem;
   color: #444;
+}
+
+/* ======================================== */
+/* RESPONSIVE STYLES                       */
+/* ======================================== */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .features {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .downloads {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .linux {
+    grid-column: span 1;
+  }
+}
+
+/* Mobile Phones */
+@media (max-width: 767px) {
+  header {
+    padding: 10px;
+  }
+
+  .logo {
+    width: 120px;
+    margin-left: 10px;
+  }
+
+  .main {
+    padding: 80px 15px 40px;
+  }
+
+  .main h1 {
+    font-size: 2.2rem;
+  }
+
+  .main p {
+    font-size: 1.1rem;
+  }
+
+  section {
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+
+  .features,
+  .downloads {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  
+  .linux {
+    grid-column: span 1;
+  }
+
+  .feature-card,
+  .download-card {
+    padding: 30px;
+  }
+
+  footer {
+    padding: 30px;
+    margin-top: 40px;
+  }
 }

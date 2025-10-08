@@ -146,6 +146,35 @@ try {
     <link rel="stylesheet" href="../css/reports.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
+
+    <style>
+        .filter-bar {
+            width: auto;
+            padding: 10px !important;
+            /* height: 50px; */
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 1024px) {
+            .main {
+                margin: 0;
+            }
+
+            .filter-bar {
+                /* margin: 0; */
+                display: flex;
+                width: auto;
+                padding: 10px !important;
+            }
+
+            .filter-bar input[type="date"],
+            .filter-bar select {
+                min-width: 175px !important;
+                max-width: 175px !important;
+            }
+
+        }
+    </style>
 </head>
 
 <body>
@@ -171,6 +200,10 @@ try {
             <div class="icon-btn" id="theme-toggle"> <i id="theme-icon" class="fa-solid fa-moon"></i> </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
+        </div>
+
+        <div class="hamburger-menu" id="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
         </div>
     </header>
     <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
@@ -284,17 +317,17 @@ try {
                         <?php else : ?>
                             <?php foreach ($registrations as $reg) : ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($reg['appointment_date']) ?></td>
-                                    <td><?= htmlspecialchars($reg['patient_name']) ?></td>
-                                    <td><?= htmlspecialchars((string)$reg['age']) ?></td>
+                                    <td data-label="Appt. Date"><?= htmlspecialchars($reg['appointment_date']) ?></td>
+                                    <td data-label="Patient Name"><?= htmlspecialchars($reg['patient_name']) ?></td>
+                                    <td data-label="Age"><?= htmlspecialchars((string)$reg['age']) ?></td>
                                     <!-- <td><?= htmlspecialchars($reg['gender']) ?></td> -->
-                                    <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $reg['chief_complain']))) ?></td>
-                                    <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $reg['referralSource']))) ?></td>
-                                    <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $reg['reffered_by']))) ?></td>
-                                    <td><?= htmlspecialchars(ucfirst(str_replace('-', ' ', $reg['consultation_type']))) ?></td>
-                                    <td><?= number_format((float)$reg['consultation_amount'], 2) ?></td>
-                                    <td><?= htmlspecialchars(ucfirst($reg['payment_method'])) ?></td>
-                                    <td><span class="status-pill status-<?= htmlspecialchars(strtolower($reg['status'])) ?>"><?= htmlspecialchars($reg['status']) ?></span></td>
+                                    <td data-label="Condition"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $reg['chief_complain']))) ?></td>
+                                    <td data-label="Source"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $reg['referralSource']))) ?></td>
+                                    <td data-label="Referred By"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $reg['reffered_by']))) ?></td>
+                                    <td data-label="Consultation"><?= htmlspecialchars(ucfirst(str_replace('-', ' ', $reg['consultation_type']))) ?></td>
+                                    <td data-label="Amount"><?= number_format((float)$reg['consultation_amount'], 2) ?></td>
+                                    <td data-label="Pay Mode"><?= htmlspecialchars(ucfirst($reg['payment_method'])) ?></td>
+                                    <td data-label="Status"><span class="status-pill status-<?= htmlspecialchars(strtolower($reg['status'])) ?>"><?= htmlspecialchars($reg['status']) ?></span></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -307,6 +340,8 @@ try {
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
     <script src="../js/clinic_reports.js"></script>
+    <script src="../js/nav_toggle.js"></script>
+
 </body>
 
 </html>

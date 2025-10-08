@@ -142,6 +142,31 @@ try {
             border-color: var(--border-color);
             color: var(--text-color);
         }
+
+        @media (max-width: 1024px) {
+
+            .filter-bar {
+                /* margin: 0; */
+                display: flex;
+                width: auto;
+            }
+
+            .search-container {
+                width: auto;
+            }
+
+            .search-container input {
+                width: 300px;
+            }
+
+            .filter-options select {
+                margin: 0;
+            }
+
+            .drawer-panel {
+                height: 90vh;
+            }
+        }
     </style>
 </head>
 
@@ -172,6 +197,10 @@ try {
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
         </div>
+        <!-- Hamburger Menu Icon (for mobile) -->
+        <div class="hamburger-menu" id="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
+        </div>
     </header>
     <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
         <div class="popup">
@@ -194,14 +223,14 @@ try {
         <div class="dashboard-container">
             <div class="top-bar">
                 <h2>Billing Overview</h2>
-                
+
                 <!-- NEW: Filter and Search Bar -->
                 <div class="filter-bar">
                     <div class="search-container">
                         <i class="fa-solid fa-search"></i>
                         <input type="text" id="searchInput" placeholder="Search by Patient Name or ID...">
                     </div>
-    
+
                     <div class="filter-options">
                         <select id="statusFilter">
                             <option value="">All Statuses</option>
@@ -239,12 +268,12 @@ try {
                                 $outstanding_due = $total_billable - $total_paid;
                                 ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars((string) $row['patient_id']); ?></td>
-                                    <td><?php echo htmlspecialchars((string) $row['patient_name']); ?></td>
-                                    <td class="numeric">₹<?php echo number_format($total_billable, 2); ?></td>
-                                    <td class="numeric">₹<?php echo number_format($total_paid, 2); ?></td>
-                                    <td class="numeric"><strong>₹<?php echo number_format($outstanding_due, 2); ?></strong></td>
-                                    <td>
+                                    <td data-label="ID"><?php echo htmlspecialchars((string) $row['patient_id']); ?></td>
+                                    <td data-label="Patient Name"><?php echo htmlspecialchars((string) $row['patient_name']); ?></td>
+                                    <td data-label="Total Bill" class="numeric">₹<?php echo number_format($total_billable, 2); ?></td>
+                                    <td data-label="Total Paid" class="numeric">₹<?php echo number_format($total_paid, 2); ?></td>
+                                    <td data-label="Expected Due Amount" class="numeric"><strong>₹<?php echo number_format($outstanding_due, 2); ?></strong></td>
+                                    <td data-label="Status">
                                         <?php if (!empty($row['treatment_status'])) :
                                             $statusClass = strtolower($row['treatment_status']);
                                         ?>
@@ -255,7 +284,7 @@ try {
                                             <span class="pill pending">Unknown</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td>
+                                    <td data-label="Actions">
                                         <button class="action-btn open-drawer" data-id="<?php echo (int) $row['patient_id']; ?>">View</button>
                                     </td>
                                 </tr>
@@ -284,7 +313,8 @@ try {
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
     <script src="../js/billings.js"></script>
-
+    <script src="../js/nav_toggle.js"></script>
+ 
 </body>
 
 </html>

@@ -88,8 +88,37 @@ try {
     <link rel="stylesheet" href="../css/attendance.css">
 
     <style>
-        #formm {
-            
+        @media (max-width: 1024px) {
+
+            .filter-bar {
+                /* margin: 0; */
+                display: flex;
+                justify-content: normal !important;
+                width: auto;
+            }
+
+            .sort-btn{
+                margin: 0;
+            }
+
+            .search-container {
+                width: auto;
+            }
+
+            .search-container input {
+                width: 300px;
+            }
+
+            .filter-options select {
+                margin: 0;
+            }
+
+            .drawer-panel {
+                margin-top: 20px;
+                margin-right: 10px;
+                border-radius: 30px;
+                height: 90vh;
+            }
         }
     </style>
 </head>
@@ -120,6 +149,9 @@ try {
             </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
+        </div>
+        <div class="hamburger-menu" id="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
         </div>
     </header>
 
@@ -188,11 +220,11 @@ try {
                         <?php if (!empty($attendance_records)) : ?>
                             <?php foreach ($attendance_records as $row) : ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars((string) $row['patient_id']); ?></td>
-                                    <td><?php echo htmlspecialchars((string) $row['patient_name']); ?></td>
-                                    <td><?php echo htmlspecialchars(ucfirst((string) $row['treatment_type'])); ?></td>
+                                    <td data-label="Id"><?php echo htmlspecialchars((string) $row['patient_id']); ?></td>
+                                    <td data-label="Name"><?php echo htmlspecialchars((string) $row['patient_name']); ?></td>
+                                    <td data-label="Treatment Type"><?php echo htmlspecialchars(ucfirst((string) $row['treatment_type'])); ?></td>
 
-                                    <td>
+                                    <td data-label="Progress(Days)">
                                         <?php
                                         // Display progress only if treatment_days is set
                                         if (!empty($row['treatment_days']) && (int)$row['treatment_days'] > 0) {
@@ -203,8 +235,8 @@ try {
                                         ?>
                                     </td>
 
-                                    <td><?php echo htmlspecialchars((string) $row['remarks']); ?></td>
-                                    <td>
+                                    <td data-label="Remarks"><?php echo htmlspecialchars((string) $row['remarks']); ?></td>
+                                    <td data-label="Action">
                                         <button class="action-btn view-attendance-btn" data-id="<?php echo (int) $row['patient_id']; ?>">Details</button>
                                     </td>
                                 </tr>
@@ -255,6 +287,7 @@ try {
     <script src="../js/dashboard.js"></script>
     <script src="../js/theme.js"></script>
     <script src="../js/attendance.js"></script>
+    <script src="../js/nav_toggle.js"></script>
 
     <script>
         (function() {

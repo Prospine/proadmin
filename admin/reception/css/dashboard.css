@@ -1365,6 +1365,93 @@ button:hover,
   }
 }
 
+/* ======================================== */
+/* MOBILE BLOCKER STYLES                   */
+/* ======================================== */
+.mobile-blocker {
+  display: none; /* Hidden by default */
+}
+
+/* Activate blocker on mobile screens */
+@media (max-width: 767px) {
+
+  /* Hide all main page content */
+  body > header,
+  body > .menu,
+  body > .notification,
+  body > .chat-inbox,
+  body > main,
+  body > #toast-container {
+    display: none !important;
+  }
+
+  /* Show and style the blocker overlay */
+  .mobile-blocker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-primary); /* Adapts to theme */
+    z-index: 99999;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .mobile-blocker-popup {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 30px 25px;
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    max-width: 400px;
+    border: 1px solid var(--border-color-primary);
+    animation: popIn 0.3s ease-out;
+  }
+
+  .mobile-blocker-popup .popup-icon {
+    font-size: 3rem;
+    color: var(--color-primary);
+    margin-bottom: 15px;
+  }
+
+  .mobile-blocker-popup h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+    color: var(--text-primary);
+  }
+
+  .mobile-blocker-popup p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 25px;
+  }
+
+  .mobile-download-btn {
+    display: inline-block;
+    background-color: var(--color-primary);
+    color: white;
+    padding: 12px 25px;
+    border-radius: var(--border-radius-pill);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  }
+
+  .mobile-download-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+  }
+
+  .mobile-download-btn i {
+    margin-right: 8px;
+  }
+}
+
 /* Tablets and Large Mobiles (max-width: 1024px) */
 @media (max-width: 1024px) {
   body {
@@ -1393,24 +1480,28 @@ button:hover,
     right: 16px;
     min-width: 170px;
     width: 170px;
-    height: auto;
     background-color: var(--bg-primary) !important;
     box-shadow: var(--shadow-popup);
     border-radius: var(--border-radius-popup);
     border: 1px solid var(--border-color-primary);
-    transition: opacity 0.2s ease, transform 0.2s ease;
     z-index: 1000;
     padding: 10px;
-    display: none;
     flex-direction: column;
     margin-left: 0;
-    transform: translateY(-10px);
-    opacity: 0;
+
+    /* --- KEY CHANGES FOR HIDING/SHOWING --- */
+    display: flex; /* Keep it as flex for layout */
+    visibility: hidden; /* Hide it visually and from screen readers */
+    opacity: 0; /* Make it fully transparent */
+    transform: translateY(-10px); /* Start slightly moved up */
+    pointer-events: none; /* Make it non-clickable when hidden */
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
   }
   nav.open {
-    display: flex;
     transform: translateY(0);
     opacity: 1;
+    visibility: visible; /* Make it visible */
+    pointer-events: auto; /* Make it clickable */
   }
   .nav-links {
     flex-direction: column;

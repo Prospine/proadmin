@@ -144,6 +144,35 @@ try {
     <link rel="stylesheet" href="../css/reports.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
+
+    <style>
+        .filter-bar {
+            width: auto;
+            padding: 10px !important;
+            /* height: 50px; */
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 1024px) {
+            .main {
+                margin: 0;
+            }
+
+            .filter-bar {
+                /* margin: 0; */
+                display: flex;
+                width: auto;
+                padding: 10px !important;
+            }
+
+            .filter-bar input[type="date"],
+            .filter-bar select {
+                min-width: 175px !important;
+                max-width: 175px !important;
+            }
+
+        }
+    </style>
 </head>
 
 <body>
@@ -169,6 +198,10 @@ try {
             <div class="icon-btn" id="theme-toggle"> <i id="theme-icon" class="fa-solid fa-moon"></i> </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
+        </div>
+
+        <div class="hamburger-menu" id="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
         </div>
     </header>
     <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
@@ -269,16 +302,16 @@ try {
                         <?php else : ?>
                             <?php foreach ($patients as $patient) : ?>
                                 <tr>
-                                    <td><?= htmlspecialchars((string)$patient['patient_id']) ?></td>
-                                    <td><?= htmlspecialchars($patient['patient_name']) ?></td>
-                                    <td><?= htmlspecialchars($patient['assigned_doctor']) ?></td>
-                                    <td><?= htmlspecialchars(ucfirst($patient['treatment_type'])) ?></td>
-                                    <td><?= number_format((float)$patient['total_amount'], 2) ?></td>
-                                    <td><?= number_format((float)$patient['advance_payment'], 2) ?></td>
-                                    <td><?= number_format((float)$patient['due_amount'], 2) ?></td>
-                                    <td><?= htmlspecialchars($patient['start_date']) ?></td>
-                                    <td><?= htmlspecialchars($patient['end_date']) ?></td>
-                                    <td><span class="status-pill status-<?= htmlspecialchars(strtolower($patient['status'])) ?>"><?= htmlspecialchars(ucfirst($patient['status'])) ?></span></td>
+                                    <td data-label="Patient ID"><?= htmlspecialchars((string)$patient['patient_id']) ?></td>
+                                    <td data-label="Patient Name"><?= htmlspecialchars($patient['patient_name']) ?></td>
+                                    <td data-label="Assigned Doctor"><?= htmlspecialchars($patient['assigned_doctor']) ?></td>
+                                    <td data-label="Treatment"><?= htmlspecialchars(ucfirst($patient['treatment_type'])) ?></td>
+                                    <td data-label="Total Amt"><?= number_format((float)$patient['total_amount'], 2) ?></td>
+                                    <td data-label="Paid"><?= number_format((float)$patient['advance_payment'], 2) ?></td>
+                                    <td data-label="Due"><?= number_format((float)$patient['due_amount'], 2) ?></td>
+                                    <td data-label="Start Date"><?= htmlspecialchars($patient['start_date']) ?></td>
+                                    <td data-label="End Date"><?= htmlspecialchars($patient['end_date']) ?></td>
+                                    <td data-label="Status"><span class="status-pill status-<?= htmlspecialchars(strtolower($patient['status'])) ?>"><?= htmlspecialchars(ucfirst($patient['status'])) ?></span></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -291,6 +324,8 @@ try {
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
     <script src="../js/patient_reports.js"></script>
+    <script src="../js/nav_toggle.js"></script>
+
 </body>
 
 </html>

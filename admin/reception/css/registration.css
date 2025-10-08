@@ -14,12 +14,7 @@
 body.dark {
   /* Backgrounds */
   --bg-color: linear-gradient(147deg, #121212 0%, #434343 74%);
-  --card-bg: rgba(
-    255,
-    255,
-    255,
-    0.08
-  );
+  --card-bg: rgba(255, 255, 255, 0.08);
   --card-bg2: rgba(255, 255, 255, 0.12); /* matches divider/disabled bg */
   --card-bg3: #1e1e1e; /* close to paper background */
   --card-body2: linear-gradient(#121212, #1e1e1e);
@@ -760,4 +755,10 @@ body.dark .filter-options select {
   background: var(--card-bg3);
   border-color: var(--border-color);
   color: var(--text-color);
+}
+
+@media screen and (max-width: 1024px){
+  .filter-bar{
+    margin: 0;
+  }
 }

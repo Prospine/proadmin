@@ -140,6 +140,35 @@ try {
     <link rel="stylesheet" href="../css/reports.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
+
+    <style>
+        .filter-bar {
+            width: auto;
+            padding: 10px !important;
+            /* height: 50px; */
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 1024px) {
+            .main {
+                margin: 0;
+            }
+
+            .filter-bar {
+                /* margin: 0; */
+                display: flex;
+                width: auto;
+                padding: 10px !important;
+            }
+
+            .filter-bar input[type="date"],
+            .filter-bar select {
+                min-width: 175px !important;
+                max-width: 175px !important;
+            }
+
+        }
+    </style>
 </head>
 
 <body>
@@ -165,6 +194,10 @@ try {
             <div class="icon-btn" id="theme-toggle"> <i id="theme-icon" class="fa-solid fa-moon"></i> </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
+        </div>
+
+        <div class="hamburger-menu" id="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
         </div>
     </header>
     <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
@@ -271,15 +304,15 @@ try {
                     <?php else : ?>
                         <?php foreach ($tests as $test) : ?>
                             <tr>
-                                <td><?= htmlspecialchars($test['assigned_test_date']) ?></td>
-                                <td><?= htmlspecialchars($test['patient_name']) ?></td>
-                                <td><?= htmlspecialchars(strtoupper(str_replace('_', ' ', (string) $test['test_name']))) ?></td>
-                                <td><?= htmlspecialchars($test['referred_by']) ?></td>
-                                <td><?= htmlspecialchars(ucwords(str_replace('_', ' ', $test['test_done_by']))) ?></td>
-                                <td><?= number_format((float)$test['total_amount'], 2) ?></td>
-                                <td><?= number_format((float)$test['advance_amount'], 2) ?></td>
-                                <td><?= number_format((float)$test['due_amount'], 2) ?></td>
-                                <td><span class="status-pill status-<?= htmlspecialchars(strtolower($test['payment_status'])) ?>"><?= ucfirst(htmlspecialchars($test['payment_status'])) ?></span></td>
+                                <td data-label="Test Date"><?= htmlspecialchars($test['assigned_test_date']) ?></td>
+                                <td data-label="Patient Name"><?= htmlspecialchars($test['patient_name']) ?></td>
+                                <td data-label="Test Name"><?= htmlspecialchars(strtoupper(str_replace('_', ' ', (string) $test['test_name']))) ?></td>
+                                <td data-label="Referred By"><?= htmlspecialchars($test['referred_by']) ?></td>
+                                <td data-label="Performed By"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $test['test_done_by']))) ?></td>
+                                <td data-label="Amount"><?= number_format((float)$test['total_amount'], 2) ?></td>
+                                <td data-label="Paid"><?= number_format((float)$test['advance_amount'], 2) ?></td>
+                                <td data-label="Due"><?= number_format((float)$test['due_amount'], 2) ?></td>
+                                <td data-label="Payment Status"><span class="status-pill status-<?= htmlspecialchars(strtolower($test['payment_status'])) ?>"><?= ucfirst(htmlspecialchars($test['payment_status'])) ?></span></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -292,6 +325,8 @@ try {
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
     <script src="../js/reports.js"></script>
+    <script src="../js/nav_toggle.js"></script>
+
 </body>
 
 </html>

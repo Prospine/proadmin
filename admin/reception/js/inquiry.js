@@ -365,5 +365,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
         calculateDue(); // initial run
     }
-
 });

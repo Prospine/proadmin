@@ -128,39 +128,58 @@ ORDER BY created_at DESC
 </head>
 
 <body>
+    <!-- Mobile Blocker Overlay -->
+    <div class="mobile-blocker">
+        <div class="mobile-blocker-popup">
+            <i class="fa-solid fa-mobile-screen-button popup-icon"></i>
+            <h2>Mobile View Not Supported</h2>
+            <p>The admin panel is designed for desktop use. For the best experience on your mobile device, please download our dedicated application.</p>
+            <a href="/proadmin/download-app/index.html" class="mobile-download-btn">
+                <i class="fa-solid fa-download"></i> Download App
+            </a>
+        </div>
+    </div>
     <header>
-        <div class="logo-container"> <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
+        <div class="logo-container">
+            <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
         </div>
         <nav>
-            <div class="nav-links"> <a href="dashboard.php">Dashboard</a>
-                <a href="inquiry.php" class="active">Inquiry</a>
-                <a href="registration.php">Registration</a>
-                <a href="appointments.php">Appointments</a>
-                <a href="patients.php">Patients</a>
-                <a href="billing.php">Billing</a>
-                <a href="attendance.php">Attendance</a>
-                <a href="tests.php">Tests</a>
-                <a href="reports.php">Reports</a>
-                <a href="expenses.php">Expenses</a>
+            <div class="nav-links">
+                <a href="dashboard.php"><i class="fa-solid fa-tachometer-alt"></i><span>Dashboard</span></a>
+                <a href="inquiry.php" class="active"><i class="fa-solid fa-magnifying-glass"></i><span>Inquiry</span></a>
+                <a href="registration.php"><i class="fa-solid fa-user-plus"></i><span>Registration</span></a>
+                <a href="appointments.php"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></a>
+                <a href="patients.php"><i class="fa-solid fa-users"></i><span>Patients</span></a>
+                <a href="billing.php"><i class="fa-solid fa-file-invoice-dollar"></i><span>Billing</span></a>
+                <a href="attendance.php"><i class="fa-solid fa-user-check"></i><span>Attendance</span></a>
+                <a href="tests.php"><i class="fa-solid fa-vial"></i><span>Tests</span></a>
+                <a href="reports.php"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
+                <a href="expenses.php"><i class="fa-solid fa-money-bill-wave"></i><span>Expenses</span></a>
             </div>
         </nav>
         <div class="nav-actions">
-            <div class="icon-btn" title="Settings"> <?php echo $branchName; ?> Branch </div>
-            <div class="icon-btn" id="theme-toggle"> <i id="theme-icon" class="fa-solid fa-moon"></i> </div>
+            <div class="icon-btn" title="Settings"><?php echo $branchName; ?> Branch</div>
+            <div class="icon-btn" id="theme-toggle"><i id="theme-icon" class="fa-solid fa-moon"></i></div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
         </div>
+        <!-- Hamburger Menu Icon (for mobile) -->
+        <div class="hamburger-menu" id="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
+        </div>
     </header>
-    <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
+    <div class="menu" id="myMenu">
         <div class="popup">
+            <span class="closebtn" onclick="closeForm()">&times;</span>
             <ul>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="logout.php">Logout</a></li>
+                <li><a href="#"><i class="fa-solid fa-user-circle"></i> Profile</a></li>
+                <li><a href="#"><i class="fa-solid fa-cog"></i> Settings</a></li>
+                <li class="logout"><a href="logout.php"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
     </div>
-    <div class="notification" id="myNotif"> <span class="closebtn" onclick="closeNotif()">&times;</span>
+    <div class="notification" id="myNotif">
+        <span class="closebtn" onclick="closeNotif()">&times;</span>
         <div class="popup">
             <ul>
                 <li><a href="changelog.html" class="active2">View Changes (1) </a></li>
@@ -203,15 +222,17 @@ ORDER BY created_at DESC
                             </select>
                         </div>
                     </div>
-                    
-                    <div class="toggle-container">
-                        <button id="quickBtn" class="toggle-btn active">Quick Inquiry</button>
-                        <button id="testBtn" class="toggle-btn">Test Inquiry</button>
-                    </div>
 
-                    <div class="toggle-container">
-                        <button class="toggle-btn" onclick="window.location.href = 'online_inquiry.php';">Online Inquiry</button>
-                        <button class="toggle-btn" onclick="window.location.href = 'online_inquiry_booked.php';">Online Inquiry Booked</button>
+                    <div class="tog">
+                        <div class="toggle-container">
+                            <button id="quickBtn" class="toggle-btn active">Quick Inquiry</button>
+                            <button id="testBtn" class="toggle-btn">Test Inquiry</button>
+                        </div>
+
+                        <div class="toggle-container">
+                            <button class="toggle-btn" onclick="window.location.href = 'online_inquiry.php';">Online Inquiry</button>
+                            <button class="toggle-btn" onclick="window.location.href = 'online_inquiry_booked.php';">Online Inquiry Booked</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -240,27 +261,27 @@ ORDER BY created_at DESC
                     <tbody> <?php if (! empty($quick_inquiries)): ?> <?php foreach ($quick_inquiries as $row): ?>
                                 <tr>
                                     <td> <?php echo htmlspecialchars((string) $row['name']) ?> </td>
-                                    <td> <?php echo htmlspecialchars((string) $row['phone_number']) ?> </td>
-                                    <td> <?php echo htmlspecialchars((string) $row['age']) ?> </td>
-                                    <td> <?php echo htmlspecialchars((string) $row['gender']) ?> </td>
-                                    <td> <?php echo htmlspecialchars((string) $row['referralSource']) ?> </td>
-                                    <td> <?php echo htmlspecialchars((string) $row['chief_complain']) ?> </td>
-                                    <td> <?php echo htmlspecialchars((string) $row['review']) ?> </td>
-                                    <td> <?php echo htmlspecialchars((string) $row['expected_visit_date']) ?> </td>
-                                    <td> <?php echo htmlspecialchars((string) $row['created_at']) ?> </td>
-                                    <td> <span class="pill <?php echo strtolower($row['status']) ?>">
+                                    <td data-label="Phone"><?php echo htmlspecialchars((string) $row['phone_number']) ?></td>
+                                    <td data-label="Age"><?php echo htmlspecialchars((string) $row['age']) ?></td>
+                                    <td data-label="Gender"><?php echo htmlspecialchars((string) $row['gender']) ?></td>
+                                    <td data-label="Referral"><?php echo htmlspecialchars((string) $row['referralSource']) ?></td>
+                                    <td data-label="Complain"><?php echo htmlspecialchars((string) $row['chief_complain']) ?></td>
+                                    <td data-label="Review"><?php echo htmlspecialchars((string) $row['review']) ?></td>
+                                    <td data-label="Expected Visit"><?php echo htmlspecialchars((string) $row['expected_visit_date']) ?></td>
+                                    <td data-label="Created At"><?php echo htmlspecialchars((string) $row['created_at']) ?></td>
+                                    <td data-label="Status"><span class="pill <?php echo strtolower($row['status']) ?>">
                                             <?php echo htmlspecialchars((string) $row['status']) ?> </span>
                                     </td>
-                                    <td> <select data-id="<?php echo $row['inquiry_id'] ?>" data-type="quick">
+                                    <td data-label="Update Status"><select data-id="<?php echo $row['inquiry_id'] ?>" data-type="quick">
                                             <option <?php echo strtolower($row['status']) === 'visited' ? 'selected' : '' ?>>Visited
                                             </option>
                                             <option <?php echo strtolower($row['status']) === 'cancelled' ? 'selected' : '' ?>>Cancelled
                                             </option>
                                             <option <?php echo strtolower($row['status']) === 'pending' ? 'selected' : '' ?>>Pending
                                             </option>
-                                        </select> </td>
-                                    <td> <button class="action-btn open-drawer" data-id="<?php echo $row['inquiry_id'] ?>"
-                                            data-type="quick"> View </button> </td>
+                                        </select></td>
+                                    <td data-label="Action"><button class="action-btn open-drawer" data-id="<?php echo $row['inquiry_id'] ?>"
+                                            data-type="quick"> View </button></td>
                                 </tr> <?php endforeach; ?> <?php else: ?>
                             <tr>
                                 <td colspan="12">No Quick Inquiry found</td>
@@ -286,23 +307,23 @@ ORDER BY created_at DESC
                     <tbody> <?php if (! empty($test_inquiries)): ?> <?php foreach ($test_inquiries as $row): ?>
                                 <tr>
                                     <td> <?php echo htmlspecialchars((string) $row['name']) ?> </td>
-                                    <td> <?php echo htmlspecialchars((string) $row['testname']) ?> </td>
-                                    <td> <?php echo htmlspecialchars((string) $row['reffered_by'] ?? '-') ?> </td>
-                                    <td> <?php echo htmlspecialchars((string) $row['mobile_number']) ?> </td>
-                                    <td> <?php echo htmlspecialchars((string) $row['expected_visit_date']) ?> </td>
-                                    <td> <?php echo htmlspecialchars((string) $row['created_at']) ?> </td>
-                                    <td> <span class="pill <?php echo strtolower($row['status']) ?>">
-                                            <?php echo htmlspecialchars((string) $row['status']) ?> </span> </td>
-                                    <td> <select data-id="<?php echo $row['inquiry_id'] ?>" data-type="test">
+                                    <td data-label="Test Name"><?php echo htmlspecialchars((string) $row['testname']) ?></td>
+                                    <td data-label="Referred By"><?php echo htmlspecialchars((string) $row['reffered_by'] ?? '-') ?></td>
+                                    <td data-label="Mobile"><?php echo htmlspecialchars((string) $row['mobile_number']) ?></td>
+                                    <td data-label="Expected Visit"><?php echo htmlspecialchars((string) $row['expected_visit_date']) ?></td>
+                                    <td data-label="Created At"><?php echo htmlspecialchars((string) $row['created_at']) ?></td>
+                                    <td data-label="Status"><span class="pill <?php echo strtolower($row['status']) ?>">
+                                            <?php echo htmlspecialchars((string) $row['status']) ?> </span></td>
+                                    <td data-label="Update Status"><select data-id="<?php echo $row['inquiry_id'] ?>" data-type="test">
                                             <option <?php echo strtolower($row['status']) === 'visited' ? 'selected' : '' ?>>Visited
                                             </option>
                                             <option <?php echo strtolower($row['status']) === 'cancelled' ? 'selected' : '' ?>>Cancelled
                                             </option>
                                             <option <?php echo strtolower($row['status']) === 'pending' ? 'selected' : '' ?>>Pending
                                             </option>
-                                        </select> </td>
-                                    <td> <button class="action-btn open-drawer" data-id="<?php echo $row['inquiry_id'] ?>"
-                                            data-type="test"> View </button> </td>
+                                        </select></td>
+                                    <td data-label="Action"><button class="action-btn open-drawer" data-id="<?php echo $row['inquiry_id'] ?>"
+                                            data-type="test"> View </button></td>
                                 </tr> <?php endforeach; ?> <?php else: ?>
                             <tr>
                                 <td colspan="9">No Test Inquiry found</td>
@@ -633,9 +654,9 @@ ORDER BY created_at DESC
 
 
     <script src="../js/theme.js"></script>
-    <script src="../js/inquiry.js"></script>
     <script src="../js/dashboard.js"></script>
-
+    <script src="../js/inquiry.js"></script>
+    <script src="../js/nav_toggle.js"></script>
     <script>
         // 4. Get Time slots
         const slotSelect = document.getElementById("appointment_time");

@@ -203,10 +203,32 @@ try {
         body.dark .schedule-grid th.is-today {
             color: #fff;
         }
+
+        @media screen and (max-width: 1024px) {
+            .modern-table td:first-child {
+                font-size: 1rem;
+            }
+
+            .schedule-grid td {
+                height: 35px;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- Mobile Blocker Overlay -->
+    <div class="mobile-blocker">
+        <div class="mobile-blocker-popup">
+            <i class="fa-solid fa-mobile-screen-button popup-icon"></i>
+            <h2>Mobile View Not Supported</h2>
+            <p>The admin panel is designed for desktop use. For the best experience on your mobile device, please download our dedicated application.</p>
+            <a href="/proadmin/download-app/index.html" class="mobile-download-btn">
+                <i class="fa-solid fa-download"></i> Download App
+            </a>
+        </div>
+    </div>
+
     <header>
         <div class="logo-container">
             <div class="logo">
@@ -236,6 +258,10 @@ try {
             <div class="icon-btn" id="theme-toggle"> <i id="theme-icon" class="fa-solid fa-moon"></i> </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
+        </div>
+        <!-- Hamburger Menu Icon (for mobile) -->
+        <div class="hamburger-menu" id="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
         </div>
     </header>
     <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
@@ -371,6 +397,7 @@ try {
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
     <script src="../js/registration.js"></script>
+    <script src="../js/nav_toggle.js"></script>
 
     <script>
         // write code for toast-container

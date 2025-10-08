@@ -135,6 +135,36 @@ try {
     <link rel="stylesheet" href="../css/reports.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
+
+
+    <style>
+        .filter-bar {
+            width: auto;
+            padding: 10px !important;
+            /* height: 50px; */
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 1024px) {
+            .main {
+                margin: 0;
+            }
+
+            .filter-bar {
+                /* margin: 0; */
+                display: flex;
+                width: auto;
+                padding: 10px !important;
+            }
+
+            .filter-bar input[type="date"],
+            .filter-bar select {
+                min-width: 175px !important;
+                max-width: 175px !important;
+            }
+
+        }
+    </style>
 </head>
 
 <body>
@@ -160,6 +190,10 @@ try {
             <div class="icon-btn" id="theme-toggle"> <i id="theme-icon" class="fa-solid fa-moon"></i> </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
+        </div>
+
+        <div class="hamburger-menu" id="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
         </div>
     </header>
     <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
@@ -259,14 +293,14 @@ try {
                     <?php else : ?>
                         <?php foreach ($inquiries as $inquiry) : ?>
                             <tr>
-                                <td><?= htmlspecialchars(date('Y-m-d', strtotime($inquiry['created_at']))) ?></td>
-                                <td><?= htmlspecialchars($inquiry['name']) ?></td>
-                                <td><?= htmlspecialchars((string)$inquiry['age']) ?></td>
-                                <td><?= htmlspecialchars($inquiry['gender']) ?></td>
-                                <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $inquiry['referralSource']))) ?></td>
-                                <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $inquiry['chief_complain']))) ?></td>
-                                <td><?= htmlspecialchars($inquiry['phone_number']) ?></td>
-                                <td><span class="status-pill status-<?= htmlspecialchars(strtolower($inquiry['status'])) ?>"><?= htmlspecialchars(ucfirst($inquiry['status'])) ?></span></td>
+                                <td data-label="Inquiry Date"><?= htmlspecialchars(date('Y-m-d', strtotime($inquiry['created_at']))) ?></td>
+                                <td data-label="Name"><?= htmlspecialchars($inquiry['name']) ?></td>
+                                <td data-label="Age"><?= htmlspecialchars((string)$inquiry['age']) ?></td>
+                                <td data-label="Gender"><?= htmlspecialchars($inquiry['gender']) ?></td>
+                                <td data-label="Source"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $inquiry['referralSource']))) ?></td>
+                                <td data-label="Condition"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $inquiry['chief_complain']))) ?></td>
+                                <td data-label="Phone"><?= htmlspecialchars($inquiry['phone_number']) ?></td>
+                                <td data-label="Status"><span class="status-pill status-<?= htmlspecialchars(strtolower($inquiry['status'])) ?>"><?= htmlspecialchars(ucfirst($inquiry['status'])) ?></span></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -279,6 +313,8 @@ try {
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
     <script src="../js/inquiry_reports.js"></script>
+    <script src="../js/nav_toggle.js"></script>
+
 </body>
 
 </html>

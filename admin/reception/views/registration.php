@@ -143,6 +143,39 @@ try {
             position: relative;
             width: auto;
         }
+
+        @media screen and (max-width: 1024px) {
+            .filter-bar {
+                margin: 0;
+                display: flex;
+            }
+
+            #searchInput {
+                width: 500px;
+            }
+
+            .filter-options {
+                display: flex;
+                width: auto;
+            }
+
+            .filter-options select {
+                max-width: 80px !important;
+            }
+
+            .sort-btn {
+                margin: 0;
+            }
+
+            .drawer{
+                max-height: 80vh;
+            }
+
+            .add-to-patient-drawer{
+                left: 50%;
+                z-index: 99999999999999999;
+            }
+        }
     </style>
 </head>
 
@@ -159,16 +192,16 @@ try {
         </div>
         <nav>
             <div class="nav-links">
-                <a href="dashboard.php">Dashboard</a>
-                <a href="inquiry.php">Inquiry</a>
-                <a class="active" href="registration.php">Registration</a>
-                <a href="appointments.php">Appointments</a>
-                <a href="patients.php">Patients</a>
-                <a href="billing.php">Billing</a>
-                <a href="attendance.php">Attendance</a>
-                <a href="tests.php">Tests</a>
-                <a href="reports.php">Reports</a>
-                <a href="expenses.php">Expenses</a>
+                <a href="dashboard.php"><i class="fa-solid fa-tachometer-alt"></i><span>Dashboard</span></a>
+                <a href="inquiry.php"><i class="fa-solid fa-magnifying-glass"></i><span>Inquiry</span></a>
+                <a class="active" href="registration.php"><i class="fa-solid fa-user-plus"></i><span>Registration</span></a>
+                <a href="appointments.php"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></a>
+                <a href="patients.php"><i class="fa-solid fa-users"></i><span>Patients</span></a>
+                <a href="billing.php"><i class="fa-solid fa-file-invoice-dollar"></i><span>Billing</span></a>
+                <a href="attendance.php"><i class="fa-solid fa-user-check"></i><span>Attendance</span></a>
+                <a href="tests.php"><i class="fa-solid fa-vial"></i><span>Tests</span></a>
+                <a href="reports.php"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
+                <a href="expenses.php"><i class="fa-solid fa-money-bill-wave"></i><span>Expenses</span></a>
             </div>
         </nav>
         <div class="nav-actions">
@@ -176,6 +209,10 @@ try {
             <div class="icon-btn" id="theme-toggle"> <i id="theme-icon" class="fa-solid fa-moon"></i> </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
+        </div>
+        <!-- Hamburger Menu Icon (for mobile) -->
+        <div class="hamburger-menu" id="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
         </div>
     </header>
     <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
@@ -237,10 +274,10 @@ try {
                         <button id="sortDirectionBtn" class="sort-btn" title="Toggle Sort Direction">
                             <i class="fa-solid fa-sort"></i>
                         </button>
+                        <button class="sort-btn" onclick="window.location.reload();">
+                            <i class="fa-solid fa-rotate"></i>&nbsp; <span>Reset</span>
+                        </button>
                     </div>
-                    <button class="sort-btn" onclick="window.location.reload();">
-                        <i class="fa-solid fa-rotate"></i>&nbsp; <span>Reset</span>
-                    </button>
                 </div>
             </div>
 
@@ -249,8 +286,8 @@ try {
                 <table>
                     <thead>
                         <tr>
-                            <th data-key="patient_uid" class="sortable">ID <span class="sort-indicator"></span></th>
-                            <th data-key="patient_name" class="sortable">Name <span class="sort-indicator"></span></th>
+                            <th data-key="patient_uid" class="sortable">ID</th>
+                            <th data-key="patient_name" class="sortable">Name</th>
                             <!-- <th data-key="phone" class="sortable">Phone</th> -->
                             <th data-key="age" class="sortable">Age</th>
                             <th data-key="gender" class="sortable">Gender</th>
@@ -268,20 +305,20 @@ try {
                             <?php foreach ($inquiries as $row): ?>
                                 <tr data-id="<?= htmlspecialchars((string) $row['patient_uid'], ENT_QUOTES, 'UTF-8') ?>">
                                     <td><?= htmlspecialchars($row['patient_uid'] ?? 'N/A') ?></td>
-                                    <td class="name"><?= htmlspecialchars($row['patient_name'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Name" class="name"><?= htmlspecialchars($row['patient_name'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <!-- <td><?= htmlspecialchars($row['phone_number'], ENT_QUOTES, 'UTF-8') ?></td> -->
-                                    <td><?= htmlspecialchars((string) $row['age'], ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars($row['gender'], ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars($row['reffered_by'], ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars($row['chief_complain'], ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td class="numeric">₹ <?= htmlspecialchars((string) $row['consultation_amount'], ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><small><?= htmlspecialchars($row['created_at'], ENT_QUOTES, 'UTF-8') ?></small></td>
-                                    <td>
+                                    <td data-label="Age"><?= htmlspecialchars((string) $row['age'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Gender"><?= htmlspecialchars($row['gender'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Referred By"><?= htmlspecialchars($row['reffered_by'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Condition"><?= htmlspecialchars($row['chief_complain'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Amount" class="numeric">₹ <?= htmlspecialchars((string) $row['consultation_amount'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Date"><?= htmlspecialchars(date('d M Y', strtotime($row['created_at'])), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Status">
                                         <span class="pill <?php echo strtolower($row['status']) ?>">
                                             <?php echo htmlspecialchars((string) $row['status']) ?>
                                         </span>
                                     </td>
-                                    <td> <select data-id="<?php echo $row['registration_id'] ?>">
+                                    <td data-label="Update Status"> <select data-id="<?php echo $row['registration_id'] ?>">
                                             <option <?php echo strtolower($row['status']) === 'pending' ? 'selected' : '' ?>>Pending
                                             </option>
                                             <option <?php echo strtolower($row['status']) === 'consulted' ? 'selected' : '' ?>>Consulted
@@ -289,7 +326,7 @@ try {
                                             <option <?php echo strtolower($row['status']) === 'closed' ? 'selected' : '' ?>>Closed
                                             </option>
                                         </select> </td>
-                                    <td>
+                                    <td data-label="Action">
                                         <button class="action-btn" data-id="<?= htmlspecialchars((string) $row['registration_id'], ENT_QUOTES, 'UTF-8') ?>">View</button>
                                     </td>
                                 </tr>
@@ -411,6 +448,7 @@ try {
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
     <script src="../js/registration.js"></script>
+    <script src="../js/nav_toggle.js"></script>
 
     <script>
         // write code for toast-container

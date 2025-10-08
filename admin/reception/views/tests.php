@@ -137,7 +137,7 @@ try {
             cursor: pointer;
         }
 
-        .sort-btn{
+        .sort-btn {
             width: 80px;
             /* border-radius: 50%; */
         }
@@ -152,6 +152,21 @@ try {
             background: var(--card-bg3);
             border-color: var(--border-color);
             color: var(--text-color);
+        }
+
+        @media (max-width: 1024px) {
+
+            .filter-bar {
+                width: auto;
+            }
+
+            .drawer {
+                margin: 0;
+                margin-right: 30px;
+                width: 720px;
+                height: 90vh;
+                z-index: 99999999;
+            }
         }
     </style>
 
@@ -183,6 +198,10 @@ try {
             </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
+        </div>
+
+        <div class="hamburger-menu" id="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
         </div>
     </header>
 
@@ -259,21 +278,21 @@ try {
                     <tbody id="testsTableBody">
                         <?php foreach ($tests as $row): ?>
                             <tr>
-                                <td><?= (int)$row['test_id'] ?></td>
-                                <td><?= htmlspecialchars($row['patient_name']) ?></td>
-                                <td><?= htmlspecialchars(strtoupper(str_replace('_', ' ', (string) $row['test_name']))) ?></td>
-                                <td>₹<?= number_format((float)$row['due_amount'], 2) ?></td>
-                                <td>
+                                <td data-label="Test ID"><?= (int)$row['test_id'] ?></td>
+                                <td data-label="Name"><?= htmlspecialchars($row['patient_name']) ?></td>
+                                <td data-label="Test Name"><?= htmlspecialchars(strtoupper(str_replace('_', ' ', (string) $row['test_name']))) ?></td>
+                                <td data-label="Due Amount">₹<?= number_format((float)$row['due_amount'], 2) ?></td>
+                                <td data-label="Payment Status">
                                     <span class="pill <?php echo strtolower($row['payment_status']); ?>">
                                         <?php echo ucfirst($row['payment_status']); ?>
                                     </span>
                                 </td>
-                                <td>
+                                <td data-label="Test Status">
                                     <span class="pill <?php echo strtolower($row['test_status']); ?>">
                                         <?php echo ucfirst($row['test_status']); ?>
                                     </span>
                                 </td>
-                                <td>
+                                <td data-label="Actions">
                                     <button class="action-btn open-drawer" data-id="<?= (int)$row['test_id'] ?>">View</button>
                                 </td>
                             </tr>
@@ -301,6 +320,8 @@ try {
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
     <script src="../js/test.js"></script>
+    <script src="../js/nav_toggle.js"></script>
+
 </body>
 
 </html>

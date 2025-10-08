@@ -159,6 +159,25 @@ try {
     <link rel="stylesheet" href="../css/inquiry.css">
     <link rel="stylesheet" href="../css/registration.css">
     <link rel="stylesheet" href="../css/patients.css">
+
+    <style>
+        @media (max-width: 1024px) {
+
+            .filter-bar {
+                /* margin: 0; */
+                display: flex;
+                width: auto;
+            }
+
+            .drawer-panel {
+                width: min(750px, 100%);
+            }
+
+            .but {
+                margin-right: 20px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -184,6 +203,10 @@ try {
             <div class="icon-btn" id="theme-toggle"> <i id="theme-icon" class="fa-solid fa-moon"></i> </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
             <div class="profile" onclick="openForm()">S</div>
+        </div>
+        <!-- Hamburger Menu Icon (for mobile) -->
+        <div class="hamburger-menu" id="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
         </div>
     </header>
     <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
@@ -281,14 +304,14 @@ try {
                                 );
                             ?>
                                 <tr <?= $data_attrs ?> data-id="<?= htmlspecialchars((string)$pid, ENT_QUOTES, 'UTF-8') ?>">
-                                    <td><?= htmlspecialchars((string)($row['patient_id'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars((string)($row['patient_name'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars((string)($row['patient_age'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars((string)($row['assigned_doctor'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars((string)($row['patient_condition'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars((string)($row['treatment_type'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="ID"><?= htmlspecialchars((string)($row['patient_id'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Name"><?= htmlspecialchars((string)($row['patient_name'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Age"><?= htmlspecialchars((string)($row['patient_age'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Assigned Doctor"><?= htmlspecialchars((string)($row['assigned_doctor'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Condition"><?= htmlspecialchars((string)($row['patient_condition'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Treatment Type"><?= htmlspecialchars((string)($row['treatment_type'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
                                     <!-- <td><?= htmlspecialchars((string)($row['treatment_days'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td> -->
-                                    <td>
+                                    <td data-label="Attendance">
                                         <?= htmlspecialchars((string)($row['attendance_count'] ?? 0), ENT_QUOTES, 'UTF-8') ?>
                                         /
                                         <?= htmlspecialchars((string)($row['treatment_days'] ?? '-'), ENT_QUOTES, 'UTF-8') ?>
@@ -296,9 +319,9 @@ try {
 
 
                                     <!-- <td class="numeric"><?= isset($row['total_amount']) ? '₹' . number_format((float)$row['total_amount'], 2) : '-' ?></td> -->
-                                    <td class="numeric"><?= isset($row['advance_payment']) ? '₹' . number_format((float)$row['advance_payment'], 2) : '-' ?></td>
+                                    <td data-label="Amount Paid" class="numeric"><?= isset($row['advance_payment']) ? '₹' . number_format((float)$row['advance_payment'], 2) : '-' ?></td>
                                     <!-- <td class="numeric"><?= isset($row['due_amount']) ? '₹' . number_format((float)$row['due_amount'], 2) : '-' ?></td> -->
-                                    <td>
+                                    <td data-label="Treatment Period">
                                         <div>
                                             <span>Start: <?= !empty($row['start_date']) ? date('d M Y', strtotime($row['start_date'])) : '-' ?></span><br>
                                             <span>End: <?= !empty($row['end_date']) ? date('d M Y', strtotime($row['end_date'])) : '-' ?></span>
@@ -313,19 +336,19 @@ try {
                                             default => 'status-inactive'
                                         };
                                         ?>
-                                        <span class="<?= $statusClass ?>"><?= htmlspecialchars(ucfirst($row['patient_status'] ?? 'Inactive'), ENT_QUOTES, 'UTF-8') ?></span>
+                                        <span data-label="Status" class="pill <?= $statusClass ?>"><?= htmlspecialchars(ucfirst($row['patient_status'] ?? 'Inactive'), ENT_QUOTES, 'UTF-8') ?></span>
                                     </td>
-                                    <td>
+                                    <td data-label="Mark Attendance">
                                         <?php if ($hasToday): ?>
                                             <button class="attendance-present-btn" disabled>Present</button>
                                         <?php else: ?>
                                             <button class="mark-attendance-btn" data-patient-id="<?= $pid ?>">Mark Today</button>
                                         <?php endif; ?>
                                     </td>
-                                    <td>
+                                    <td data-label="Token">
                                         <button class="action-btn2" data-patient-id="<?= htmlspecialchars((string)($row['patient_id'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">Print</button>
                                     </td>
-                                    <td>
+                                    <td data-label="Action">
                                         <button class="action-btn" data-id="<?= htmlspecialchars((string)($row['patient_id'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">View</button>
                                     </td>
                                 </tr>
@@ -355,7 +378,7 @@ try {
             <div class="drawer-body" id="drawer-body"></div>
         </div>
     </div>
-    
+
     <!-- Attendance Modal (only used for daily/advance) -->
     <div id="attendanceModal" class="modal" aria-hidden="true">
         <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -419,6 +442,7 @@ try {
     <script src="../js/dashboard.js"></script>
     <script src="../js/patients.js"></script>
     <script src="../js/addattendance.js"></script>
+    <script src="../js/nav_toggle.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

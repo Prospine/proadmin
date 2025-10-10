@@ -67,7 +67,8 @@ try {
             reg.consultation_amount,
             reg.created_at,
             reg.status,
-            pm.patient_uid -- Here is our shiny new UID!
+            pm.patient_uid, -- Here is our shiny new UID!
+            reg.patient_photo_path
         FROM
             registration AS reg
         LEFT JOIN
@@ -75,7 +76,7 @@ try {
         WHERE
             reg.branch_id = :branch_id
         ORDER BY
-            reg.created_at DESC
+            reg.registration_id DESC
     ");
     $stmt->execute([':branch_id' => $branchId]);
     // The $inquiries variable will now contain the 'patient_uid' for each record
@@ -287,6 +288,7 @@ try {
                     <thead>
                         <tr>
                             <th data-key="patient_uid" class="sortable">ID</th>
+                            <th>Photo</th>
                             <th data-key="patient_name" class="sortable">Name</th>
                             <!-- <th data-key="phone" class="sortable">Phone</th> -->
                             <th data-key="age" class="sortable">Age</th>
@@ -304,7 +306,19 @@ try {
                         <?php if (!empty($inquiries)): ?>
                             <?php foreach ($inquiries as $row): ?>
                                 <tr data-id="<?= htmlspecialchars((string) $row['patient_uid'], ENT_QUOTES, 'UTF-8') ?>">
+                                    <?php
+                                        $initial = !empty($row['patient_name']) ? strtoupper(substr($row['patient_name'], 0, 1)) : '?';
+                                    ?>
                                     <td><?= htmlspecialchars($row['patient_uid'] ?? 'N/A') ?></td>
+                                    <td data-label="Photo">
+                                        <div class="photo-cell" data-registration-id="<?= htmlspecialchars((string)$row['registration_id']) ?>" title="Click to capture/update photo">
+                                            <?php if (!empty($row['patient_photo_path'])): ?>
+                                                <img src="/proadmin/admin/<?= htmlspecialchars($row['patient_photo_path']) ?>?v=<?= time() ?>" alt="Photo" class="table-photo">
+                                            <?php else: ?>
+                                                <div class="table-initials"><?= $initial ?></div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
                                     <td data-label="Name" class="name"><?= htmlspecialchars($row['patient_name'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <!-- <td><?= htmlspecialchars($row['phone_number'], ENT_QUOTES, 'UTF-8') ?></td> -->
                                     <td data-label="Age"><?= htmlspecialchars((string) $row['age'], ENT_QUOTES, 'UTF-8') ?></td>
@@ -333,7 +347,7 @@ try {
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="11" class="no-data">No inquiries found</td>
+                                <td colspan="12" class="no-data">No inquiries found</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
@@ -444,6 +458,37 @@ try {
         </div>
     </div>
     <div id="toast-container"></div>
+
+    <!-- NEW: Photo Capture Modal -->
+    <div id="photo-modal-overlay" class="photo-modal-overlay">
+        <div class="photo-modal">
+            <h3 class="photo-modal-title">Capture Patient Photo</h3>
+
+            <div class="photo-modal-body">
+                <video id="webcam-feed" autoplay playsinline></video>
+                <canvas id="photo-canvas" class="hidden"></canvas>
+            </div>
+            <p id="webcam-error" class="webcam-error hidden">Could not access the webcam. Please check permissions and try again.</p>
+
+            <div id="initial-controls" class="photo-modal-footer">
+                <button id="close-photo-modal-1" type="button" class="modal-btn cancel-btn">Cancel</button>
+                <button id="capture-photo-btn" type="button" class="modal-btn capture-btn">
+                    <i class="fa-solid fa-camera"></i> Click Photo
+                </button>
+            </div>
+
+            <div id="confirm-controls" class="photo-modal-footer hidden">
+                <button id="close-photo-modal-2" type="button" class="modal-btn cancel-btn">Cancel</button>
+                <button id="retake-photo-btn" type="button" class="modal-btn retake-btn">
+                    <i class="fa-solid fa-refresh"></i> Retake
+                </button>
+                <button id="upload-photo-btn" type="button" class="modal-btn upload-btn">
+                    <i class="fa-solid fa-upload"></i> Upload
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>

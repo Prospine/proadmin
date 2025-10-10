@@ -64,7 +64,8 @@ try {
             r.phone_number AS patient_phone,
             r.age AS patient_age,
             r.chief_complain AS patient_condition,
-            r.created_at
+            r.created_at,
+            r.patient_photo_path
         FROM patients p
         INNER JOIN registration r ON p.registration_id = r.registration_id
         WHERE p.branch_id = :branch_id
@@ -270,6 +271,7 @@ try {
                     <thead>
                         <tr>
                             <th data-key="patient_id" class="sortable">ID <span class="sort-indicator"></span></th>
+                            <th>Photo</th>
                             <th data-key="patient_name" class="sortable">Name <span class="sort-indicator"></span></th>
                             <th data-key="patient_age" class="sortable">Age</th>
                             <th data-key="assigned_doctor" class="sortable">Assigned Doctor</th>
@@ -292,6 +294,7 @@ try {
                             <?php foreach ($patients as $row):
                                 $pid = (int) ($row['patient_id'] ?? 0);
                                 $hasToday = isset($attendanceTodayMap[$pid]);
+                                $initial = !empty($row['patient_name']) ? strtoupper(substr($row['patient_name'], 0, 1)) : '?';
 
                                 // Now we pass the effective balance to the front-end
                                 $data_attrs = sprintf(
@@ -305,6 +308,15 @@ try {
                             ?>
                                 <tr <?= $data_attrs ?> data-id="<?= htmlspecialchars((string)$pid, ENT_QUOTES, 'UTF-8') ?>">
                                     <td data-label="ID"><?= htmlspecialchars((string)($row['patient_id'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Photo">
+                                        <div class="photo-cell">
+                                            <?php if (!empty($row['patient_photo_path'])): ?>
+                                                <img src="/proadmin/admin/<?= htmlspecialchars($row['patient_photo_path']) ?>?v=<?= time() ?>" alt="Photo" class="table-photo">
+                                            <?php else: ?>
+                                                <div class="table-initials"><?= $initial ?></div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
                                     <td data-label="Name"><?= htmlspecialchars((string)($row['patient_name'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
                                     <td data-label="Age"><?= htmlspecialchars((string)($row['patient_age'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
                                     <td data-label="Assigned Doctor"><?= htmlspecialchars((string)($row['assigned_doctor'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
@@ -355,7 +367,7 @@ try {
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="14" class="no-data">No patients found</td>
+                                <td colspan="15" class="no-data">No patients found</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>

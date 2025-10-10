@@ -595,6 +595,118 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ------------------------------
+       NEW: Photo Capture Logic
+    ------------------------------ */
+    const photoModalOverlay = $('#photo-modal-overlay');
+    if (photoModalOverlay) {
+        const video = $('#webcam-feed');
+        const canvas = $('#photo-canvas');
+        const webcamError = $('#webcam-error');
+        const initialControls = $('#initial-controls');
+        const confirmControls = $('#confirm-controls');
+        const captureBtn = $('#capture-photo-btn');
+        const retakeBtn = $('#retake-photo-btn');
+        const uploadBtn = $('#upload-photo-btn');
+        const closeModalBtns = $$('#close-photo-modal-1, #close-photo-modal-2');
+
+        let stream = null;
+        let currentRegistrationId = null;
+
+        const startWebcam = async () => {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                video.srcObject = stream;
+                webcamError.classList.add('hidden');
+            } catch (err) {
+                console.error("Error accessing webcam: ", err);
+                webcamError.classList.remove('hidden');
+            }
+        };
+
+        const stopWebcam = () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+        };
+
+        const openPhotoModal = (registrationId) => {
+            currentRegistrationId = registrationId;
+            photoModalOverlay.style.display = 'flex';
+            video.classList.remove('hidden');
+            canvas.classList.add('hidden');
+            initialControls.classList.remove('hidden');
+            confirmControls.classList.add('hidden');
+            startWebcam();
+        };
+
+        const closePhotoModal = () => {
+            photoModalOverlay.style.display = 'none';
+            stopWebcam();
+        };
+
+        const capturePhoto = () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.translate(canvas.width, 0);
+            context.scale(-1, 1); // Un-mirror
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            video.classList.add('hidden');
+            canvas.classList.remove('hidden');
+            initialControls.classList.add('hidden');
+            confirmControls.classList.remove('hidden');
+        };
+
+        const retakePhoto = () => {
+            video.classList.remove('hidden');
+            canvas.classList.add('hidden');
+            initialControls.classList.remove('hidden');
+            confirmControls.classList.add('hidden');
+        };
+
+        const uploadPhoto = async () => {
+            const imageData = canvas.toDataURL('image/jpeg');
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
+
+            try {
+                const response = await fetch('../api/upload_patient_photo.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ registration_id: currentRegistrationId, image_data: imageData })
+                });
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    showToast('Photo uploaded successfully!', 'success');
+                    closePhotoModal();
+                    // Reload to show the new photo
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    throw new Error(result.message || 'Failed to upload photo.');
+                }
+            } catch (error) {
+                console.error('Upload failed:', error);
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = '<i class="fa-solid fa-upload"></i> Upload';
+            }
+        };
+
+        // Event Listeners
+        $$('.photo-cell').forEach(cell => cell.addEventListener('click', () => {
+            const registrationId = cell.dataset.registrationId;
+            if (registrationId) openPhotoModal(registrationId);
+        }));
+        closeModalBtns.forEach(btn => btn.addEventListener('click', closePhotoModal));
+        captureBtn.addEventListener('click', capturePhoto);
+        retakeBtn.addEventListener('click', retakePhoto);
+        uploadBtn.addEventListener('click', uploadPhoto);
+    }
+
+    /* ------------------------------
        End of module
     ------------------------------ */
 });

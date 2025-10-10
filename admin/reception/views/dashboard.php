@@ -46,35 +46,20 @@ try {
     $stmtBranch->execute([':branch_id' => $branchId]);
     $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
     $branchName = $branchDetails['branch_name'];
-
-    // --- Appointments ---
-    $stmt = $pdo->prepare("SELECT COUNT(*) AS count 
-                           FROM appointments 
-                           WHERE branch_id = :branch_id 
-                             AND DATE(created_at) = :today");
-    $stmt->execute(['branch_id' => $branchId, 'today' => $today]);
-    $todayAppointments = (int) $stmt->fetch()['count'];
-
-    $stmt = $pdo->prepare("SELECT COUNT(*) AS count 
-                           FROM appointments 
-                           WHERE branch_id = :branch_id");
-    $stmt->execute(['branch_id' => $branchId]);
-    $totalAppointments = (int) $stmt->fetch()['count'];
-
-    // Appointments Requests
-
-    $stmt = $pdo->prepare("SELECT COUNT(*) AS count 
-                           FROM appointment_requests 
-                           WHERE branch_id = :branch_id 
-                             AND DATE(created_at) = :today");
-    $stmt->execute(['branch_id' => $branchId, 'today' => $today]);
-    $todayAppointmentsReq = (int) $stmt->fetch()['count'];
-
-    $stmt = $pdo->prepare("SELECT COUNT(*) AS count 
-                           FROM appointment_requests 
-                           WHERE branch_id = :branch_id");
-    $stmt->execute(['branch_id' => $branchId]);
-    $totalAppointmentsReq = (int) $stmt->fetch()['count'];
+    
+    // --- Appointments from Registration Status ---
+    $stmtApptStatus = $pdo->prepare("
+        SELECT 
+            SUM(CASE WHEN status IN ('consulted', 'closed') THEN 1 ELSE 0 END) as conducted,
+            SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as in_queue
+        FROM registration
+        WHERE branch_id = :branch_id AND DATE(appointment_date) = :today
+    ");
+    $stmtApptStatus->execute(['branch_id' => $branchId, 'today' => $today]);
+    $appointmentStatusCounts = $stmtApptStatus->fetch(PDO::FETCH_ASSOC);
+    
+    $todayAppointmentsConducted = (int)($appointmentStatusCounts['conducted'] ?? 0);
+    $todayAppointmentsInQueue = (int)($appointmentStatusCounts['in_queue'] ?? 0);
 
     //--- patients ----
     $stmt = $pdo->prepare("SELECT COUNT(*) AS count 
@@ -163,6 +148,31 @@ try {
     $totalCompletedTests = (int) $stmt->fetch()['count'];
 
     // --- Payments ---
+    // New, more specific queries for today's collections breakdown
+    $stmtRegPayments = $pdo->prepare("
+        SELECT SUM(consultation_amount) FROM registration 
+        WHERE branch_id = :branch_id AND DATE(created_at) = :today
+    ");
+    $stmtRegPayments->execute(['branch_id' => $branchId, 'today' => $today]);
+    $todayRegistrationPaid = (float)$stmtRegPayments->fetchColumn();
+
+    $stmtTestPayments = $pdo->prepare("
+        SELECT SUM(advance_amount) FROM tests 
+        WHERE branch_id = :branch_id AND DATE(visit_date) = :today
+    ");
+    $stmtTestPayments->execute(['branch_id' => $branchId, 'today' => $today]);
+    $todayTestPaid = (float)$stmtTestPayments->fetchColumn();
+
+    $stmtPatientPayments = $pdo->prepare("
+        SELECT SUM(p.amount) 
+        FROM payments p
+        JOIN patients pt ON p.patient_id = pt.patient_id
+        WHERE pt.branch_id = :branch_id AND p.payment_date = :today
+    ");
+    $stmtPatientPayments->execute(['branch_id' => $branchId, 'today' => $today]);
+    $todayPatientTreatmentPaid = (float)$stmtPatientPayments->fetchColumn();
+
+
     $appointments = $pdo->prepare("SELECT payment_amount, payment_date 
                                    FROM appointments 
                                    WHERE branch_id = :branch_id 
@@ -294,8 +304,7 @@ try {
     error_log($e->getMessage());
 
     // Fallback defaults
-    $todayAppointments = $totalAppointments = 0;
-    $todayAppointmentsReq = $totalAppointmentsReq = 0;
+    $todayAppointmentsConducted = $todayAppointmentsInQueue = 0;
     $todayPatients = $totalPatients = 0;
     $ongoingPatients = $dischargedPatients = 0;
     $todayInquiries = $totalInquiries = 0;
@@ -305,6 +314,22 @@ try {
     $todayCompletedTests = $totalCompletedTests = 0;
     $todayPaid = $totalPaid = 0.0;
     $todayDues = $totalDues = 0.0;
+}
+
+// --- Fetch distinct referrers for datalist ---
+try {
+    $stmtReferrers = $pdo->query("
+        (SELECT DISTINCT reffered_by FROM registration WHERE branch_id = {$branchId} AND reffered_by IS NOT NULL AND reffered_by != '')
+        UNION
+        (SELECT DISTINCT reffered_by FROM test_inquiry WHERE branch_id = {$branchId} AND reffered_by IS NOT NULL AND reffered_by != '')
+        UNION
+        (SELECT DISTINCT referred_by FROM tests WHERE branch_id = {$branchId} AND referred_by IS NOT NULL AND referred_by != '')
+        ORDER BY reffered_by ASC
+    ");
+    $referrers = $stmtReferrers->fetchAll(PDO::FETCH_COLUMN);
+} catch (PDOException $e) {
+    $referrers = []; // Default to empty array on error
+    error_log("Could not fetch referrers: " . $e->getMessage());
 }
 
 // --- CSRF token ---
@@ -391,8 +416,6 @@ $success = false;
             object-fit: contain;
             cursor: auto;
         }
-
-      
     </style>
 </head>
 
@@ -523,8 +546,8 @@ $success = false;
                     </div>
 
                     <div class="card-body2">
-                        <div class="card-title">Today's Appointments: <?php echo $todayAppointments; ?></div>
-                        <div class="card-title">Today's Appointment Requests: <?php echo $todayAppointmentsReq; ?></div>
+                        <div class="card-title">Appointments Conducted: <?php echo $todayAppointmentsConducted; ?></div>
+                        <div class="card-sub">Appointments in Queue: <?php echo $todayAppointmentsInQueue; ?></div>
                     </div>
                 </div>
                 <div class="card">
@@ -583,19 +606,33 @@ $success = false;
                             <h2><i class="fa-solid fa-file-invoice-dollar"></i> Payments</h2>
                         </div>
                     </div>
-                    <div class="spcard">
+                    <div>
                         <div class="card-body">
                             <div class="card-title">Payment Received Today: ₹<?= number_format($todayPaid, 2) ?></div>
                             <div class="card-sub">Total Payment Received: ₹<?= number_format($totalPaid, 2) ?></div>
                         </div>
-
                         <div class="card-body2">
-                            <div class="card-title">Total Dues Today : ₹<?= number_format($todayDues, 2) ?></div>
-                            <div class="card-sub">Total Dues Amount: ₹<?= number_format($totalDues, 2) ?></div>
+                            <div class="card-title">Treatments: ₹<?= number_format($todayPatientTreatmentPaid, 2) ?></div>
+                            <div class="card-sub">From ongoing patient treatments.</div>
                         </div>
                     </div>
                 </div>
 
+                <div class="card">
+                    <div class="card-header-flex">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-money-bill-transfer"></i> Today's Collections</h2>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Registration: ₹<?= number_format($todayRegistrationPaid, 2) ?></div>
+                        <div class="card-sub">From new patient registrations.</div>
+                    </div>
+                    <div class="card-body2">
+                        <div class="card-title">Tests: ₹<?= number_format($todayTestPaid, 2) ?></div>
+                        <div class="card-sub">From diagnostic tests.</div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -677,7 +714,12 @@ $success = false;
 
                     <div>
                         <label>Referred By *</label>
-                        <input type="text" name="referred_by" required>
+                        <input list="referrers-list" id="registration_referred_by" name="referred_by" placeholder="Type or select a doctor" required>
+                        <datalist id="referrers-list">
+                            <?php foreach ($referrers as $referrer): ?>
+                                <option value="<?= htmlspecialchars($referrer) ?>">
+                                <?php endforeach; ?>
+                        </datalist>
                     </div>
 
                     <div class="select-wrapper">
@@ -722,7 +764,8 @@ $success = false;
                             <option value="">Select Method</option>
                             <option value="cash">Cash</option>
                             <option value="card">Card</option>
-                            <option value="upi">UPI</option>
+                            <option value="upi-boi">UPI-BOI</option>
+                            <option value="upi-hdfc">UPI-HDFC</option>
                             <option value="cheque">Cheque</option>
                             <option value="other">Other</option>
                         </select>
@@ -824,8 +867,13 @@ $success = false;
                     </div>
 
                     <div>
-                        <label>Referred By</label>
-                        <input type="text" name="referred_by" placeholder="Doctor/Clinic Name">
+                        <label>Referred By *</label>
+                        <input list="referrers-list" id="test_form_referred_by" name="referred_by" placeholder="Type or select a doctor" required>
+                        <datalist id="referrers-list">
+                            <?php foreach ($referrers as $referrer): ?>
+                                <option value="<?= htmlspecialchars($referrer) ?>">
+                                <?php endforeach; ?>
+                        </datalist>
                     </div>
 
                     <div class="select-wrapper">
@@ -897,7 +945,7 @@ $success = false;
 
                     <div>
                         <label>Discount</label>
-                        <input type="number" placeholder="Enter Discount">
+                        <input type="number" name="discount" step="0.01" value="0" placeholder="Enter Discount">
                     </div>
 
                     <div class="select-wrapper">
@@ -905,7 +953,8 @@ $success = false;
                         <select name="payment_method" required>
                             <option value="">Select Method</option>
                             <option value="cash">Cash</option>
-                            <option value="upi">UPI</option>
+                            <option value="upi-boi">UPI-BOI</option>
+                            <option value="upi-hdfc">UPI-HDFC</option>
                             <option value="card">Card</option>
                             <option value="cheque">Cheque</option>
                             <option value="other">Other</option>
@@ -1027,8 +1076,13 @@ $success = false;
 
                     <div class="form-row">
                         <div>
-                            <label for="test_referred_by">Referred By *</label>
-                            <input type="text" id="test_referred_by" name="referred_by" placeholder="Referred By" required>
+                            <label for="test_inquiry_referred_by">Referred By *</label>
+                            <input list="referrers-list" id="test_inquiry_referred_by" name="referred_by" placeholder="Type or select a doctor" required>
+                            <datalist id="referrers-list">
+                                <?php foreach ($referrers as $referrer): ?>
+                                    <option value="<?= htmlspecialchars($referrer) ?>">
+                                    <?php endforeach; ?>
+                            </datalist>
                         </div>
                         <div>
                             <label for="test_phone_number">Mobile No. *</label>
@@ -1050,6 +1104,27 @@ $success = false;
     </main>
 
     <div id="toast-container"></div>
+
+    <!-- What's New Changelog Modal -->
+    <div id="changelog-modal-overlay" class="changelog-overlay">
+        <div class="changelog-modal">
+            <!-- New Animated Intro Section -->
+            <div id="changelog-intro" class="changelog-intro">
+                <div class="icon"><i class="fa-solid fa-rocket"></i></div>
+                <h2>System Updated!</h2>
+                <p id="changelog-version-text"></p>
+            </div>
+
+            <!-- Main Changelog Content -->
+            <div class="changelog-body" id="changelog-body">
+                <!-- Content will be injected by JS -->
+                <div class="changelog-loader"></div>
+            </div>
+            <div class="changelog-footer">
+                <button id="changelog-close-btn">Got it!</button>
+            </div>
+        </div>
+    </div>
 
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>

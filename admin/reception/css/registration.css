@@ -186,6 +186,115 @@ body {
   color: var(--text-color);
 }
 
+/* --- NEW: Photo Styles --- */
+.photo-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.table-photo,
+.table-initials {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-color-primary);
+}
+
+.table-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* --- NEW: Photo Capture Modal --- */
+.photo-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 5000;
+  display: none; /* Hidden by default */
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-modal {
+  background-color: var(--bg-primary);
+  border-radius: var(--border-radius-card);
+  box-shadow: var(--shadow-popup);
+  padding: 24px;
+  width: 100%;
+  max-width: 550px;
+  position: relative;
+  animation: popIn 0.3s ease-out;
+}
+
+.photo-modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.photo-modal-body {
+  margin-bottom: 1rem;
+}
+
+#webcam-feed,
+#photo-canvas {
+  width: 100%;
+  border-radius: var(--border-radius-btn);
+  background-color: #000;
+  aspect-ratio: 4 / 3;
+  transform: scaleX(-1); /* Mirror effect */
+}
+
+.webcam-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.photo-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.modal-btn {
+  padding: 8px 16px;
+  border-radius: var(--border-radius-btn);
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+
+.modal-btn.cancel-btn {
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+.modal-btn.capture-btn,
+.modal-btn.upload-btn {
+  background-color: var(--color-primary);
+  color: white;
+}
+.modal-btn.retake-btn {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color-primary);
+}
+.hidden { display: none; }
+
+
 /* --- BODY & FORM LAYOUT --- */
 .add-drawer-body {
   padding: 24px 12px;

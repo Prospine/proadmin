@@ -62,7 +62,7 @@ try {
 
     // Define the time slots for the grid columns
     $timeSlots = [];
-    $startTime = new DateTime('11:00');
+    $startTime = new DateTime('09:00');
     $endTime = new DateTime('19:00'); // Grid will go up to 18:00 - 18:30 slot
     $interval = new DateInterval('PT30M');
     $timePeriod = new DatePeriod($startTime, $interval, $endTime);

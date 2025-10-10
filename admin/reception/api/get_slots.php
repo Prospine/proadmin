@@ -51,7 +51,7 @@ try {
 
     // Generate slots (11:00 AM to 7:00 PM, every 30 minutes)
     $slots = [];
-    $start = new DateTime('11:00');
+    $start = new DateTime('09:00');
     $end   = new DateTime('19:00');
 
     while ($start < $end) {

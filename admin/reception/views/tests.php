@@ -269,6 +269,7 @@ try {
                             <th data-key="id" class="sortable">Test ID</th>
                             <th data-key="name" class="sortable">Name</th>
                             <th data-key="test_name" class="sortable">Test Name</th>
+                            <th data-key="due" class="sortable numeric">Paid Amount</th>
                             <th data-key="due" class="sortable numeric">Due Amount</th>
                             <th data-key="payment_status">Payment Status</th>
                             <th data-key="test_status">Test Status</th>
@@ -281,6 +282,7 @@ try {
                                 <td data-label="Test ID"><?= (int)$row['test_id'] ?></td>
                                 <td data-label="Name"><?= htmlspecialchars($row['patient_name']) ?></td>
                                 <td data-label="Test Name"><?= htmlspecialchars(strtoupper(str_replace('_', ' ', (string) $row['test_name']))) ?></td>
+                                <td data-label="Due Amount">₹<?= number_format((float)$row['advance_amount'], 2) ?></td>
                                 <td data-label="Due Amount">₹<?= number_format((float)$row['due_amount'], 2) ?></td>
                                 <td data-label="Payment Status">
                                     <span class="pill <?php echo strtolower($row['payment_status']); ?>">

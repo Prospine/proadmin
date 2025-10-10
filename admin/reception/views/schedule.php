@@ -90,7 +90,7 @@ try {
 
 // --- Define the Time Slots for the Grid (No changes needed here) ---
 $timeSlots = [];
-$startTime = new DateTime('11:00');
+$startTime = new DateTime('09:00');
 $endTime = new DateTime('19:00');
 $interval = new DateInterval('PT30M');
 $period = new DatePeriod($startTime, $interval, $endTime);

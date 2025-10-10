@@ -1121,6 +1121,7 @@ $success = false;
                 <div class="changelog-loader"></div>
             </div>
             <div class="changelog-footer">
+                <button onclick="window.location.href='changelog.html'">View Changelog</button>
                 <button id="changelog-close-btn">Got it!</button>
             </div>
         </div>

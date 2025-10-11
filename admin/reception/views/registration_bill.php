@@ -224,12 +224,14 @@ $today = date("d-m-Y");
 
 <body>
     <header>
-        <div class="logo">
-            <?php if (!empty($branchDetails['logo_primary_path'])): ?>
-                <img src="/proadmin/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
-            <?php else: ?>
-                <div class="logo-placeholder">Primary Logo N/A</div>
-            <?php endif; ?>
+        <div class="logo-container">
+            <div class="logo">
+                <?php if (!empty($branchDetails['logo_primary_path'])): ?>
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                <?php else: ?>
+                    <div class="logo-placeholder">Primary Logo N/A</div>
+                <?php endif; ?>
+            </div>
         </div>
         <nav>
             <div class="nav-links">
@@ -254,14 +256,14 @@ $today = date("d-m-Y");
         <div class="header">
             <div class="logo">
                 <?php if (!empty($branchDetails['logo_primary_path'])): ?>
-                    <img src="/proadmin/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
                 <?php else: ?>
                     <div class="logo-placeholder">Primary Logo N/A</div>
                 <?php endif; ?>
             </div>
             <div class="logo2">
                 <?php if (!empty($branchDetails['logo_secondary_path'])): ?>
-                    <img src="/proadmin/admin/<?= htmlspecialchars($branchDetails['logo_secondary_path']) ?>" alt="Secondary Clinic Logo">
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_secondary_path']) ?>" alt="Secondary Clinic Logo">
                 <?php else: ?>
                     <div class="logo-placeholder" style="width:200px;">Secondary Logo N/A</div>
                 <?php endif; ?>

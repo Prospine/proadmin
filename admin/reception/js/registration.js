@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusFilter = $('#statusFilter');
     const genderFilter = $('#genderFilter');
     const referredByFilter = $('#referredByFilter');
+    const inquiryTypeFilter = $('#inquiryTypeFilter');
     const conditionFilter = $('#conditionFilter');
     const sortDirectionBtn = $('#sortDirectionBtn');
     const tableBody = $('#registrationTableBody');
@@ -58,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const statusValue = statusFilter.value.toLowerCase();
         const genderValue = genderFilter.value.toLowerCase();
         const referredByValue = referredByFilter.value.toLowerCase();
+        const inquiryTypeValue = inquiryTypeFilter.value.toLowerCase();
         const conditionValue = conditionFilter.value.toLowerCase();
         const rows = $$('tr', tableBody);
         let visibleRows = 0;
@@ -71,12 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const rowText = row.textContent.toLowerCase();
             const statusCell = row.querySelector('.pill');
-            const genderCell = row.querySelector('td:nth-child(4)'); // 4th column is Gender
-            const referredByCell = row.querySelector('td:nth-child(5)'); // 5th column is Referred By
-            const conditionCell = row.querySelector('td:nth-child(6)'); // 6th column is Condition
+            const genderCell = row.querySelector('td:nth-child(5)');
+            const inquiryTypeCell = row.querySelector('td:nth-child(6)'); // NEW: 6th column is Inquiry Type
+            const referredByCell = row.querySelector('td:nth-child(7)'); // 7th column is Referred By
+            const conditionCell = row.querySelector('td:nth-child(8)'); // 8th column is Condition Type
 
             const rowStatus = statusCell ? statusCell.textContent.trim().toLowerCase() : '';
             const rowGender = genderCell ? genderCell.textContent.trim().toLowerCase() : '';
+            const rowInquiryType = inquiryTypeCell ? inquiryTypeCell.textContent.trim().toLowerCase() : '';
             const rowReferredBy = referredByCell ? referredByCell.textContent.trim().toLowerCase() : '';
             const rowCondition = conditionCell ? conditionCell.textContent.trim().toLowerCase() : '';
 
@@ -85,9 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchesStatus = statusValue ? rowStatus === statusValue : true;
             const matchesGender = genderValue ? rowGender === genderValue : true;
             const matchesReferredBy = referredByValue ? rowReferredBy === referredByValue : true;
+            const matchesInquiryType = inquiryTypeValue ? rowInquiryType === inquiryTypeValue : true;
             const matchesCondition = conditionValue ? rowCondition === conditionValue : true;
 
-            if (matchesSearch && matchesStatus && matchesGender && matchesReferredBy && matchesCondition) {
+            if (matchesSearch && matchesStatus && matchesGender && matchesReferredBy && matchesInquiryType && matchesCondition) {
                 row.style.display = '';
                 visibleRows++;
             } else {
@@ -186,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Attach event listeners if filter elements exist
-    [searchInput, statusFilter, genderFilter, referredByFilter, conditionFilter].forEach(el => {
+    [searchInput, statusFilter, genderFilter, referredByFilter, inquiryTypeFilter, conditionFilter].forEach(el => {
         if (el) el.addEventListener('input', processTable);
     });
 
@@ -381,6 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="info-item"><strong>Referral By</strong><span>${safeText(data.reffered_by) || 'N/A'}</span></div>
             <div class="info-item"><strong>Consultation</strong><span>₹ ${safeText(data.consultation_amount)}</span></div>
             <div class="info-item"><strong>Payment</strong><span>${safeText(data.payment_method) || 'N/A'}</span></div>
+            <div class="info-item"><strong>Address</strong><span>${safeText(data.address) || 'N/A'}</span></div>
             <div class="info-item"><strong>Doctor Notes</strong><span>${safeText(data.doctor_notes) || 'N/A'}</span></div>
             <div class="info-item"><strong>Prescription</strong><span>${safeText(data.prescription) || 'N/A'}</span></div>
             <div class="info-item"><strong>Follow Up Date</strong><span>${safeText(data.follow_up_date) || 'N/A'}</span></div>

@@ -87,6 +87,7 @@ try {
             reg.reffered_by,
             reg.consultation_amount,
             reg.created_at,
+            reg.consultation_type,
             reg.status,
             pm.patient_uid -- Here is our shiny new UID!
         FROM
@@ -230,15 +231,17 @@ try {
     </div>
 
     <header>
-        <div class="logo-container">
+       
+    <div class="logo-container">
             <div class="logo">
                 <?php if (!empty($branchDetails['logo_primary_path'])): ?>
-                    <img src="/proadmin/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
                 <?php else: ?>
                     <div class="logo-placeholder">Primary Logo N/A</div>
                 <?php endif; ?>
             </div>
         </div>
+
         <nav>
             <div class="nav-links">
                 <a href="dashboard.php">Dashboard</a>
@@ -345,6 +348,7 @@ try {
                                     <th data-key="name" class="sortable">Name <span class="sort-indicator"></span></th>
                                     <th data-key="age" class="sortable">Age</th>
                                     <th data-key="gender" class="sortable">Gender</th>
+                                    <th data-key="consultation_type" class="sortable">Inquiry Type</th>
                                     <th data-key="reffered_by" class="sortable">Referred By</th>
                                     <th data-key="conditionType" class="sortable">Condition Type</th>
                                     <th data-key="status">Status</th>
@@ -359,6 +363,7 @@ try {
                                             <td class="name"><?= htmlspecialchars($row['patient_name'], ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= htmlspecialchars((string) $row['age'], ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= htmlspecialchars($row['gender'], ENT_QUOTES, 'UTF-8') ?></td>
+                                            <td><?= htmlspecialchars($row['consultation_type'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= htmlspecialchars($row['reffered_by'], ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= htmlspecialchars($row['chief_complain'], ENT_QUOTES, 'UTF-8') ?></td>
                                             <td>
@@ -381,7 +386,7 @@ try {
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="7" class="no-data">No new registrations today.</td>
+                                        <td colspan="7" class="no-data">No new Appointments today.</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>

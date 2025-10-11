@@ -114,7 +114,15 @@ foreach ($period as $dt) {
 
 <body>
     <header>
-        <div class="logo-container"> <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" /></div>
+        <div class="logo-container">
+            <div class="logo">
+                <?php if (!empty($branchDetails['logo_primary_path'])): ?>
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                <?php else: ?>
+                    <div class="logo-placeholder">Primary Logo N/A</div>
+                <?php endif; ?>
+            </div>
+        </div>
         <nav>
             <div class="nav-links">
                 <a href="dashboard.php">Dashboard</a>
@@ -212,7 +220,7 @@ foreach ($period as $dt) {
     </main>
 
     <script src="../js/theme.js"></script>
-  
+
 </body>
 
 </html>

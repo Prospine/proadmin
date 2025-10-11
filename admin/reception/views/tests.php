@@ -48,7 +48,8 @@ try {
     // Fetch all tests for the branch
     $stmt = $pdo->prepare("
     SELECT 
-        t.* 
+        t.*,
+        t.test_uid -- Fetch the new UID
     FROM tests t
     WHERE t.branch_id = :branch_id
     ORDER BY t.created_at DESC
@@ -175,7 +176,13 @@ try {
 <body>
     <header>
         <div class="logo-container">
-            <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
+            <div class="logo">
+                <?php if (!empty($branchDetails['logo_primary_path'])): ?>
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                <?php else: ?>
+                    <div class="logo-placeholder">Primary Logo N/A</div>
+                <?php endif; ?>
+            </div>
         </div>
         <nav>
             <div class="nav-links">
@@ -266,7 +273,7 @@ try {
                 <table>
                     <thead>
                         <tr>
-                            <th data-key="id" class="sortable">Test ID</th>
+                            <th data-key="id" class="sortable">Test UID</th>
                             <th data-key="name" class="sortable">Name</th>
                             <th data-key="test_name" class="sortable">Test Name</th>
                             <th data-key="due" class="sortable numeric">Paid Amount</th>
@@ -279,7 +286,7 @@ try {
                     <tbody id="testsTableBody">
                         <?php foreach ($tests as $row): ?>
                             <tr>
-                                <td data-label="Test ID"><?= (int)$row['test_id'] ?></td>
+                                <td data-label="Test UID"><?= htmlspecialchars($row['test_uid'] ?: (string)$row['test_id']) ?></td>
                                 <td data-label="Name"><?= htmlspecialchars($row['patient_name']) ?></td>
                                 <td data-label="Test Name"><?= htmlspecialchars(strtoupper(str_replace('_', ' ', (string) $row['test_name']))) ?></td>
                                 <td data-label="Due Amount">₹<?= number_format((float)$row['advance_amount'], 2) ?></td>

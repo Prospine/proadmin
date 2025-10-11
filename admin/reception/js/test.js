@@ -37,8 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const rowText = row.textContent.toLowerCase();
             const testNameCell = row.querySelector('td:nth-child(3)');
-            const paymentStatusCell = row.querySelector('td:nth-child(5) .pill');
-            const testStatusCell = row.querySelector('td:nth-child(6) .pill');
+            const paymentStatusCell = row.querySelector('td:nth-child(6) .pill');
+            const testStatusCell = row.querySelector('td:nth-child(7) .pill');
 
             const rowTestName = testNameCell ? testNameCell.textContent.trim().toLowerCase() : '';
             const rowPaymentStatus = paymentStatusCell ? paymentStatusCell.textContent.trim().toLowerCase() : '';

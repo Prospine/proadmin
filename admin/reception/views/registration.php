@@ -36,6 +36,7 @@ try {
     $filterQueries = [
         'referred_by' => "SELECT DISTINCT reffered_by FROM registration WHERE branch_id = :branch_id AND reffered_by IS NOT NULL AND reffered_by != '' ORDER BY reffered_by",
         'conditions' => "SELECT DISTINCT chief_complain FROM registration WHERE branch_id = :branch_id AND chief_complain IS NOT NULL AND chief_complain != '' ORDER BY chief_complain",
+        'inquiry_types' => "SELECT DISTINCT consultation_type FROM registration WHERE branch_id = :branch_id AND consultation_type IS NOT NULL AND consultation_type != '' ORDER BY consultation_type",
     ];
 
     // --- NEW: Fetch users for the 'Approved By' dropdown ---
@@ -68,7 +69,8 @@ try {
             reg.created_at,
             reg.status,
             pm.patient_uid, -- Here is our shiny new UID!
-            reg.patient_photo_path
+            reg.patient_photo_path,
+            reg.consultation_type -- Fetch the inquiry type
         FROM
             registration AS reg
         LEFT JOIN
@@ -168,11 +170,11 @@ try {
                 margin: 0;
             }
 
-            .drawer{
+            .drawer {
                 max-height: 80vh;
             }
 
-            .add-to-patient-drawer{
+            .add-to-patient-drawer {
                 left: 50%;
                 z-index: 99999999999999999;
             }
@@ -185,7 +187,7 @@ try {
         <div class="logo-container">
             <div class="logo">
                 <?php if (!empty($branchDetails['logo_primary_path'])): ?>
-                    <img src="/proadmin/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
                 <?php else: ?>
                     <div class="logo-placeholder">Primary Logo N/A</div>
                 <?php endif; ?>
@@ -260,6 +262,12 @@ try {
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                         </select>
+                        <select id="inquiryTypeFilter">
+                            <option value="">All Inquiry Types</option>
+                            <?php foreach ($filterOptions['inquiry_types'] as $inquiryType): ?>
+                                <option value="<?= htmlspecialchars($inquiryType) ?>"><?= htmlspecialchars($inquiryType) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                         <select id="referredByFilter">
                             <option value="">All Referrers</option>
                             <?php foreach ($filterOptions['referred_by'] as $referrer): ?>
@@ -293,6 +301,7 @@ try {
                             <!-- <th data-key="phone" class="sortable">Phone</th> -->
                             <th data-key="age" class="sortable">Age</th>
                             <th data-key="gender" class="sortable">Gender</th>
+                            <th data-key="consultation_type" class="sortable">Inquiry Type</th>
                             <th data-key="reffered_by" class="sortable">Reffered By</th>
                             <th data-key="chief_complain" class="sortable">Condition Type</th>
                             <th data-key="consultation_amount" class="sortable numeric">Amount</th>
@@ -307,7 +316,7 @@ try {
                             <?php foreach ($inquiries as $row): ?>
                                 <tr data-id="<?= htmlspecialchars((string) $row['patient_uid'], ENT_QUOTES, 'UTF-8') ?>">
                                     <?php
-                                        $initial = !empty($row['patient_name']) ? strtoupper(substr($row['patient_name'], 0, 1)) : '?';
+                                    $initial = !empty($row['patient_name']) ? strtoupper(substr($row['patient_name'], 0, 1)) : '?';
                                     ?>
                                     <td><?= htmlspecialchars($row['patient_uid'] ?? 'N/A') ?></td>
                                     <td data-label="Photo">
@@ -323,6 +332,7 @@ try {
                                     <!-- <td><?= htmlspecialchars($row['phone_number'], ENT_QUOTES, 'UTF-8') ?></td> -->
                                     <td data-label="Age"><?= htmlspecialchars((string) $row['age'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <td data-label="Gender"><?= htmlspecialchars($row['gender'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="Inquiry Type"><?= htmlspecialchars($row['consultation_type'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td data-label="Referred By"><?= htmlspecialchars($row['reffered_by'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <td data-label="Condition"><?= htmlspecialchars($row['chief_complain'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <td data-label="Amount" class="numeric">₹ <?= htmlspecialchars((string) $row['consultation_amount'], ENT_QUOTES, 'UTF-8') ?></td>
@@ -347,7 +357,7 @@ try {
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="12" class="no-data">No inquiries found</td>
+                                <td colspan="13" class="no-data">No inquiries found</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>

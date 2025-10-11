@@ -57,6 +57,7 @@ try {
             p.due_amount,
             p.assigned_doctor,
             p.start_date,
+            pm.patient_uid,
             p.end_date,
             p.status AS patient_status,
             r.registration_id,
@@ -67,7 +68,8 @@ try {
             r.created_at,
             r.patient_photo_path
         FROM patients p
-        INNER JOIN registration r ON p.registration_id = r.registration_id
+        JOIN registration r ON p.registration_id = r.registration_id
+        LEFT JOIN patient_master pm ON r.master_patient_id = pm.master_patient_id
         WHERE p.branch_id = :branch_id
         ORDER BY p.created_at DESC
     ");
@@ -183,7 +185,14 @@ try {
 
 <body>
     <header>
-        <div class="logo-container"> <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
+        <div class="logo-container">
+            <div class="logo">
+                <?php if (!empty($branchDetails['logo_primary_path'])): ?>
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                <?php else: ?>
+                    <div class="logo-placeholder">Primary Logo N/A</div>
+                <?php endif; ?>
+            </div>
         </div>
         <nav>
             <div class="nav-links">
@@ -270,7 +279,7 @@ try {
                 <table id="patientsTable">
                     <thead>
                         <tr>
-                            <th data-key="patient_id" class="sortable">ID <span class="sort-indicator"></span></th>
+                            <th data-key="patient_uid" class="sortable">ID <span class="sort-indicator"></span></th>
                             <th>Photo</th>
                             <th data-key="patient_name" class="sortable">Name <span class="sort-indicator"></span></th>
                             <th data-key="patient_age" class="sortable">Age</th>
@@ -287,7 +296,7 @@ try {
                             <th>Mark Attendance</th>
                             <th>Token</th>
                             <th>Action</th>
-                        </tr>
+                            </>
                     </thead>
                     <tbody id="patientsTableBody">
                         <?php if (!empty($patients)): ?>
@@ -307,11 +316,11 @@ try {
                                 );
                             ?>
                                 <tr <?= $data_attrs ?> data-id="<?= htmlspecialchars((string)$pid, ENT_QUOTES, 'UTF-8') ?>">
-                                    <td data-label="ID"><?= htmlspecialchars((string)($row['patient_id'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td data-label="ID"><?= htmlspecialchars($row['patient_uid'] ?? 'N/A') ?></td>
                                     <td data-label="Photo">
                                         <div class="photo-cell">
                                             <?php if (!empty($row['patient_photo_path'])): ?>
-                                                <img src="/proadmin/admin/<?= htmlspecialchars($row['patient_photo_path']) ?>?v=<?= time() ?>" alt="Photo" class="table-photo">
+                                                <img src="/admin/<?= htmlspecialchars($row['patient_photo_path']) ?>?v=<?= time() ?>" alt="Photo" class="table-photo">
                                             <?php else: ?>
                                                 <div class="table-initials"><?= $initial ?></div>
                                             <?php endif; ?>

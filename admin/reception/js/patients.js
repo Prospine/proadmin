@@ -64,9 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const rowText = row.textContent.toLowerCase();
-            const doctorCell = row.querySelector('td:nth-child(4)');
-            const treatmentCell = row.querySelector('td:nth-child(6)');
-            const statusCell = row.querySelector('td:nth-child(10) .status-active, td:nth-child(10) .status-inactive, td:nth-child(10) .status-completed');
+            const doctorCell = row.querySelector('td:nth-child(5)'); // Corrected: Doctor is in the 5th column
+            const treatmentCell = row.querySelector('td:nth-child(7)'); // Corrected: Treatment Type is in the 7th column
+            const statusCell = row.querySelector('td:nth-child(11) .pill'); // Corrected: Status is in the 11th column
 
             const rowDoctor = doctorCell ? doctorCell.textContent.trim().toLowerCase() : '';
             const rowTreatment = treatmentCell ? treatmentCell.textContent.trim().toLowerCase() : '';
@@ -103,8 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 valA = parseFloat(valA.replace(/[^0-9.-]+/g, "")) || 0;
                 valB = parseFloat(valB.replace(/[^0-9.-]+/g, "")) || 0;
             } else if (isDate) {
-                valA = new Date(valA.split('Start: ')[1]).getTime() || 0;
-                valB = new Date(valB.split('Start: ')[1]).getTime() || 0;
+                valA = new Date(valA.replace('Start: ', '')).getTime() || 0; // Corrected: Simpler and correct date parsing
+                valB = new Date(valB.replace('Start: ', '')).getTime() || 0; // Corrected: Simpler and correct date parsing
             } else {
                 valA = valA.toLowerCase();
                 valB = valB.toLowerCase();
@@ -276,9 +276,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                 .then((res) => res.json())
                                 .then((result) => {
                                     showToast("success", "Status updated to " + newStatus);
+                                    // This line was a duplicate and had arguments in the wrong order. Removed.
                                 })
                                 .catch(() => {
-                                    showToast("error", "Failed to update status");
+                                    showToast("Failed to update status", "error");
                                 });
                         });
                     }

@@ -29,7 +29,68 @@
   </header>
 
   <main>
+
     <div class="segment">
+
+      <div class="log-entry">
+        <h2>v2.2.6 <span class="badge live">Feature & Improvements</span></h2>
+        <div class="meta">
+          October 11, 2025 · UID System, Logo Unification, Table Enhancements, System Update Banner, Bug Fixes
+        </div>
+        <ul class="changes">
+          <li><span class="tag added">Added</span> <strong>Test UID System:</strong>
+            <ul>
+              <li>Introduced a unique, date-prefixed <code>test_uid</code> for all test records (e.g., <code>23101101</code> for the first test on 2023-10-11).</li>
+              <li>UID is auto-generated on test submission, ensuring traceability and easier referencing in reports and UI.</li>
+              <li>Database migration: Added <code>test_uid</code> column to the <code>tests</code> table with a unique index.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Logo Handling Across All Views:</strong>
+            <ul>
+              <li>All major admin/reception views (patients, registration, billing, attendance, reports, schedule, etc.) now display the correct branch logo dynamically.</li>
+              <li>Fallback placeholder is shown if no logo is set, ensuring consistent branding and a professional look.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Table Columns & Filtering:</strong>
+            <ul>
+              <li>Registration and patient tables now display the new UID columns (<code>patient_uid</code>, <code>test_uid</code>) for easier cross-referencing.</li>
+              <li>Added "Inquiry Type" column and filter to registration and appointment tables, allowing staff to filter by consultation type.</li>
+              <li>Test and patient tables updated to use the new UID columns as primary identifiers.</li>
+            </ul>
+          </li>
+          <li><span class="tag added">Added</span> <strong>System Update Banner & Overlay:</strong>
+            <ul>
+              <li>Dashboard now features a dismissible banner and overlay for scheduled maintenance or urgent system updates.</li>
+              <li>Banner and overlay can be toggled via JavaScript, with customizable messages for real-time communication to users.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Photo Column Sizing:</strong>
+            <ul>
+              <li>Patient photo and initials columns in tables increased to 60x60px for better visibility and a more modern appearance.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Table Search, Filter, and Sort Logic:</strong>
+            <ul>
+              <li>Fixed column index mismatches in patients, registration, and test JS, ensuring accurate filtering and sorting by doctor, treatment, status, and new columns.</li>
+            </ul>
+          </li>
+          <li><span class="tag fixed">Fixed</span> <strong>Logo Path Consistency:</strong>
+            <ul>
+              <li>All logo image paths now use <code>/admin/</code> as the base, resolving issues with missing or broken images in various modules and print views.</li>
+            </ul>
+          </li>
+          <li><span class="tag fixed">Fixed</span> <strong>UI/UX Bugs:</strong>
+            <ul>
+              <li>Corrected table header and cell mismatches, improved accessibility, and fixed minor layout glitches in modals and drawers.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Database & Backend:</strong>
+            <ul>
+              <li>Updated backend logic to support new UID fields and ensure all APIs and reports fetch and display the correct identifiers.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
 
       <div class="log-entry">
         <h2>v2.2.5 <span class="badge live">Feature</span></h2>

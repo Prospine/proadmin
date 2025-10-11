@@ -46,7 +46,7 @@ try {
     $stmtBranch->execute([':branch_id' => $branchId]);
     $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
     $branchName = $branchDetails['branch_name'];
-    
+
     // --- Appointments from Registration Status ---
     $stmtApptStatus = $pdo->prepare("
         SELECT 
@@ -57,7 +57,7 @@ try {
     ");
     $stmtApptStatus->execute(['branch_id' => $branchId, 'today' => $today]);
     $appointmentStatusCounts = $stmtApptStatus->fetch(PDO::FETCH_ASSOC);
-    
+
     $todayAppointmentsConducted = (int)($appointmentStatusCounts['conducted'] ?? 0);
     $todayAppointmentsInQueue = (int)($appointmentStatusCounts['in_queue'] ?? 0);
 
@@ -416,6 +416,78 @@ $success = false;
             object-fit: contain;
             cursor: auto;
         }
+
+        /* NEW: System Update Overlay */
+        .system-update-overlay {
+            display: none;
+            /* Hidden by default, controlled by JS */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .system-update-popup {
+            background-color: #fff;
+            padding: 2rem 3rem;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+        }
+
+        .system-update-popup .fa-gears {
+            font-size: 3rem;
+            color: var(--primary-color, #007bff);
+            margin-bottom: 1rem;
+            --fa-animation-duration: 3s;
+            /* Slower spin */
+        }
+
+        .system-update-popup h2 {
+            margin-top: 0;
+            color: var(--text-color);
+        }
+
+        .system-update-popup p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* NEW: System Update Banner */
+        .system-update-banner {
+            margin: 0 auto;
+            width: 90%;
+            display: none;
+            /* Hidden by default */
+            background-color: #fffbe6;
+            /* A warning yellow */
+            color: #8a6d3b;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ffe58f;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        body.dark .system-update-banner {
+            background-color: #4d3c1a;
+            color: #ffeca7;
+            border-color: #8a6d3b;
+        }
+
+        .system-update-banner i {
+            margin-right: 0.5rem;
+        }
     </style>
 </head>
 
@@ -436,7 +508,7 @@ $success = false;
         <div class="logo-container">
             <div class="logo">
                 <?php if (!empty($branchDetails['logo_primary_path'])): ?>
-                    <img src="/proadmin/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
                 <?php else: ?>
                     <div class="logo-placeholder">Primary Logo N/A</div>
                 <?php endif; ?>
@@ -528,6 +600,13 @@ $success = false;
     </div>
 
     <main>
+        <!-- NEW: System Update Banner -->
+        <div id="system-update-banner" class="system-update-banner">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span id="update-banner-message">
+                <strong>System Update Scheduled:</strong> The system will be undergoing maintenance today from 6:10 PM to 06:20 PM. Access may be intermittent.
+            </span>
+        </div>
         <div class="content">
             <div class="heaad">
                 <div class="card-header2"><span id="datetime"><?php echo date('Y-m-d h:i:s A'); ?></span></div>
@@ -1127,6 +1206,17 @@ $success = false;
         </div>
     </div>
 
+    <!-- NEW: System Update Overlay -->
+    <div id="system-update-overlay" class="system-update-overlay">
+        <div class="system-update-popup">
+            <i class="fa-solid fa-gears fa-spin"></i>
+            <h2>System Update in Progress</h2>
+            <p>The system is currently being updated. Please wait a few minutes and try again. We appreciate your
+                patience.</p>
+            <p style="background-color:#007bff; width: auto; color: #ffffffff; padding: 4px; border-radius: 10px;">Expected time <strong>5 min</strong>.</p>
+        </div>
+    </div>
+
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
 
@@ -1139,8 +1229,46 @@ $success = false;
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             // ==========================================================
+            // NEW: System Update Overlay Control
+            // ==========================================================
+            const systemUpdateOverlay = document.getElementById('system-update-overlay');
+
+            function toggleSystemUpdate(show) {
+                if (systemUpdateOverlay) {
+                    systemUpdateOverlay.style.display = show ? 'flex' : 'none';
+                }
+            }
+
+            // Example Usage: You can call these from your browser's console to test
+            // To show: toggleSystemUpdate(true)
+            // To hide: toggleSystemUpdate(false)
+            window.toggleSystemUpdate = toggleSystemUpdate(true);
+
+            // ==========================================================
+            // NEW: System Update Banner Control
+            // ==========================================================
+            const systemUpdateBanner = document.getElementById('system-update-banner');
+            const bannerMessageSpan = document.getElementById('update-banner-message');
+
+            function toggleUpdateBanner(show, message = null) {
+                if (systemUpdateBanner) {
+                    systemUpdateBanner.style.display = show ? 'block' : 'none';
+                    if (show && message && bannerMessageSpan) {
+                        bannerMessageSpan.innerHTML = message; // Use innerHTML to allow for <strong> etc.
+                    }
+                }
+            }
+
+            // Example Usage (from browser console):
+            // To show: toggleUpdateBanner(true)
+            // To show with custom message: toggleUpdateBanner(true, "<strong>Maintenance Alert:</strong> System will be offline at midnight.")
+            // To hide: toggleUpdateBanner(false)
+            window.toggleUpdateBanner = toggleUpdateBanner(true);
+
+            // ==========================================================
             // 1. Core Utilities: Toast Notifications
             // ==========================================================
+
             const toastContainer = document.getElementById("toast-container");
 
             function showToast(message, type = 'success') {

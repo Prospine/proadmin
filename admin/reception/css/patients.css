@@ -744,8 +744,8 @@ body.dark .modal .modal-content {
 
 .table-photo,
 .table-initials {
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--border-color);

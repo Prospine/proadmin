@@ -68,8 +68,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // ... (Your extensive validation code remains here) ...
 
         if (empty($errors)) {
+            $pdo->beginTransaction();
             try {
-                // Payment status logic
+                // --- NEW: UID Generation Logic ---
+                $visitDate = $_POST['visit_date'] ?? date('Y-m-d');
+                $datePrefix = date('ymd', strtotime($visitDate)); // e.g., 231026
+
+                // Find the last UID for the given date to determine the next serial number
+                $stmtLastUid = $pdo->prepare(
+                    "SELECT test_uid FROM tests 
+                     WHERE test_uid LIKE :prefix 
+                     ORDER BY test_uid DESC 
+                     LIMIT 1"
+                );
+                $stmtLastUid->execute([':prefix' => $datePrefix . '%']);
+                $lastUid = $stmtLastUid->fetchColumn();
+
+                $serial = 1;
+                if ($lastUid) {
+                    // Extract the serial number part and increment it
+                    $lastSerial = (int)substr($lastUid, 6);
+                    $serial = $lastSerial + 1;
+                }
+
+                // Format the new UID with a leading zero for the serial number (e.g., 01, 02)
+                $newTestUid = $datePrefix . str_pad((string)$serial, 2, '0', STR_PAD_LEFT);
+                // --- END: UID Generation Logic ---
+
+                 // Payment status logic
                 $payment_status = 'pending';
                 if ($due_amount == 0 && $total_amount > 0) {
                     $payment_status = 'paid';
@@ -79,13 +105,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $stmt = $pdo->prepare("
                     INSERT INTO tests (
-                        visit_date, assigned_test_date, patient_name, phone_number,
+                        test_uid, visit_date, assigned_test_date, patient_name, phone_number,
                         gender, age, dob, parents, relation, alternate_phone_no,
                         limb, test_name, referred_by, test_done_by,
                         total_amount, advance_amount, due_amount, payment_method,
                         payment_status, branch_id
                     ) VALUES (
-                        :visit_date, :assigned_test_date, :patient_name, :phone_number,
+                        :test_uid, :visit_date, :assigned_test_date, :patient_name, :phone_number,
                         :gender, :age, :dob, :parents, :relation, :alternate_phone_no,
                         :limb, :test_name, :referred_by, :test_done_by,
                         :total_amount, :advance_amount, :due_amount, :payment_method,
@@ -94,6 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ");
 
                 $stmt->execute([
+                    ':test_uid'           => $newTestUid,
                     ':visit_date'         => $visit_date,
                     ':assigned_test_date' => $assigned_test_date,
                     ':patient_name'       => $patient_name,
@@ -120,6 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $newTestId = $pdo->lastInsertId();
                 $logDetailsAfter = [
                     'patient_name' => $patient_name,
+                    'test_uid' => $newTestUid,
                     'test_name' => $test_name,
                     'assigned_test_date' => $assigned_test_date,
                     'total_amount' => $total_amount,
@@ -138,8 +166,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $logDetailsAfter // details_after contains the new data
                 );
 
-                $success_message = 'Test record added successfully!';
+                $pdo->commit();
+                $success_message = "Test record added successfully with ID: {$newTestUid}";
             } catch (Throwable $e) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
                 error_log($e->getMessage());
                 $errors[] = 'Failed to save test record: ' . $e->getMessage();
             }

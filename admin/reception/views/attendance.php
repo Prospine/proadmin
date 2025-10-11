@@ -97,7 +97,7 @@ try {
                 width: auto;
             }
 
-            .sort-btn{
+            .sort-btn {
                 margin: 0;
             }
 
@@ -126,7 +126,13 @@ try {
 <body data-page-date="<?php echo htmlspecialchars($selectedDate); ?>">
     <header>
         <div class="logo-container">
-            <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
+            <div class="logo">
+                <?php if (!empty($branchDetails['logo_primary_path'])): ?>
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                <?php else: ?>
+                    <div class="logo-placeholder">Primary Logo N/A</div>
+                <?php endif; ?>
+            </div>
         </div>
         <nav>
             <div class="nav-links">

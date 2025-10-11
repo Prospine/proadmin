@@ -141,7 +141,13 @@ ORDER BY created_at DESC
     </div>
     <header>
         <div class="logo-container">
-            <img src="../../assets/images/image.png" alt="Pro Physio Logo" class="logo" />
+            <div class="logo">
+                <?php if (!empty($branchDetails['logo_primary_path'])): ?>
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                <?php else: ?>
+                    <div class="logo-placeholder">Primary Logo N/A</div>
+                <?php endif; ?>
+            </div>
         </div>
         <nav>
             <div class="nav-links">
@@ -342,6 +348,9 @@ ORDER BY created_at DESC
         </div>
 
         <div id="drawerMessage" class="drawer-message"></div>
+        <div class="msg" style="text-align: center; color: #fc2222ff; font-weight: bold; font-size: 14px; background-color: #fac6c6ff; margin: 0px 8px; border-radius: 10px;">
+            <p>Currently do not use this for Registration/Test. Use the form in the Dashboard instead.</p>
+        </div>
 
         <div class="drawer-body">
 

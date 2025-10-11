@@ -395,12 +395,14 @@ $today = date("d-m-Y");
 
 <body>
     <header>
-        <div class="logo">
-            <?php if (!empty($branchDetails['logo_primary_path'])): ?>
-                <img src="/proadmin/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
-            <?php else: ?>
-                <div class="logo-placeholder">Primary Logo N/A</div>
-            <?php endif; ?>
+        <div class="logo-container">
+            <div class="logo">
+                <?php if (!empty($branchDetails['logo_primary_path'])): ?>
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                <?php else: ?>
+                    <div class="logo-placeholder">Primary Logo N/A</div>
+                <?php endif; ?>
+            </div>
         </div>
         <nav>
             <div class="nav-links">
@@ -424,7 +426,15 @@ $today = date("d-m-Y");
     <div class="bill-container">
         <!-- Header -->
         <div class="bill-header">
-            <div class="logo"><img src="../../assets/images/image.png" alt="Logo"></div>
+            <div class="logo-container">
+                <div class="logo">
+                    <?php if (!empty($branchDetails['logo_primary_path'])): ?>
+                        <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                    <?php else: ?>
+                        <div class="logo-placeholder">Primary Logo N/A</div>
+                    <?php endif; ?>
+                </div>
+            </div>
             <div class="clinic-details">
                 <p>Swami Vivika Nand Road, Adampur Chowk, Bhagalpur</p>
                 <p>Phone: +91-8002910021, 9304414144</p>

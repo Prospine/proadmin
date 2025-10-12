@@ -503,9 +503,7 @@ body.dark .modern-table td {
   color: var(--text-color);
 }
 
-body.dark .pill {
-  color: var(--text-color);
-}
+
 
 body.dark .pill.visited {
   background: var(--accent-color);

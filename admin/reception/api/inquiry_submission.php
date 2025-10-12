@@ -22,14 +22,16 @@ try {
 
     $stmt = $pdo->prepare("
         INSERT INTO quick_inquiry 
-        (name, age, gender, referralSource, chief_complain, phone_number, review, expected_visit_date, branch_id) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (name, age, gender, inquiry_type, communication_type, referralSource, chief_complain, phone_number, review, expected_visit_date, branch_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     $stmt->execute([
         $data['patient_name'],
         $data['age'],
         $data['gender'],
+        $data['inquiry_type'] ?? null,
+        $data['communication_type'] ?? null,
         $data['referralSource'] ?? 'self',
         $data['conditionType'] ?? 'other',
         $data['phone'],
@@ -44,7 +46,9 @@ try {
         'name' => $data['patient_name'],
         'age' => $data['age'],
         'phone_number' => $data['phone'],
-        'referralSource' => $data['referralSource'] ?? 'self'
+        'referralSource' => $data['referralSource'] ?? 'self',
+        'inquiry_type' => $data['inquiry_type'] ?? null,
+        'communication_type' => $data['communication_type'] ?? null
     ];
 
     log_activity(

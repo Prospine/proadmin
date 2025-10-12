@@ -33,6 +33,7 @@ try {
         'doctors' => "SELECT DISTINCT assigned_doctor FROM patients WHERE branch_id = :branch_id AND assigned_doctor IS NOT NULL AND assigned_doctor != '' ORDER BY assigned_doctor",
         'treatments' => "SELECT DISTINCT treatment_type FROM patients WHERE branch_id = :branch_id AND treatment_type IS NOT NULL AND treatment_type != '' ORDER BY treatment_type",
         'statuses' => "SELECT DISTINCT status FROM patients WHERE branch_id = :branch_id AND status IS NOT NULL AND status != '' ORDER BY status",
+        'services' => "SELECT DISTINCT service_type FROM patients WHERE branch_id = :branch_id AND service_type IS NOT NULL AND service_type != '' ORDER BY service_type",
     ];
 
     foreach ($filterQueries as $key => $query) {
@@ -48,6 +49,7 @@ try {
         SELECT
             p.patient_id,
             p.treatment_type,
+            p.service_type,
             p.treatment_cost_per_day,
             p.package_cost,
             p.treatment_days,
@@ -87,6 +89,15 @@ try {
     ");
     $attStmt->execute([':branch_id' => $branchId]);
     $attendanceTodayMap = array_flip($attStmt->fetchAll(PDO::FETCH_COLUMN));
+
+    // NEW: Fetch today's tokens for quick UI check
+    $tokenStmt = $pdo->prepare("
+        SELECT patient_id
+        FROM tokens
+        WHERE token_date = CURDATE() AND branch_id = :branch_id
+    ");
+    $tokenStmt->execute([':branch_id' => $branchId]);
+    $tokensTodayMap = array_flip($tokenStmt->fetchAll(PDO::FETCH_COLUMN));
 
     //branch name
     $stmt = $pdo->prepare("SELECT branch_name FROM branches WHERE branch_id = :branch_id");
@@ -251,6 +262,12 @@ try {
                     </div>
 
                     <div class="filter-options">
+                        <select id="serviceTypeFilter">
+                            <option value="">All Services</option>
+                            <?php foreach ($filterOptions['services'] as $service): ?>
+                                <option value="<?= htmlspecialchars($service) ?>"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $service))) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                         <select id="doctorFilter">
                             <option value="">All Doctors</option>
                             <?php foreach ($filterOptions['doctors'] as $doctor): ?>
@@ -284,7 +301,8 @@ try {
                             <th data-key="patient_name" class="sortable">Name <span class="sort-indicator"></span></th>
                             <th data-key="patient_age" class="sortable">Age</th>
                             <th data-key="assigned_doctor" class="sortable">Assigned Doctor</th>
-                            <th data-key="patient_condition" class="sortable">Condition</th>
+                            <!-- <th data-key="patient_condition" class="sortable">Condition</th> -->
+                            <th data-key="service_type" class="sortable">Service Type</th>
                             <th data-key="treatment_type" class="sortable">Treatment Type</th>
                             <!-- <th data-key="days" class="sortable">Days</th> -->
                             <th data-key="attendance_count" class="sortable">Attendance</th>
@@ -303,10 +321,19 @@ try {
                             <?php foreach ($patients as $row):
                                 $pid = (int) ($row['patient_id'] ?? 0);
                                 $hasToday = isset($attendanceTodayMap[$pid]);
+                                $hasTokenToday = isset($tokensTodayMap[$pid]);
                                 $initial = !empty($row['patient_name']) ? strtoupper(substr($row['patient_name'], 0, 1)) : '?';
 
                                 // Now we pass the effective balance to the front-end
                                 $data_attrs = sprintf(
+                                    'data-patient-id="%d" data-treatment-type="%s" data-cost-per-day="%s" data-due-amount="%s" data-effective-balance="%s"',
+                                    $pid,
+                                    htmlspecialchars((string)($row['treatment_type'] ?? ''), ENT_QUOTES, 'UTF-8'),
+                                    htmlspecialchars((string)($row['cost_per_day'] ?? 0), ENT_QUOTES, 'UTF-8'),
+                                    htmlspecialchars((string)($row['due_amount'] ?? 0), ENT_QUOTES, 'UTF-8'),
+                                    htmlspecialchars((string)($row['effective_balance'] ?? 0), ENT_QUOTES, 'UTF-8')
+                                );
+                                $token_data_attrs = sprintf(
                                     'data-patient-id="%d" data-treatment-type="%s" data-cost-per-day="%s" data-due-amount="%s" data-effective-balance="%s"',
                                     $pid,
                                     htmlspecialchars((string)($row['treatment_type'] ?? ''), ENT_QUOTES, 'UTF-8'),
@@ -329,7 +356,8 @@ try {
                                     <td data-label="Name"><?= htmlspecialchars((string)($row['patient_name'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
                                     <td data-label="Age"><?= htmlspecialchars((string)($row['patient_age'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
                                     <td data-label="Assigned Doctor"><?= htmlspecialchars((string)($row['assigned_doctor'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td data-label="Condition"><?= htmlspecialchars((string)($row['patient_condition'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <!-- <td data-label="Condition"><?= htmlspecialchars((string)($row['patient_condition'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td> -->
+                                    <td data-label="Service Type"><?= htmlspecialchars(ucwords(str_replace('_', ' ', (string)($row['service_type'] ?? '-'))), ENT_QUOTES, 'UTF-8') ?></td>
                                     <td data-label="Treatment Type"><?= htmlspecialchars((string)($row['treatment_type'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
                                     <!-- <td><?= htmlspecialchars((string)($row['treatment_days'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td> -->
                                     <td data-label="Attendance">
@@ -367,7 +395,16 @@ try {
                                         <?php endif; ?>
                                     </td>
                                     <td data-label="Token">
-                                        <button class="action-btn2" data-patient-id="<?= htmlspecialchars((string)($row['patient_id'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">Print</button>
+                                        <?php if ($hasTokenToday): ?>
+                                            <button class="action-btn2" disabled title="Token already generated today.">Printed</button>
+                                        <?php else: ?>
+                                            <button class="action-btn2 print-token-btn" 
+                                                data-patient-id="<?= htmlspecialchars((string)$pid) ?>"
+                                                data-patient-name="<?= htmlspecialchars((string)($row['patient_name'] ?? '')) ?>"
+                                                data-assigned-doctor="<?= htmlspecialchars((string)($row['assigned_doctor'] ?? 'N/A')) ?>"
+                                                data-attendance-progress="<?= htmlspecialchars((string)($row['attendance_count'] ?? 0)) ?> / <?= htmlspecialchars((string)($row['treatment_days'] ?? '-')) ?>"
+                                            >Print</button>
+                                        <?php endif; ?>
                                     </td>
                                     <td data-label="Action">
                                         <button class="action-btn" data-id="<?= htmlspecialchars((string)($row['patient_id'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">View</button>
@@ -442,14 +479,15 @@ try {
     <div id="token-modal" class="popups">
         <div class="token-modal-content" id="token-print-area">
             <div class="token-header">
-                <h3>Patient Summary</h3>
+                <h3>Patient Token</h3>
                 <button class="close-token">&times;</button>
             </div>
+            <p><strong>Token No:</strong> <span id="popup-token-uid"></span></p>
             <p><strong>Name:</strong> <span id="popup-name"></span></p>
+            <p><strong>Assigned Doctor:</strong> <span id="popup-doctor"></span></p>
             <p><strong>Date & Time:</strong> <span id="popup-date"></span></p>
             <p><strong>Total Paid:</strong> ₹<span id="popup-total-paid"></span></p>
-            <p><strong>Today Paid:</strong> ₹<span id="popup-today-paid"></span></p>
-            <p><strong>Attendance:</strong> <span id="popup-attendance"></span> days</p>
+            <p><strong>Attendance Progress:</strong> <span id="popup-attendance"></span></p>
             <hr>
             <button id="popup-print-btn">🖨 Print</button>
 

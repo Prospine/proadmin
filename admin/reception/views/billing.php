@@ -54,10 +54,11 @@ try {
     $stmt->execute([':branch_id' => $branchId]);
     $patients = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Fetch branch name (safer method)
-    $stmtBranch = $pdo->prepare("SELECT branch_name FROM branches WHERE branch_id = :branch_id");
-    $stmtBranch->execute(['branch_id' => $branchId]);
-    $branchName = $stmtBranch->fetchColumn() ?? ''; // CHANGED: Safer fetch method
+    // Branch name
+    $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
+    $stmtBranch->execute([':branch_id' => $branchId]);
+    $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
+    $branchName = $branchDetails['branch_name'];
 
 } catch (PDOException $e) {
     die("Error fetching patient billing data: " . $e->getMessage());

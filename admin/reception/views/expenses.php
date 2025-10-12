@@ -44,18 +44,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $paid_to = trim($_POST['paid_to'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $amount = filter_var($_POST['amount'], FILTER_VALIDATE_FLOAT);
+        $expense_done_by = trim($_POST['expense_done_by'] ?? ''); // New field
+        $expense_for = trim($_POST['expense_for'] ?? '');       // New field
         $payment_method = trim($_POST['payment_method'] ?? '');
         $amount_in_words = trim($_POST['amount_in_words'] ?? '');
 
         // Validation
-        if (empty($voucher_no) || empty($expense_date) || empty($paid_to) || empty($description) || $amount === false || $amount <= 0 || empty($payment_method)) {
-            $errors[] = "Please fill out all fields correctly. Amount must be greater than zero.";
+        if (empty($expense_date) || empty($paid_to) || empty($description) || $amount === false || $amount <= 0 || empty($payment_method) || empty($expense_done_by) || empty($expense_for)) {
+            $errors[] = "Please fill out all required fields (*). Amount must be greater than zero.";
         }
 
-        $stmtCheck = $pdo->prepare("SELECT 1 FROM expenses WHERE branch_id = ? AND voucher_no = ?");
-        $stmtCheck->execute([$branchId, $voucher_no]);
-        if ($stmtCheck->fetch()) {
+        if (!empty($voucher_no)) {
+            $stmtCheck = $pdo->prepare("SELECT 1 FROM expenses WHERE branch_id = ? AND voucher_no = ?");
+            $stmtCheck->execute([$branchId, $voucher_no]);
+            if ($stmtCheck->fetch()) {
             $errors[] = "Voucher No. '{$voucher_no}' already exists for this branch. Please use a unique number.";
+            }
         }
 
         if (empty($errors)) {
@@ -87,8 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // --- END OF MODIFICATION ---
 
                 $stmt = $pdo->prepare(
-                    "INSERT INTO expenses (branch_id, user_id, voucher_no, expense_date, paid_to, description, amount, amount_in_words, payment_method, status) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                    "INSERT INTO expenses (branch_id, user_id, voucher_no, expense_date, paid_to, expense_done_by, expense_for, description, amount, amount_in_words, payment_method, status) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                 );
                 $stmt->execute([
                     $branchId,
@@ -96,6 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $voucher_no,
                     $expense_date,
                     $paid_to,
+                    $expense_done_by,
+                    $expense_for,
                     $description,
                     $amount,
                     $amount_in_words,
@@ -104,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
                 $newExpenseId = $pdo->lastInsertId();
 
-                $logDetailsAfter = ['voucher_no' => $voucher_no, 'amount' => $amount, 'status' => $status];
+                $logDetailsAfter = ['voucher_no' => $voucher_no, 'amount' => $amount, 'status' => $status, 'expense_done_by' => $expense_done_by, 'expense_for' => $expense_for];
                 log_activity($pdo, $userId, $username, $branchId, 'CREATE', 'expenses', (int)$newExpenseId, null, $logDetailsAfter);
 
                 $pdo->commit();
@@ -165,22 +171,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // -------------------------
 // DATA FETCHING FOR DISPLAY
 // -------------------------
+
+// NEW: Get date range and other filters from GET parameters
+$startDate = $_GET['start_date'] ?? null;
+$endDate = $_GET['end_date'] ?? null;
+
 try {
-    // Fetch all expenses for the current branch
-    $stmtExpenses = $pdo->prepare("
+    // Base query
+    $sql = "
         SELECT e.*, u.username as creator_username
         FROM expenses e
         LEFT JOIN users u ON e.user_id = u.id
         WHERE e.branch_id = :branch_id
-        ORDER BY e.expense_date DESC, e.created_at DESC
-    ");
-    $stmtExpenses->execute([':branch_id' => $branchId]);
+    ";
+    $params = [':branch_id' => $branchId];
+
+    // Append date range condition if provided
+    if ($startDate && $endDate) {
+        $sql .= " AND e.expense_date BETWEEN :start_date AND :end_date";
+        $params[':start_date'] = $startDate;
+        $params[':end_date'] = $endDate;
+    } elseif ($startDate) {
+        $sql .= " AND e.expense_date >= :start_date";
+        $params[':start_date'] = $startDate;
+    } elseif ($endDate) {
+        $sql .= " AND e.expense_date <= :end_date";
+        $params[':end_date'] = $endDate;
+    }
+
+    $sql .= " ORDER BY e.expense_date DESC, e.created_at DESC";
+
+    $stmtExpenses = $pdo->prepare($sql);
+    $stmtExpenses->execute($params);
     $expenses = $stmtExpenses->fetchAll(PDO::FETCH_ASSOC);
 
-    // Fetch branch name
-    $stmtBranch = $pdo->prepare("SELECT branch_name FROM branches WHERE branch_id = :branch_id");
-    $stmtBranch->execute(['branch_id' => $branchId]);
-    $branchName = $stmtBranch->fetchColumn() ?? '';
+    // Branch name
+    $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
+    $stmtBranch->execute([':branch_id' => $branchId]);
+    $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
+    $branchName = $branchDetails['branch_name'];
 
     // --- MODIFIED: Calculate Today's Budget and Spending ---
     $todayDate = date('Y-m-d');
@@ -231,6 +260,41 @@ unset($_SESSION['errors'], $_SESSION['success']);
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../css/expenses.css">
+
+    <style>
+        /* NEW: Styles for the date picker form */
+
+
+        /* form{
+            } */
+        
+        .date-picker-form {
+            /* margin: 4px; */
+            padding: 4px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-direction: row !important;
+        }
+
+        .date-picker-form input[type="date"] {
+            /* width: 40%; */
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        button{
+            margin: 4px;
+        }
+
+        /* The existing .btn-reset style in expenses.css is sufficient */
+    </style>
 
 </head>
 
@@ -301,9 +365,11 @@ unset($_SESSION['errors'], $_SESSION['success']);
                     <!-- NEW: Add hidden action field -->
                     <input type="hidden" name="action" value="create_expense">
                     <div class="form-grid">
-                        <div class="form-group"><label for="voucher_no">Voucher No. *</label><input type="text" id="voucher_no" name="voucher_no" required></div>
+                        <div class="form-group"><label for="voucher_no">Voucher No.</label><input type="text" id="voucher_no" name="voucher_no"></div>
                         <div class="form-group"><label for="expense_date">Date *</label><input type="date" id="expense_date" name="expense_date" value="<?= date('Y-m-d') ?>" required></div>
                         <div class="form-group"><label for="paid_to">Paid To *</label><input type="text" id="paid_to" name="paid_to" required></div>
+                        <div class="form-group"><label for="expense_done_by">Expense Done By *</label><input type="text" id="expense_done_by" name="expense_done_by" required></div>
+                        <div class="form-group"><label for="expense_for">Expense For *</label><input type="text" id="expense_for" name="expense_for" placeholder="e.g., Office, Marketing" required></div>
                         <div class="form-group"><label for="amount">Amount (₹) *</label><input type="number" id="amount" name="amount" step="0.01" min="0.01" required></div>
                         <div class="form-group"><label for="amount_in_words">Amount in Words</label><input type="text" id="amount_in_words" name="amount_in_words" readonly></div>
                         <div class="form-group"><label for="payment_method">Payment Method *</label><select id="payment_method" name="payment_method" required>
@@ -377,30 +443,36 @@ unset($_SESSION['errors'], $_SESSION['success']);
                             ₹<?= number_format($remainingBudget, 2) ?>
                         </span>
                     </p>
+                    
+                    <div class="filter-bar">
+                        <!-- The search and filter inputs have been removed. Only the date picker remains. -->
+                        <form method="GET" action="" class="date-picker-form">
+                            <input type="date" name="start_date" value="<?= htmlspecialchars($startDate ?? '') ?>" title="Start Date">
+                            <input type="date" name="end_date" value="<?= htmlspecialchars($endDate ?? '') ?>" title="End Date">
+                            <button type="submit" class="btn-go">Filter</button>
+                            <a href="expenses.php" class="btn-reset" title="Reset Filters">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                            </a>
+                        </form>
+                    </div>
+                    
                     <button id="add-expense-btn" class="action-btn"><i class="fa fa-plus"></i> Add New Expense</button>
                 </div>
             </div>
 
-            <!-- Session Messages -->
-            <?php if ($successMessage): ?><div class="message success"><?= htmlspecialchars($successMessage) ?></div><?php endif; ?>
-            <?php if (!empty($sessionErrors)): ?>
-                <div class="message error">
-                    <ul><?php foreach ($sessionErrors as $error): ?><li><?= htmlspecialchars($error) ?></li><?php endforeach; ?></ul>
-                </div>
-            <?php endif; ?>
-
-            <?php if ($remainingBudget < 0): ?>
-                <p class="budget-warning">You have used your daily budget</p>
-            <?php endif; ?>
+            <!-- NEW: Filter and Search Bar -->
 
             <div class="table-container modern-table">
                 <h3>Expense History</h3>
                 <table>
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Voucher No.</th>
                             <th>Date</th>
                             <th>Paid To</th>
+                            <th>Done By</th>
+                            <th>For</th>
                             <th>Amount (₹)</th>
                             <th>Payment Method</th>
                             <th>Status</th>
@@ -408,23 +480,32 @@ unset($_SESSION['errors'], $_SESSION['success']);
                             <th style="text-align: center;">View</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="expensesTableBody">
                         <?php if (empty($expenses)): ?>
                             <tr>
-                                <td colspan="7" style="text-align: center;">No expenses found.</td>
+                                <td colspan="10" style="text-align: center;">No expenses found.</td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($expenses as $expense): ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($expense['voucher_no']) ?></td>
+                                    <td><?= htmlspecialchars((string)($expense['expense_id'] ?? '')) ?></td>
+                                    <td><?= htmlspecialchars($expense['voucher_no'] ?? '') ?></td>
                                     <td><?= htmlspecialchars(date('d M Y', strtotime($expense['expense_date']))) ?></td>
-                                    <td><?= htmlspecialchars($expense['paid_to']) ?></td>
+                                    <td><?= htmlspecialchars($expense['paid_to'] ?? '') ?></td>
+                                    <td><?= htmlspecialchars($expense['expense_done_by'] ?? '') ?></td>
+                                    <td><?= htmlspecialchars($expense['expense_for'] ?? '') ?></td>
                                     <td style="text-align: right;"><?= number_format((float)$expense['amount'], 2) ?></td>
                                     <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $expense['payment_method']))) ?></td>
                                     <td><span class="status-pill status-<?= htmlspecialchars(strtolower($expense['status'])) ?>"><?= htmlspecialchars(ucfirst($expense['status'])) ?></span></td>
                                     <!-- NEW: Action Buttons -->
                                     <td>
-                                        <button class="action-btn upload-btn" data-expense-id="<?= $expense['expense_id'] ?>"><i class="fa fa-upload"></i> Upload</button>
+                                        <?php $isUploaded = !empty($expense['bill_image_path']); ?>
+                                        <button 
+                                            class="action-btn upload-btn" 
+                                            data-expense-id="<?= $expense['expense_id'] ?>" 
+                                            <?= $isUploaded ? 'disabled title="A bill has already been uploaded."' : '' ?>>
+                                            <i class="fa <?= $isUploaded ? 'fa-check' : 'fa-upload' ?>"></i> <?= $isUploaded ? 'Uploaded' : 'Upload' ?>
+                                        </button>
                                     </td>
                                     <td>
                                         <button class="action-btn view-btn" data-expense-details='<?= htmlspecialchars(json_encode($expense), ENT_QUOTES, 'UTF-8') ?>'><i class="fa fa-eye"></i> View</button>

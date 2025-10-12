@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const doctorFilter = document.getElementById('doctorFilter');
     const treatmentFilter = document.getElementById('treatmentFilter');
+    const serviceTypeFilter = document.getElementById('serviceTypeFilter'); // NEW
     const statusFilter = document.getElementById('statusFilter');
     const sortDirectionBtn = document.getElementById('sortDirectionBtn');
     const tableBody = document.getElementById('patientsTableBody');
@@ -52,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchTerm = searchInput.value.toLowerCase();
         const doctorValue = doctorFilter.value.toLowerCase();
         const treatmentValue = treatmentFilter.value.toLowerCase();
+        const serviceValue = serviceTypeFilter.value.toLowerCase(); // NEW
         const statusValue = statusFilter.value.toLowerCase();
         const rows = Array.from(tableBody.querySelectorAll('tr'));
         let visibleRows = 0;
@@ -65,19 +67,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const rowText = row.textContent.toLowerCase();
             const doctorCell = row.querySelector('td:nth-child(5)'); // Corrected: Doctor is in the 5th column
-            const treatmentCell = row.querySelector('td:nth-child(7)'); // Corrected: Treatment Type is in the 7th column
-            const statusCell = row.querySelector('td:nth-child(11) .pill'); // Corrected: Status is in the 11th column
+            const serviceCell = row.querySelector('td:nth-child(7)'); // NEW: Service Type is in the 7th column
+            const treatmentCell = row.querySelector('td:nth-child(8)'); // Corrected: Treatment Type is now in the 8th column
+            const statusCell = row.querySelector('td:nth-child(12) .pill'); // Corrected: Status is now in the 12th column
 
             const rowDoctor = doctorCell ? doctorCell.textContent.trim().toLowerCase() : '';
+            const rowService = serviceCell ? serviceCell.textContent.trim().toLowerCase() : ''; // NEW
             const rowTreatment = treatmentCell ? treatmentCell.textContent.trim().toLowerCase() : '';
             const rowStatus = statusCell ? statusCell.textContent.trim().toLowerCase() : '';
 
             const matchesSearch = rowText.includes(searchTerm);
             const matchesDoctor = doctorValue ? rowDoctor === doctorValue : true;
             const matchesTreatment = treatmentValue ? rowTreatment === treatmentValue : true;
+            const matchesService = serviceValue ? rowService === serviceValue : true; // NEW
             const matchesStatus = statusValue ? rowStatus === statusValue : true;
 
-            if (matchesSearch && matchesDoctor && matchesTreatment && matchesStatus) {
+            if (matchesSearch && matchesDoctor && matchesTreatment && matchesService && matchesStatus) {
                 row.style.display = '';
                 visibleRows++;
             } else {
@@ -134,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Attach event listeners
-    [searchInput, doctorFilter, treatmentFilter, statusFilter].forEach(el => {
+    [searchInput, doctorFilter, treatmentFilter, serviceTypeFilter, statusFilter].forEach(el => {
         if (el) el.addEventListener('input', processTable);
     });
 
@@ -189,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="info-item"><span class="label">Phone</span><span class="value">${data.phone_number ?? '-'}</span></div>
         <div class="info-item"><span class="label">Email</span><span class="value">${data.email ?? 'N/A'}</span></div>
         <div class="info-item"><span class="label">Assigned Doctor</span><span class="value">${data.assigned_doctor ?? '-'}</span></div>
+        <div class="info-item"><span class="label">Service Type</span><span class="value">${ucFirst(data.service_type?.replace('_', ' ') ?? '-')}</span></div>
         <div class="info-item"><span class="label">Chief Complaint</span><span class="value">${ucFirst(data.chief_complain ?? '-')}</span></div>
          <div class="info-item">
     <span class="label">Update Status</span>
@@ -213,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="info-item"><span class="label">Package Cost</span><span class="value">₹${numberFormat(data.package_cost ?? 0)}</span></div>
         <div class="info-item"><span class="label">Total Amount</span><span class="value">₹${numberFormat(data.total_amount ?? 0)}</span></div>
         <div class="info-item"><span class="label">Discount</span><span class="value">${data.discount_percentage ?? 0}%</span></div>
+        <div class="info-item"><span class="label">Discount Approved By</span><span class="value">${data.discount_approver_name ?? 'None'}</span></div>
         <div class="info-item"><span class="label">Expected Due Amount</span><span class="value">₹${numberFormat(data.due_amount ?? 0)}</span></div>
         <div class="info-item"><span class="label">Treatment Payment Method</span><span class="value">${ucFirst(data.treatment_payment_method ?? 'N/A')}</span></div>
     </div>
@@ -313,37 +320,31 @@ document.addEventListener('DOMContentLoaded', () => {
             processTable();
         });
     }
-    
-    // When print button is clicked
-    document.querySelectorAll(".action-btn2").forEach(btn => {
-        btn.addEventListener("click", function () {
-            const patientId = this.getAttribute("data-patient-id"); // make sure your button has this attr
 
-            fetch(`../api/get_patient_summary.php?patient_id=${patientId}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                        return;
-                    }
+    // --- NEW LOGIC: Step 1 - Open token modal with client-side data ---
+    document.querySelectorAll(".print-token-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const modal = document.getElementById("token-modal");
+            const printBtn = document.getElementById("popup-print-btn");
 
-                    // Fill modal fields
-                    document.getElementById("popup-name").textContent = data.name;
-                    document.getElementById("popup-total-paid").textContent = data.total_paid;
-                    document.getElementById("popup-today-paid").textContent = data.today_paid;
-                    document.getElementById("popup-attendance").textContent = data.attendance;
+            // Get data from the button's attributes
+            const patientId = this.dataset.patientId;
+            const patientName = this.dataset.patientName;
+            const assignedDoctor = this.dataset.assignedDoctor;
+            const attendanceProgress = this.dataset.attendanceProgress;
 
-                    // Add today's date & time (JS side)
-                    const now = new Date();
-                    document.getElementById("popup-date").textContent =
-                        now.toLocaleDateString() + " " + now.toLocaleTimeString();
+            // Populate the modal
+            document.getElementById("popup-token-uid").textContent = "Pending...";
+            document.getElementById("popup-name").textContent = patientName;
+            document.getElementById("popup-doctor").textContent = assignedDoctor;
+            document.getElementById("popup-attendance").textContent = attendanceProgress;
+            document.getElementById("popup-date").textContent = new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            
+            // Store patient ID on the modal's print button for the next step
+            printBtn.dataset.patientId = patientId;
 
-                    // Show modal
-                    document.getElementById("token-modal").style.display = "block";
-                })
-                .catch(err => {
-                    console.error("Error fetching patient summary:", err);
-                });
+            // Show modal
+            modal.style.display = "block";
         });
     });
 
@@ -354,8 +355,35 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Print from modal
+    // --- NEW LOGIC: Step 2 - Generate token and print from modal ---
     document.getElementById("popup-print-btn").addEventListener("click", function () {
-        window.print(); // optimized with @media print CSS
+        const patientId = this.dataset.patientId;
+        if (!patientId) return;
+
+        const printBtn = this;
+        printBtn.disabled = true;
+        printBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating...';
+
+        fetch(`../api/generate_token.php?patient_id=${patientId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById("popup-token-uid").textContent = data.token_uid;
+                    document.getElementById("popup-total-paid").textContent = data.total_paid; // This still comes from API
+                    window.print(); // Trigger print dialog
+                    // Reload to update the table button state
+                    setTimeout(() => window.location.reload(), 1500); // Increased timeout slightly
+                } else {
+                    alert(data.message || "Failed to generate token.");
+                    printBtn.disabled = false;
+                    printBtn.innerHTML = '🖨 Print';
+                }
+            })
+            .catch(err => {
+                console.error("Error generating token:", err);
+                alert("An error occurred. Please check the console.");
+                printBtn.disabled = false;
+                printBtn.innerHTML = '🖨 Print';
+            });
     });
 });

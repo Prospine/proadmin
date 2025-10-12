@@ -1,3 +1,35 @@
 ALTER TABLE `tests`
 ADD COLUMN `test_uid` VARCHAR(20) NULL DEFAULT NULL AFTER `test_id`,
 ADD UNIQUE INDEX `test_uid_unique` (`test_uid`);
+
+------------ Done -------------
+
+ALTER TABLE `quick_inquiry`
+ADD COLUMN `inquiry_type` VARCHAR(50) NULL DEFAULT NULL COMMENT 'e.g., physio, speech_therapy' AFTER `gender`,
+ADD COLUMN `communication_type` VARCHAR(50) NULL DEFAULT NULL COMMENT 'e.g., phone, web, email' AFTER `inquiry_type`;
+
+ALTER TABLE `expenses`
+ADD COLUMN `expense_done_by` VARCHAR(100) NULL DEFAULT NULL COMMENT 'Name of person who did the expense' AFTER `paid_to`,
+ADD COLUMN `expense_for` VARCHAR(100) NULL DEFAULT NULL COMMENT 'Purpose of the expense, e.g., Office, Marketing' AFTER `expense_done_by`;
+
+ALTER TABLE `patients`
+ADD COLUMN `service_type` VARCHAR(50) NOT NULL DEFAULT 'physio' COMMENT 'e.g., physio, speech_therapy' AFTER `assigned_doctor`;
+
+CREATE TABLE `patient_appointments` (
+  `appointment_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `patient_id` INT(11) NOT NULL,
+  `branch_id` INT(11) NOT NULL,
+  `appointment_date` DATE NOT NULL,
+  `time_slot` TIME NOT NULL,
+  `service_type` VARCHAR(50) NOT NULL COMMENT 'e.g., physio, speech_therapy',
+  `status` VARCHAR(50) NOT NULL DEFAULT 'scheduled' COMMENT 'e.g., scheduled, completed, cancelled',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`appointment_id`),
+  INDEX `idx_patient_id` (`patient_id`),
+  INDEX `idx_branch_id_date_service` (`branch_id`, `appointment_date`, `service_type`),
+  CONSTRAINT `fk_patient_appointments_patient` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`patient_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_patient_appointments_branch` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`branch_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `patients` 
+ADD COLUMN `treatment_time_slot` TIME NULL DEFAULT NULL COMMENT 'Initial time slot chosen at registration' AFTER `payment_method`;

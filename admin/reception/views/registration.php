@@ -179,6 +179,10 @@ try {
                 z-index: 99999999999999999;
             }
         }
+
+        #closeDrawer {
+            font-size: 28px;
+        }
     </style>
 </head>
 
@@ -467,6 +471,102 @@ try {
             </form>
         </div>
     </div>
+
+    </div>
+    </div>
+
+    <!-- NEW: Add Speech Patient Drawer -->
+    <div class="add-to-patient-drawer" id="addSpeechPatientDrawer" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="add-drawer-header">
+            <h3>Add Speech Patient</h3>
+            <button type="button" class="add-drawer-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="add-drawer-body">
+            <form id="addSpeechPatientForm">
+                <input type="hidden" id="speechRegistrationId" name="registrationId">
+                <div class="form-group">
+                    <label for="speechTreatmentType">Select Treatment Type</label>
+                    <div class="treatment-options">
+                        <label class="treatment-option" data-cost="500">
+                            <input type="radio" name="treatmentType" value="daily" required>
+                            <div class="treatment-option-info">
+                                <h4>Daily Session</h4>
+                                <p>₹500 per day</p>
+                            </div>
+                        </label>
+                        <label class="treatment-option" data-cost="11000">
+                            <input type="radio" name="treatmentType" value="package" required>
+                            <div class="treatment-option-info">
+                                <h4>Package</h4>
+                                <p>₹11,000 for 26 days</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-grid-container">
+                    <div class="results-grid">
+                        <div class="form-group" id="speechTreatmentDaysGroup">
+                            <label for="speechTreatmentDays">Number of Days</label>
+                            <input type="number" id="speechTreatmentDays" name="treatmentDays" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="speechStartDate">Start Date</label>
+                            <input type="date" id="speechStartDate" name="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="speechEndDate">End Date</label>
+                            <input type="date" id="speechEndDate" name="endDate" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="speechTotalCost">Total Cost</label>
+                            <input type="number" id="speechTotalCost" name="totalCost" readonly>
+                        </div>
+                    </div>
+                    <div class="results-grid">
+                        <div class="form-group">
+                            <label for="speechDiscount">Discount (%)</label>
+                            <input type="number" id="speechDiscount" name="discount" min="0" max="100" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="speechDiscountApprovedBy">Discount Approved By</label>
+                            <select id="speechDiscountApprovedBy" name="discount_approved_by">
+                                <option value="">Not Required</option>
+                                <?php foreach ($branchUsers as $user): ?>
+                                    <option value="<?= $user['id'] ?>"><?= htmlspecialchars($user['username']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="speechAdvancePayment">Advance Payment (₹)</label>
+                            <input type="number" id="speechAdvancePayment" name="advancePayment" min="0" value="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="speechDueAmount">Due Amount</label>
+                            <input type="number" id="speechDueAmount" name="dueAmount" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="speechPaymentMethod">Payment Method *</label>
+                            <select id="speechPaymentMethod" name="payment_method" required>
+                                <option value="">Select Method</option>
+                                <option value="cash">Cash</option>
+                                <option value="card">Card</option>
+                                <option value="upi">UPI</option>
+                                <option value="cheque">Cheque</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">Add Speech Patient</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <!-- NEW: Photo Capture Modal -->
+
     <div id="toast-container"></div>
 
     <!-- NEW: Photo Capture Modal -->

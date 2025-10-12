@@ -14,12 +14,15 @@ if (isset($_GET['id'])) {
         SELECT 
             p.patient_id,
             p.treatment_type,
+            p.service_type,
             p.treatment_cost_per_day,
             p.package_cost,
             p.treatment_days,
             p.total_amount,
             p.advance_payment,
             p.discount_percentage,
+            p.discount_approved_by,
+            u_approver.username AS discount_approver_name,
             p.due_amount,
             p.payment_method AS treatment_payment_method,
             p.assigned_doctor,
@@ -52,6 +55,7 @@ if (isset($_GET['id'])) {
             r.updated_at
         FROM patients p
         LEFT JOIN registration r ON p.registration_id = r.registration_id
+        LEFT JOIN users u_approver ON p.discount_approved_by = u_approver.id
         WHERE p.patient_id = :id
     ");
     $stmt->execute(['id' => $id]);

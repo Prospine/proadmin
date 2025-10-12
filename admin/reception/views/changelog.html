@@ -12,6 +12,143 @@
     href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="../css/changelog.css">
+  <style>
+    
+    body {
+      background: #f7f8fa;
+      color: #222;
+    }
+
+    header h1,
+    .log-entry h2 {
+      color: #1a202c;
+    }
+
+    .segment {
+      padding-left: 0;
+    }
+
+    .log-entry {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+      border: 1px solid #e5e7eb;
+      margin-bottom: 2.5rem;
+      padding: 1.5rem 2rem;
+      transition: box-shadow 0.2s, border 0.2s, background 0.2s;
+    }
+
+    .log-entry:hover {
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.13);
+      border: 1.5px solid #a5b4fc;
+      background: #f7f8fa;
+      color: #222;
+    }
+
+    .unreleased-modern {
+      background: linear-gradient(90deg, #e0e7ff 0%, #f1f5f9 100%);
+      border: 2px solid #6366f1;
+      color: #222;
+      box-shadow: 0 2px 16px rgba(99, 102, 241, 0.08);
+      margin-bottom: 2.5rem;
+      padding: 2rem 2.5rem 1.5rem 2.5rem;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow 0.2s, border 0.2s, background 0.2s;
+    }
+
+    .unreleased-modern:hover {
+      box-shadow: 0 6px 24px rgba(99, 102, 241, 0.13);
+      border: 2px solid #3730a3;
+      background: linear-gradient(90deg, #e0e7ff 0%, #f7f8fa 100%);
+      color: #222;
+    }
+
+    .log-entry::before,
+    .log-entry:not(:last-child)::after {
+      display: none;
+    }
+
+    .badge {
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .unreleased-modern {
+      background: linear-gradient(90deg, #e0e7ff 0%, #f1f5f9 100%);
+      border: 2px solid #6366f1;
+      color: #222;
+      box-shadow: 0 2px 16px rgba(99, 102, 241, 0.08);
+      margin-bottom: 2.5rem;
+      padding: 2rem 2.5rem 1.5rem 2.5rem;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .unreleased-modern h2 {
+      font-size: 1.4rem;
+      margin-bottom: 0.7rem;
+      color: #3730a3;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .unreleased-modern .meta {
+      color: #6366f1;
+      font-size: 1.05rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .unreleased-modern ul.changes li {
+      margin-bottom: 0.7rem;
+    }
+
+    .unreleased-modern .tag {
+      background: #6366f1;
+      color: #fff;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.9em;
+      margin-right: 0.5em;
+    }
+
+    .dev-banner {
+      background: #fef9c3;
+      color: #a16207;
+      border: 1.5px solid #fde047;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: 500;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    #changelog-search {
+      background: #f1f5f9;
+      border: 1.5px solid #cbd5e1;
+      color: #222;
+      transition: border 0.2s;
+    }
+
+    #changelog-search:focus {
+      border: 1.5px solid #6366f1;
+      outline: none;
+    }
+
+    @media (max-width: 700px) {
+
+      .log-entry,
+      .unreleased-modern {
+        padding: 1rem 0.7rem;
+      }
+    }
+  </style>
   <title>Changelog</title>
 </head>
 
@@ -21,16 +158,157 @@
     </div>
     <div class="text">
       <h1>Changelog</h1>
+      <div class="dev-banner"
+        style="background:#ffeeba;color:#856404;padding:10px 20px;border-radius:6px;margin-bottom:10px;font-weight:500;">
+        <i class="fa-solid fa-triangle-exclamation"></i> This page is under active development. Features and layout may
+        change.
+      </div>
       <p>
         Stay up to date with the latest changes! Since the first release, we’ve been
         working hard to make this project the best it can be. Thanks everyone for your feedback ❤️
       </p>
+      <div style="margin-top:15px;">
+        <input id="changelog-search" type="text" placeholder="Search changelog..."
+          style="padding:7px 12px;width:260px;border-radius:5px;border:1px solid #ccc;font-size:1em;">
+      </div>
     </div>
   </header>
 
   <main>
 
     <div class="segment">
+      <div class="unreleased-modern">
+        <h2><i class="fa-solid fa-flask"></i> Unreleased <span class="badge progress">Upcoming</span></h2>
+        <div class="meta">Planned features, improvements, and bug fixes for the next release.</div>
+        <ul class="changes">
+          <li><span class="tag">Planned</span> <strong>Changelog Page Enhancements:</strong>
+            <ul>
+              <li>Search and filter functionality for easier navigation.</li>
+              <li>Sync with <code>CHANGELOG.md</code> for consistency.</li>
+              <li>Improved mobile responsiveness and accessibility.</li>
+              <li>More links to documentation and related commits.</li>
+            </ul>
+          </li>
+          <li><span class="tag">Planned</span> <strong>General Improvements:</strong>
+            <ul>
+              <li>Performance optimizations and UI refinements.</li>
+              <li>Additional reporting and analytics features.</li>
+              <li>Enhanced security and audit logging.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="log-entry">
+        <h2>v2.2.7 <span class="badge live">Major Feature Release</span></h2>
+        <div class="meta">
+          October 12, 2025 · Speech Therapy Integration, Time Slot Management, Appointment System, Database Enhancements, UI/UX Improvements
+        </div>
+        <ul class="changes">
+          <li><span class="tag added">Added</span> <strong>Speech Therapy Service Integration:</strong>
+            <ul>
+              <li>Introduced comprehensive speech therapy support alongside existing physiotherapy services.</li>
+              <li>New dedicated API endpoint <code>add_speech_patient.php</code> for speech therapy patient registration with specialized treatment plans.</li>
+              <li>Speech therapy pricing: ₹500 per session (daily) or ₹11,000 package for 26 days.</li>
+              <li>Separate registration workflow with "Add to Speech" button in patient registration interface.</li>
+              <li>Service type distinction in database with <code>service_type</code> field ('physio' or 'speech_therapy').</li>
+            </ul>
+          </li>
+          <li><span class="tag added">Added</span> <strong>Advanced Time Slot Management System:</strong>
+            <ul>
+              <li>Mandatory time slot selection for all treatment plans during patient registration.</li>
+              <li>Time slot validation ensures no patient can be registered without selecting an appointment time.</li>
+              <li>Integration with existing appointment scheduling infrastructure.</li>
+              <li>Support for both physiotherapy and speech therapy time slot booking.</li>
+            </ul>
+          </li>
+          <li><span class="tag added">Added</span> <strong>Patient Appointments Management System:</strong>
+            <ul>
+              <li>New <code>patient_appointments</code> database table for centralized appointment tracking.</li>
+              <li>Automatic first appointment creation when patient is registered for treatment.</li>
+              <li>Appointment status tracking (scheduled, completed, cancelled).</li>
+              <li>Service-type specific appointment management for both physio and speech therapy.</li>
+              <li>Branch-wise appointment organization with proper foreign key relationships.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Registration Interface & User Experience:</strong>
+            <ul>
+              <li>Enhanced registration drawer with dual service options (Physio/Speech).</li>
+              <li>Dedicated speech therapy registration form with specialized pricing calculations.</li>
+              <li>Improved treatment option selection interface with visual cost indicators.</li>
+              <li>Dynamic calculation system for speech therapy packages and daily sessions.</li>
+              <li>Enhanced form validation and error handling for both service types.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Payment & Billing System:</strong>
+            <ul>
+              <li>Extended payment tracking to support both physiotherapy and speech therapy services.</li>
+              <li>Service-specific discount approval workflows.</li>
+              <li>Enhanced advance payment recording with proper service type attribution.</li>
+              <li>Updated due amount calculations for mixed service types.</li>
+            </ul>
+          </li>
+          <li><span class="tag added">Added</span> <strong>Enhanced Inquiry Management:</strong>
+            <ul>
+              <li>New inquiry type classification system supporting physio and speech therapy inquiries.</li>
+              <li>Communication type tracking (phone, web, email) for better inquiry source management.</li>
+              <li>Improved inquiry reporting with service-type filtering capabilities.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Expense Management System:</strong>
+            <ul>
+              <li>Enhanced expense tracking with "Expense Done By" field for personnel accountability.</li>
+              <li>"Expense For" categorization (Office, Marketing, Equipment, etc.) for better expense classification.</li>
+              <li>Improved expense reporting and categorization for better financial insights.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Patient Data Management:</strong>
+            <ul>
+              <li>Enhanced patient search functionality with service type filtering.</li>
+              <li>Improved patient profile display with service-specific treatment information.</li>
+              <li>Better data organization for mixed service type patients.</li>
+              <li>Enhanced patient photo display and management across all interfaces.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Dashboard & System Interface:</strong>
+            <ul>
+              <li>Updated system banners with improved styling and responsiveness.</li>
+              <li>Enhanced notification system for various service types.</li>
+              <li>Improved mobile responsiveness across all new features.</li>
+              <li>Better accessibility features for speech therapy workflow.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Database Architecture & Performance:</strong>
+            <ul>
+              <li>Comprehensive database schema updates to support multi-service architecture.</li>
+              <li>Optimized foreign key relationships and indexing for better performance.</li>
+              <li>Enhanced data integrity with proper constraints and validations.</li>
+              <li>Future-ready architecture for additional service types.</li>
+            </ul>
+          </li>
+          <li><span class="tag added">Added</span> <strong>Treatment Time Slot Integration:</strong>
+            <ul>
+              <li>New <code>treatment_time_slot</code> field in patients table for initial time slot tracking.</li>
+              <li>Integration with appointment scheduling system for seamless time management.</li>
+              <li>Time slot API enhancement for treatment-specific scheduling.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Code Quality & Documentation:</strong>
+            <ul>
+              <li>Enhanced error handling and logging across all new APIs.</li>
+              <li>Improved code documentation and inline comments.</li>
+              <li>Better security validation for all speech therapy endpoints.</li>
+              <li>Comprehensive database modification documentation in <code>dbmodif.txt</code>.</li>
+            </ul>
+          </li>
+          <li><span class="tag fixed">Fixed</span> <strong>Package Treatment Duration:</strong>
+            <ul>
+              <li>Corrected physiotherapy package duration from 22 days to 21 days for consistency.</li>
+              <li>Speech therapy package standardized to 26 days as per service requirements.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
 
       <div class="log-entry">
         <h2>v2.2.6 <span class="badge live">Feature & Improvements</span></h2>
@@ -40,53 +318,67 @@
         <ul class="changes">
           <li><span class="tag added">Added</span> <strong>Test UID System:</strong>
             <ul>
-              <li>Introduced a unique, date-prefixed <code>test_uid</code> for all test records (e.g., <code>23101101</code> for the first test on 2023-10-11).</li>
-              <li>UID is auto-generated on test submission, ensuring traceability and easier referencing in reports and UI.</li>
-              <li>Database migration: Added <code>test_uid</code> column to the <code>tests</code> table with a unique index.</li>
+              <li>Introduced a unique, date-prefixed <code>test_uid</code> for all test records (e.g.,
+                <code>23101101</code> for the first test on 2023-10-11).</li>
+              <li>UID is auto-generated on test submission, ensuring traceability and easier referencing in reports and
+                UI.</li>
+              <li>Database migration: Added <code>test_uid</code> column to the <code>tests</code> table with a unique
+                index.</li>
             </ul>
           </li>
           <li><span class="tag improved">Improved</span> <strong>Logo Handling Across All Views:</strong>
             <ul>
-              <li>All major admin/reception views (patients, registration, billing, attendance, reports, schedule, etc.) now display the correct branch logo dynamically.</li>
-              <li>Fallback placeholder is shown if no logo is set, ensuring consistent branding and a professional look.</li>
+              <li>All major admin/reception views (patients, registration, billing, attendance, reports, schedule, etc.)
+                now display the correct branch logo dynamically.</li>
+              <li>Fallback placeholder is shown if no logo is set, ensuring consistent branding and a professional look.
+              </li>
             </ul>
           </li>
           <li><span class="tag improved">Improved</span> <strong>Table Columns & Filtering:</strong>
             <ul>
-              <li>Registration and patient tables now display the new UID columns (<code>patient_uid</code>, <code>test_uid</code>) for easier cross-referencing.</li>
-              <li>Added "Inquiry Type" column and filter to registration and appointment tables, allowing staff to filter by consultation type.</li>
+              <li>Registration and patient tables now display the new UID columns (<code>patient_uid</code>,
+                <code>test_uid</code>) for easier cross-referencing.</li>
+              <li>Added "Inquiry Type" column and filter to registration and appointment tables, allowing staff to
+                filter by consultation type.</li>
               <li>Test and patient tables updated to use the new UID columns as primary identifiers.</li>
             </ul>
           </li>
           <li><span class="tag added">Added</span> <strong>System Update Banner & Overlay:</strong>
             <ul>
-              <li>Dashboard now features a dismissible banner and overlay for scheduled maintenance or urgent system updates.</li>
-              <li>Banner and overlay can be toggled via JavaScript, with customizable messages for real-time communication to users.</li>
+              <li>Dashboard now features a dismissible banner and overlay for scheduled maintenance or urgent system
+                updates.</li>
+              <li>Banner and overlay can be toggled via JavaScript, with customizable messages for real-time
+                communication to users.</li>
             </ul>
           </li>
           <li><span class="tag improved">Improved</span> <strong>Photo Column Sizing:</strong>
             <ul>
-              <li>Patient photo and initials columns in tables increased to 60x60px for better visibility and a more modern appearance.</li>
+              <li>Patient photo and initials columns in tables increased to 60x60px for better visibility and a more
+                modern appearance.</li>
             </ul>
           </li>
           <li><span class="tag improved">Improved</span> <strong>Table Search, Filter, and Sort Logic:</strong>
             <ul>
-              <li>Fixed column index mismatches in patients, registration, and test JS, ensuring accurate filtering and sorting by doctor, treatment, status, and new columns.</li>
+              <li>Fixed column index mismatches in patients, registration, and test JS, ensuring accurate filtering and
+                sorting by doctor, treatment, status, and new columns.</li>
             </ul>
           </li>
           <li><span class="tag fixed">Fixed</span> <strong>Logo Path Consistency:</strong>
             <ul>
-              <li>All logo image paths now use <code>/admin/</code> as the base, resolving issues with missing or broken images in various modules and print views.</li>
+              <li>All logo image paths now use <code>/admin/</code> as the base, resolving issues with missing or broken
+                images in various modules and print views.</li>
             </ul>
           </li>
           <li><span class="tag fixed">Fixed</span> <strong>UI/UX Bugs:</strong>
             <ul>
-              <li>Corrected table header and cell mismatches, improved accessibility, and fixed minor layout glitches in modals and drawers.</li>
+              <li>Corrected table header and cell mismatches, improved accessibility, and fixed minor layout glitches in
+                modals and drawers.</li>
             </ul>
           </li>
           <li><span class="tag improved">Improved</span> <strong>Database & Backend:</strong>
             <ul>
-              <li>Updated backend logic to support new UID fields and ensure all APIs and reports fetch and display the correct identifiers.</li>
+              <li>Updated backend logic to support new UID fields and ensure all APIs and reports fetch and display the
+                correct identifiers.</li>
             </ul>
           </li>
         </ul>
@@ -637,7 +929,48 @@
 
   <footer>
     © 2025 Prospine · Made with ☕ + sanity sacrifices
-  </footer>
-</body>
+    <footer>
+      © 2025 Prospine · Made with ☕ + sanity sacrifices
+      <script>
+        // Simple search/filter for changelog entries
+        document.addEventListener('DOMContentLoaded', function () {
+          var searchInput = document.getElementById('changelog-search');
+          if (searchInput) {
+            searchInput.addEventListener('input', function () {
+              var query = this.value.toLowerCase();
+              var entries = document.querySelectorAll('.log-entry, .unreleased-modern');
+              entries.forEach(function (entry) {
+                if (query === '' || entry.textContent.toLowerCase().indexOf(query) !== -1) {
+                  entry.style.display = '';
+                } else {
+                  entry.style.display = 'none';
+                }
+              });
+            });
+          }
+
+          // Fetch and display CHANGELOG.md content (sync preview)
+          fetch('../../../../CHANGELOG.md')
+            .then(resp => resp.ok ? resp.text() : Promise.reject('No changelog'))
+            .then(md => {
+              // Simple markdown to HTML conversion for preview (headings, lists)
+              var preview = document.createElement('section');
+              preview.style.background = '#f1f5f9';
+              preview.style.border = '1.5px solid #e5e7eb';
+              preview.style.borderRadius = '10px';
+              preview.style.margin = '2.5rem auto';
+              preview.style.maxWidth = '900px';
+              preview.style.padding = '1.5rem 2rem';
+              preview.innerHTML = '<h2 style="color:#6366f1;">CHANGELOG.md Preview</h2>' +
+                md.replace(/^### (.*)$/gm, '<h4>$1</h4>')
+                  .replace(/^## (.*)$/gm, '<h3>$1</h3>')
+                  .replace(/^# (.*)$/gm, '<h2>$1</h2>')
+                  .replace(/^- (.*)$/gm, '<li>$1</li>')
+                  .replace(/\n\n/g, '<br>');
+              document.body.insertBefore(preview, document.querySelector('footer'));
+            });
+        });
+      </script>
+    </footer>
 
 </html>

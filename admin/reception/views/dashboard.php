@@ -463,8 +463,6 @@ $success = false;
 
         /* NEW: System Update Banner */
         .system-update-banner {
-            margin: 0 auto;
-            width: 90%;
             display: none;
             /* Hidden by default */
             background-color: #fffbe6;
@@ -476,7 +474,6 @@ $success = false;
             border-radius: 8px;
             text-align: center;
             font-weight: 500;
-            font-size: 14px;
         }
 
         body.dark .system-update-banner {
@@ -487,6 +484,44 @@ $success = false;
 
         .system-update-banner i {
             margin-right: 0.5rem;
+        }
+
+        /* NEW: System Updated Banner (Blue) */
+        .system-updated-banner {
+            display: none;
+            /* Hidden by default */
+            background-color: #eef7ff;
+            /* A gentle blue */
+            color: #005a9e;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #bde0ff;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        body.dark .system-updated-banner {
+            background-color: #1c3b55;
+            color: #cce4ff;
+            border-color: #3a6a97;
+        }
+
+        .system-updated-banner i {
+            margin-right: 0.5rem;
+        }
+
+        .submit-btn2 button {
+            margin-left: 10px;
+            min-width: 200% !important;
+        }
+
+        body.dark .event-time {
+            color: #222;
+        }
+
+        body.dark .event-title {
+            color: #111;
         }
     </style>
 </head>
@@ -508,7 +543,7 @@ $success = false;
         <div class="logo-container">
             <div class="logo">
                 <?php if (!empty($branchDetails['logo_primary_path'])): ?>
-                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                    <img src="admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
                 <?php else: ?>
                     <div class="logo-placeholder">Primary Logo N/A</div>
                 <?php endif; ?>
@@ -604,9 +639,17 @@ $success = false;
         <div id="system-update-banner" class="system-update-banner">
             <i class="fa-solid fa-triangle-exclamation"></i>
             <span id="update-banner-message">
-                <strong>System Update Scheduled:</strong> The system will be undergoing maintenance today from 6:10 PM to 06:20 PM. Access may be intermittent.
+                <strong>System Update Scheduled:</strong> The system will be undergoing maintenance today from 10:00 PM to 11:00 PM. Access may be intermittent.
             </span>
         </div>
+        <!-- NEW: System Updated Banner -->
+        <div id="system-updated-banner" class="system-updated-banner">
+            <i class="fa-solid fa-circle-check"></i>
+            <span id="updated-banner-message">
+                <strong>System Update Complete!</strong> The system has been successfully updated. You can now continue your work.
+            </span>
+        </div>
+
         <div class="content">
             <div class="heaad">
                 <div class="card-header2"><span id="datetime"><?php echo date('Y-m-d h:i:s A'); ?></span></div>
@@ -1075,6 +1118,14 @@ $success = false;
                                 <option value="Other">Other</option>
                             </select>
                         </div>
+                        <div>
+                            <label for="inquiry_type">Inquiry Service *</label>
+                            <select name="inquiry_type" id="inquiry_type" required>
+                                <option value="disabled selected">select inquiry service</option>
+                                <option value="physio">Physio</option>
+                                <option value="speech_therapy">Speech Therapy</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-row">
@@ -1094,7 +1145,18 @@ $success = false;
                                 <option value="other">Other</option>
                             </select>
                         </div>
+
+                        <div>
+                            <label for="inquiry_communication_type">Inquiry Communication Type *</label>
+                            <select id="inquiry_communication_type" name="communication_type" required>
+                                <option value="" disabled selected>Select</option>
+                                <option value="phone">Phone</option>
+                                <option value="web">Web</option>
+                                <option value="email">Email</option>
+                            </select>
+                        </div>
                     </div>
+
 
                     <div class="form-row">
                         <div>
@@ -1116,11 +1178,11 @@ $success = false;
 
                     <div class="form-row">
                         <div>
-                            <label for="inquiry_remarks">Review</label>
-                            <textarea id="inquiry_remarks" name="remarks" placeholder="Review"></textarea>
+                            <label for="inquiry_remarks">Remarks</label>
+                            <textarea id="inquiry_remarks" name="remarks" placeholder="Remarks... "></textarea>
                         </div>
                         <div>
-                            <label for="inquiry_expected_date">Expected Date *</label>
+                            <label for="inquiry_expected_date">Plan to visit Date *</label>
                             <input type="date" id="inquiry_expected_date" name="expected_date" required>
                         </div>
                     </div>
@@ -1213,7 +1275,6 @@ $success = false;
             <h2>System Update in Progress</h2>
             <p>The system is currently being updated. Please wait a few minutes and try again. We appreciate your
                 patience.</p>
-            <p style="background-color:#007bff; width: auto; color: #ffffffff; padding: 4px; border-radius: 10px;">Expected time <strong>5 min</strong>.</p>
         </div>
     </div>
 
@@ -1242,28 +1303,61 @@ $success = false;
             // Example Usage: You can call these from your browser's console to test
             // To show: toggleSystemUpdate(true)
             // To hide: toggleSystemUpdate(false)
-            window.toggleSystemUpdate = toggleSystemUpdate(true);
+            window.toggleSystemUpdate = toggleSystemUpdate();
 
             // ==========================================================
             // NEW: System Update Banner Control
             // ==========================================================
-            const systemUpdateBanner = document.getElementById('system-update-banner');
-            const bannerMessageSpan = document.getElementById('update-banner-message');
+            const preUpdateBanner = document.getElementById('system-update-banner');
+            const postUpdateBanner = document.getElementById('system-updated-banner');
+            const preUpdateMessageSpan = document.getElementById('update-banner-message');
+            const postUpdateMessageSpan = document.getElementById('updated-banner-message');
 
-            function toggleUpdateBanner(show, message = null) {
-                if (systemUpdateBanner) {
-                    systemUpdateBanner.style.display = show ? 'block' : 'none';
-                    if (show && message && bannerMessageSpan) {
-                        bannerMessageSpan.innerHTML = message; // Use innerHTML to allow for <strong> etc.
+            const POST_UPDATE_BANNER_KEY = 'postUpdateBannerShown_v2.2.6'; // Change this key for new versions
+
+            /**
+             * Toggles system update banners.
+             * @param {boolean} show - Whether to show or hide a banner.
+             * @param {number} type - 1 for pre-update (yellow), 2 for post-update (blue).
+             * @param {string|null} message - A custom message to display.
+             */
+            function toggleUpdateBanner(show, type = 1, message = null) {
+                // Always hide both first to reset state
+                if (preUpdateBanner) preUpdateBanner.style.display = 'none';
+                if (postUpdateBanner) postUpdateBanner.style.display = 'none';
+
+                if (!show) {
+                    // If hiding, we're done.
+                    return;
+                }
+
+                if (type === 1 && preUpdateBanner) {
+                    // Show the persistent pre-update banner
+                    preUpdateBanner.style.display = 'block';
+                    if (message && preUpdateMessageSpan) {
+                        preUpdateMessageSpan.innerHTML = message;
                     }
+                } else if (type === 2 && postUpdateBanner) {
+                    // Show the temporary post-update banner
+                    if (localStorage.getItem(POST_UPDATE_BANNER_KEY)) {
+                        return; // Don't show if it has already been seen this session
+                    }
+                    postUpdateBanner.style.display = 'block';
+                    if (message && postUpdateMessageSpan) {
+                        postUpdateMessageSpan.innerHTML = message;
+                    }
+                    localStorage.setItem(POST_UPDATE_BANNER_KEY, 'true');
+                    setTimeout(() => {
+                        postUpdateBanner.style.display = 'none';
+                    }, 10000); // Hide after 10 seconds
                 }
             }
 
             // Example Usage (from browser console):
-            // To show: toggleUpdateBanner(true)
-            // To show with custom message: toggleUpdateBanner(true, "<strong>Maintenance Alert:</strong> System will be offline at midnight.")
+            // To show pre-update banner: toggleUpdateBanner(true, 1, "System will be down at 10 PM.")
+            // To show post-update banner: toggleUpdateBanner(true, 2)
             // To hide: toggleUpdateBanner(false)
-            window.toggleUpdateBanner = toggleUpdateBanner(true);
+            window.toggleUpdateBanner = toggleUpdateBanner(true, 1);
 
             // ==========================================================
             // 1. Core Utilities: Toast Notifications

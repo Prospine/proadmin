@@ -93,8 +93,11 @@ document.addEventListener('DOMContentLoaded', function () {
         viewModalBody.innerHTML = `
             <div class="view-grid">
                 <div class="view-item"><strong>Voucher No:</strong><span>${data.voucher_no}</span></div>
+                <div class="view-item"><strong>Expense ID:</strong><span>${data.expense_id}</span></div>
                 <div class="view-item"><strong>Date:</strong><span>${formattedDate}</span></div>
                 <div class="view-item"><strong>Paid To:</strong><span>${data.paid_to}</span></div>
+                <div class="view-item"><strong>Done By:</strong><span>${data.expense_done_by}</span></div>
+                <div class="view-item"><strong>For:</strong><span>${data.expense_for}</span></div>
                 <div class="view-item"><strong>Amount:</strong><span>₹ ${parseFloat(data.amount).toFixed(2)}</span></div>
                 <div class="view-item"><strong>Status:</strong><span class="status-pill status-${data.status.toLowerCase()}">${data.status.charAt(0).toUpperCase() + data.status.slice(1)}</span></div>
                 <div class="view-item"><strong>Payment Method:</strong><span>${data.payment_method.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span></div>
@@ -159,4 +162,3 @@ document.addEventListener('DOMContentLoaded', function () {
         return a[Math.floor(n / 100)] + ' hundred' + (n % 100 !== 0 ? ' ' + convertChunk(n % 100) : '');
     }
 });
-

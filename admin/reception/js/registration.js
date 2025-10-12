@@ -242,6 +242,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const dueAmountInput = $('#dueAmount', addDrawer);
     const treatmentOptions = $$('input[name="treatmentType"]', addDrawer); // might be empty
 
+    // NEW: Speech Drawer element references
+    const addSpeechDrawer = $('#addSpeechPatientDrawer');
+    const addSpeechPatientForm = $('#addSpeechPatientForm', addSpeechDrawer);
+    const closeAddSpeechPatientBtn = $('.add-drawer-close', addSpeechDrawer);
+    const speechRegistrationIdInput = $('#speechRegistrationId', addSpeechDrawer);
+    const speechTreatmentDaysGroup = $('#speechTreatmentDaysGroup', addSpeechDrawer);
+    const speechTreatmentDaysInput = $('#speechTreatmentDays', addSpeechDrawer);
+    const speechStartDateInput = $('#speechStartDate', addSpeechDrawer);
+    const speechDiscountInput = $('#speechDiscount', addSpeechDrawer);
+    const speechAdvancePaymentInput = $('#speechAdvancePayment', addSpeechDrawer);
+    const speechTotalCostInput = $('#speechTotalCost', addSpeechDrawer);
+    const speechDiscountApprovedByInput = $('#speechDiscountApprovedBy', addSpeechDrawer);
+    const speechDueAmountInput = $('#speechDueAmount', addSpeechDrawer);
+    const speechTreatmentOptions = $$('input[name="treatmentType"]', addSpeechDrawer);
+
     /* ------------------------------
        Drawer open/close helpers
     ------------------------------ */
@@ -269,14 +284,31 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dueAmountInput) dueAmountInput.value = '';
     };
 
+    // NEW: Speech Drawer helpers
+    const openAddSpeechPatientDrawer = (regId = '') => {
+        if (speechRegistrationIdInput) speechRegistrationIdInput.value = regId;
+        addSpeechDrawer.classList.add('is-open');
+        addSpeechDrawer.setAttribute('aria-hidden', 'false');
+    };
+    const closeAddSpeechPatientDrawer = () => {
+        addSpeechDrawer.classList.remove('is-open');
+        addSpeechDrawer.setAttribute('aria-hidden', 'true');
+        if (addSpeechPatientForm) addSpeechPatientForm.reset();
+        // reset calculated fields
+        if (speechTotalCostInput) speechTotalCostInput.value = '';
+        if (speechDueAmountInput) speechDueAmountInput.value = '';
+    };
+
     // Close buttons
     if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeMainDrawer);
     if (closeAddPatientBtn) closeAddPatientBtn.addEventListener('click', closeAddPatientDrawer);
+    if (closeAddSpeechPatientBtn) closeAddSpeechPatientBtn.addEventListener('click', closeAddSpeechPatientDrawer);
 
     document.addEventListener('keydown', (ev) => {
         if (ev.key === 'Escape') {
             // close whichever is open (prioritize add drawer)
-            if (addDrawer.classList.contains('is-open')) closeAddPatientDrawer();
+            if (addSpeechDrawer.classList.contains('is-open')) closeAddSpeechPatientDrawer();
+            else if (addDrawer.classList.contains('is-open')) closeAddPatientDrawer();
             else if (drawer.classList.contains('open')) closeMainDrawer();
         }
     });
@@ -400,7 +432,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="addToPatient">
                     <p><strong>Add to Patients</strong></p>
-                    <button id="addToPatientBtn" data-id="${safeText(data.registration_id)}" data-open="add-patient">Add</button>
+                    <div class="btn-group" style="display: flex; gap: 10px;">
+                    <button id="addToPatientBtn" data-id="${safeText(data.registration_id)}" data-open="add-patient">Add to Physio</button>
+                    <button id="addToPatientBtnSpch" data-id="${safeText(data.registration_id)}">Add to Speech</button>
+                    </div>
                 </div>
                 </div>
                 <div id="patientMessage" class="patient-message">
@@ -459,6 +494,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
 
+                // NEW: Add to Speech patient button
+                const addToPatientBtnSpch = $('#addToPatientBtnSpch', drawerBody);
+                if (addToPatientBtnSpch) {
+                    addToPatientBtnSpch.addEventListener('click', (ev) => {
+                        ev.preventDefault();
+                        const regId = addToPatientBtnSpch.dataset.id;
+                        openAddSpeechPatientDrawer(regId);
+                    });
+                }
+
                 // Optionally: status dropdown in drawer (if you add one)
                 const statusDropdown = $('.status-dropdown-drawer', drawerBody);
                 if (statusDropdown) {
@@ -491,6 +536,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // if add-drawer-close clicked (fallback)
         if (e.target.closest('.add-drawer-close')) {
             closeAddPatientDrawer();
+            return;
+        }
+
+        // NEW: if speech-drawer-close clicked
+        if (e.target.closest('#addSpeechPatientDrawer .add-drawer-close')) {
+            closeAddSpeechPatientDrawer();
             return;
         }
     }); // end document click delegation
@@ -534,6 +585,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // NEW: Speech Drawer Calculation Logic
+    let selectedSpeechTreatmentCost = 0;
+
+    const updateSpeechCalculations = () => {
+        if (!speechTreatmentDaysInput || !speechDiscountInput || !speechAdvancePaymentInput || !speechTotalCostInput || !speechDueAmountInput || !speechDiscountApprovedByInput) return;
+        const days = parseInt(speechTreatmentDaysInput.value) || 0;
+        const discount = parseFloat(speechDiscountInput.value) || 0;
+        const advancePayment = parseFloat(speechAdvancePaymentInput.value) || 0;
+        const totalCost = selectedSpeechTreatmentCost === 11000 ? 11000 : selectedSpeechTreatmentCost * days;
+        const finalCost = totalCost * (1 - discount / 100);
+        const dueAmount = finalCost - advancePayment;
+
+        speechDiscountApprovedByInput.required = (discount > 0);
+
+        speechTotalCostInput.value = isFinite(finalCost) ? finalCost.toFixed(2) : '';
+        speechDueAmountInput.value = isFinite(dueAmount) ? dueAmount.toFixed(2) : '';
+    };
+
+    const updateSpeechEndDate = () => {
+        if (!speechTreatmentDaysInput || !speechStartDateInput) return;
+        const days = parseInt(speechTreatmentDaysInput.value) || 0;
+        const startDate = speechStartDateInput.value;
+        if (days && startDate) {
+            const date = new Date(startDate);
+            date.setDate(date.getDate() + days - 1);
+            const str = date.toISOString().slice(0, 10);
+            const endDateInput = $('#speechEndDate', addSpeechDrawer);
+            if (endDateInput) endDateInput.value = str;
+        } else {
+            const endDateInput = $('#speechEndDate', addSpeechDrawer);
+            if (endDateInput) endDateInput.value = '';
+        }
+    };
+
+    // NEW: Speech Treatment option change
+    if (speechTreatmentOptions && speechTreatmentOptions.length) {
+        speechTreatmentOptions.forEach(option => {
+            option.addEventListener('change', (e) => {
+                const parentLabel = e.target.closest('label');
+                if (!parentLabel) return;
+                $$('label.treatment-option', addSpeechDrawer).forEach(l => l.classList.remove('selected'));
+                parentLabel.classList.add('selected');
+                selectedSpeechTreatmentCost = parseInt(parentLabel.dataset.cost) || 0;
+                speechTreatmentDaysInput.readOnly = e.target.value === 'package';
+                speechTreatmentDaysInput.value = e.target.value === 'package' ? 26 : '';
+                if (speechTreatmentDaysGroup) speechTreatmentDaysGroup.style.display = 'block';
+                updateSpeechCalculations();
+                updateSpeechEndDate();
+            });
+        });
+    }
+
+
     // Treatment option change
     if (treatmentOptions && treatmentOptions.length) {
         treatmentOptions.forEach(option => {
@@ -559,6 +663,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (startDateInput) startDateInput.addEventListener('change', updateEndDate);
     if (discountInput) discountInput.addEventListener('input', updateCalculations);
     if (advancePaymentInput) advancePaymentInput.addEventListener('input', updateCalculations);
+
+    // NEW: Speech calculation event listeners
+    if (speechTreatmentDaysInput) speechTreatmentDaysInput.addEventListener('input', () => { updateSpeechCalculations(); updateSpeechEndDate(); });
+    if (speechStartDateInput) speechStartDateInput.addEventListener('change', updateSpeechEndDate);
+    if (speechDiscountInput) speechDiscountInput.addEventListener('input', updateSpeechCalculations);
+    if (speechAdvancePaymentInput) speechAdvancePaymentInput.addEventListener('input', updateSpeechCalculations);
 
     // Add patient form submit
     if (addPatientForm) {
@@ -596,6 +706,37 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (err) {
                 console.error('add patient error', err);
                 showToast('Failed to add patient.', 'error');
+            }
+        });
+    }
+
+    // NEW: Add Speech Patient form submit
+    if (addSpeechPatientForm) {
+        addSpeechPatientForm.addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            const formData = new FormData(addSpeechPatientForm);
+            const dataObj = Object.fromEntries(formData.entries());
+
+            try {
+                const res = await fetch('../api/add_speech_patient.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataObj)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Speech Patient added successfully!', 'success');
+                    closeAddSpeechPatientDrawer();
+                    // Optional: reload the main registration table after a delay
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    showToast(`Error: ${result.message}`, 'error');
+                }
+            } catch (err) {
+                console.error('add speech patient error', err);
+                showToast('Failed to add speech patient.', 'error');
             }
         });
     }

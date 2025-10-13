@@ -123,10 +123,11 @@ try {
     ];
     $patients = getPatientData($pdo, $branchId, $defaultFilters);
 
-    // Get branch name
-    $stmtBranch = $pdo->prepare("SELECT branch_name FROM branches WHERE branch_id = :branch_id");
-    $stmtBranch->execute(['branch_id' => $branchId]);
-    $branchName = $stmtBranch->fetchColumn() ?? '';
+     // Branch name
+    $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
+    $stmtBranch->execute([':branch_id' => $branchId]);
+    $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
+    $branchName = $branchDetails['branch_name'];
 } catch (PDOException $e) {
     die("Error fetching initial page data: " . $e->getMessage());
 }

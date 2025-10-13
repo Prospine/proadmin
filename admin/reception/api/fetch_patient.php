@@ -22,6 +22,7 @@ if (isset($_GET['id'])) {
             p.advance_payment,
             p.discount_percentage,
             p.discount_approved_by,
+            p.treatment_time_slot,
             u_approver.username AS discount_approver_name,
             p.due_amount,
             p.payment_method AS treatment_payment_method,

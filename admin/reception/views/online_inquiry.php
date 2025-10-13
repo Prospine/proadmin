@@ -48,10 +48,11 @@ try {
     $stmtQuick->execute([':branch_id' => $branchId]);
     $appointment_requests = $stmtQuick->fetchAll(PDO::FETCH_ASSOC);
 
-    // branch name
-    $stmt = $pdo->prepare("SELECT branch_name FROM branches WHERE branch_id = :branch_id");
-    $stmt->execute(['branch_id' => $branchId]);
-    $branchName = $stmt->fetch()['branch_name'] ?? '';
+    // Branch name
+    $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
+    $stmtBranch->execute([':branch_id' => $branchId]);
+    $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
+    $branchName = $branchDetails['branch_name'];
 } catch (PDOException $e) {
     die("Error fetching inquiries: " . $e->getMessage());
 }

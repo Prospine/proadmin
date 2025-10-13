@@ -13,7 +13,6 @@
     rel="stylesheet">
   <link rel="stylesheet" href="../css/changelog.css">
   <style>
-    
     body {
       background: #f7f8fa;
       color: #222;
@@ -196,22 +195,129 @@
               <li>Enhanced security and audit logging.</li>
             </ul>
           </li>
+          <li><span class="tag">Planned</span> <strong>Global & Inter-Branch Functionality:</strong>
+            <ul>
+              <li>Global reports and search capabilities across all branches associated with the clinic.</li>
+              <li>Search for patients by their unique UID for seamless data lookup and transfer between branches.</li>
+            </ul>
+          </li>
+          <li><span class="tag">Planned</span> <strong>User & System Management:</strong>
+            <ul>
+              <li>Notification, Logs, and User Profile/Settings management pages.</li>
+              <li>Email notifications to Junior Doctors upon patient assignment.</li>
+            </ul>
+          </li>
+          <li><span class="tag">Planned</span> <strong>Financial & Follow-up Improvements:</strong>
+            <ul>
+              <li>Treatment refund option that generates a corresponding voucher.</li>
+              <li>More comprehensive follow-up tracking for both inquiries and treated patients.</li>
+            </ul>
+          </li>
+          <li><span class="tag">Planned</span> <strong>Accessibility & Internationalization:</strong>
+            <ul>
+              <li>Multi-language support via a dropdown, using Google Translate for localization.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="log-entry">
+        <h2>v2.2.8 <span class="badge live">Feature Release</span></h2>
+        <div class="meta">
+          October 14, 2025 · Advanced Schedule & Slot Management, UI/UX Improvements
+        </div>
+        <ul class="changes">
+          <li><span class="tag added">Added</span> <strong>Advanced Scheduling System:</strong>
+            <ul>
+              <li>Implemented a dedicated schedule management page with separate views for Physiotherapy and Speech
+                Therapy.</li>
+              <li>Introduced service-specific time slots with capacity tracking:
+                <ul>
+                  <li><strong>Physiotherapy:</strong> 1.5-hour blocks from 9:00 AM to 7:30 PM with a 10-patient
+                    capacity.</li>
+                  <li><strong>Speech Therapy:</strong> 1-hour blocks from 3:00 PM to 7:00 PM with a 1-patient capacity.
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><span class="tag added">Added</span> <strong>Appointment Management Tools:</strong>
+            <ul>
+              <li>"Add to Schedule" feature allows for manually booking appointments for existing patients through a
+                search-and-select modal.</li>
+              <li>"Reschedule" functionality enables staff to easily move an existing appointment to a new date and time
+                slot.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <ul class="changes">
+          <li><span class="tag added">Added</span> <strong>Test Itemization System:</strong>
+            <ul>
+              <li>Introduced a new `test_items` table to allow adding multiple tests to a single patient order, enabling
+                comprehensive billing for complex cases.</li>
+              <li>Added an "Add More Test" button and modal popup within the test details drawer, creating a seamless
+                workflow for adding subsequent tests.</li>
+              <li>Created a new API (`add_test_item.php`) to securely handle the creation and database insertion of new
+                test items, linked to the original test order.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Test Details Drawer UI/UX:</strong>
+            <ul>
+              <li>The drawer has been completely redesigned to display each test (original and additional) in its own
+                distinct card, providing a clear, itemized view.</li>
+              <li>Each test card now includes its own financial breakdown (Total, Paid, Due) and individual controls for
+                updating Test Status and Payment Status.</li>
+              <li>An "Overall Financial Summary" card was added at the end of the drawer to show the aggregated grand
+                totals for the entire order.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>API & Data Handling:</strong>
+            <ul>
+              <li>The `fetch_test.php` API was enhanced to retrieve the main test record along with all its associated
+                `test_items`, providing a complete data package to the UI.</li>
+              <li>A new, unified API (`update_test_item.php`) was created to manage status and payment updates for both
+                the main `tests` table and the new `test_items` table, reducing code duplication.</li>
+            </ul>
+          </li>
+          <li><span class="tag added">Added</span> <strong>Client-Side Calculations:</strong>
+            <ul>
+              <li>The "Add New Test Item" modal now features real-time, client-side calculation of the "Due Amount" as
+                the user types, improving user experience.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Database Schema:</strong>
+            <ul>
+              <li>Added a `payment_status` column to the `test_items` table to allow for granular payment tracking for
+                each individual test.</li>
+            </ul>
+          </li>
+          <li><span class="tag fixed">Fixed</span> <strong>Audit Logging Error:</strong>
+            <ul>
+              <li>Resolved a "Data truncated" database error that occurred when adding a payment. The `log_activity`
+                call in `update_test_item.php` was corrected to use the valid 'UPDATE' action type instead of 'PAYMENT'.
+              </li>
+            </ul>
+          </li>
         </ul>
       </div>
 
       <div class="log-entry">
         <h2>v2.2.7 <span class="badge live">Major Feature Release</span></h2>
         <div class="meta">
-          October 12, 2025 · Speech Therapy Integration, Time Slot Management, Appointment System, Database Enhancements, UI/UX Improvements
+          October 12, 2025 · Speech Therapy Integration, Time Slot Management, Appointment System, Database
+          Enhancements, UI/UX Improvements
         </div>
         <ul class="changes">
           <li><span class="tag added">Added</span> <strong>Speech Therapy Service Integration:</strong>
             <ul>
               <li>Introduced comprehensive speech therapy support alongside existing physiotherapy services.</li>
-              <li>New dedicated API endpoint <code>add_speech_patient.php</code> for speech therapy patient registration with specialized treatment plans.</li>
+              <li>New dedicated API endpoint <code>add_speech_patient.php</code> for speech therapy patient registration
+                with specialized treatment plans.</li>
               <li>Speech therapy pricing: ₹500 per session (daily) or ₹11,000 package for 26 days.</li>
               <li>Separate registration workflow with "Add to Speech" button in patient registration interface.</li>
-              <li>Service type distinction in database with <code>service_type</code> field ('physio' or 'speech_therapy').</li>
+              <li>Service type distinction in database with <code>service_type</code> field ('physio' or
+                'speech_therapy').</li>
             </ul>
           </li>
           <li><span class="tag added">Added</span> <strong>Advanced Time Slot Management System:</strong>
@@ -258,7 +364,8 @@
           <li><span class="tag improved">Improved</span> <strong>Expense Management System:</strong>
             <ul>
               <li>Enhanced expense tracking with "Expense Done By" field for personnel accountability.</li>
-              <li>"Expense For" categorization (Office, Marketing, Equipment, etc.) for better expense classification.</li>
+              <li>"Expense For" categorization (Office, Marketing, Equipment, etc.) for better expense classification.
+              </li>
               <li>Improved expense reporting and categorization for better financial insights.</li>
             </ul>
           </li>
@@ -319,7 +426,8 @@
           <li><span class="tag added">Added</span> <strong>Test UID System:</strong>
             <ul>
               <li>Introduced a unique, date-prefixed <code>test_uid</code> for all test records (e.g.,
-                <code>23101101</code> for the first test on 2023-10-11).</li>
+                <code>23101101</code> for the first test on 2023-10-11).
+              </li>
               <li>UID is auto-generated on test submission, ensuring traceability and easier referencing in reports and
                 UI.</li>
               <li>Database migration: Added <code>test_uid</code> column to the <code>tests</code> table with a unique
@@ -337,7 +445,8 @@
           <li><span class="tag improved">Improved</span> <strong>Table Columns & Filtering:</strong>
             <ul>
               <li>Registration and patient tables now display the new UID columns (<code>patient_uid</code>,
-                <code>test_uid</code>) for easier cross-referencing.</li>
+                <code>test_uid</code>) for easier cross-referencing.
+              </li>
               <li>Added "Inquiry Type" column and filter to registration and appointment tables, allowing staff to
                 filter by consultation type.</li>
               <li>Test and patient tables updated to use the new UID columns as primary identifiers.</li>

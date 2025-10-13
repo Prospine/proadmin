@@ -1018,7 +1018,7 @@ $success = false;
                             <option value="">Select Limb</option>
                             <option value="upper_limb">Upper Limb</option>
                             <option value="lower_limb">Lower Limb</option>
-                            <option value="both">Both</option>
+                            <option value="both">Both Limbs</option>
                             <option value="none">None</option>
                         </select>
                     </div>
@@ -1349,7 +1349,7 @@ $success = false;
                     localStorage.setItem(POST_UPDATE_BANNER_KEY, 'true');
                     setTimeout(() => {
                         postUpdateBanner.style.display = 'none';
-                    }, 10000); // Hide after 10 seconds
+                    }, 30000); // Hide after 10 seconds
                 }
             }
 
@@ -1357,7 +1357,7 @@ $success = false;
             // To show pre-update banner: toggleUpdateBanner(true, 1, "System will be down at 10 PM.")
             // To show post-update banner: toggleUpdateBanner(true, 2)
             // To hide: toggleUpdateBanner(false)
-            window.toggleUpdateBanner = toggleUpdateBanner(true, 1);
+            window.toggleUpdateBanner = toggleUpdateBanner(true, 1, "System is going to be Updated. Please STOP any work for 5 Minutes");
 
             // ==========================================================
             // 1. Core Utilities: Toast Notifications

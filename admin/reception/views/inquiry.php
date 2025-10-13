@@ -132,7 +132,7 @@ ORDER BY created_at DESC
             <i class="fa-solid fa-mobile-screen-button popup-icon"></i>
             <h2>Mobile View Not Supported</h2>
             <p>The admin panel is designed for desktop use. For the best experience on your mobile device, please download our dedicated application.</p>
-            <a href="/proadmin/download-app/index.html" class="mobile-download-btn">
+            <a href="/download-app/index.html" class="mobile-download-btn">
                 <i class="fa-solid fa-download"></i> Download App
             </a>
         </div>
@@ -590,7 +590,7 @@ ORDER BY created_at DESC
                                 <option value="">Select Limb</option>
                                 <option value="upper_limb">Upper Limb</option>
                                 <option value="lower_limb">Lower Limb</option>
-                                <option value="both">Both</option>
+                                <option value="both">Both Limbs</option>
                                 <option value="none">None</option>
                             </select>
                         </div>

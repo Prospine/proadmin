@@ -57,7 +57,7 @@ try {
     $stmt->execute([':branch_id' => $branchId]);
     $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Branch name
+   // Branch name
     $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
     $stmtBranch->execute([':branch_id' => $branchId]);
     $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);

@@ -37,7 +37,7 @@ try {
     $startDate       = $data['startDate'];
     $endDate         = $data['endDate'];
     $paymentMethod   = $data['payment_method'] ?? null;
-    $timeSlot        = $data['time_slot'] ?? null; // NEW: Get time slot
+    $timeSlot        = $data['treatment_time_slot'] ?? null; // FIX: Get time slot from correct key
 
     // --- NEW: Handle discount and approver ---
     $discount = isset($data['discount']) ? (float)$data['discount'] : 0;
@@ -94,17 +94,28 @@ try {
     // Retrieve the patient_id of the newly inserted record
     $patientId = (int)$pdo->lastInsertId();
 
-    // NEW: Insert the first appointment into the new table
-    $apptStmt = $pdo->prepare("
-        INSERT INTO patient_appointments (patient_id, branch_id, appointment_date, time_slot, service_type, status)
-        VALUES (?, ?, ?, ?, 'physio', 'scheduled')
-    ");
-    $apptStmt->execute([
-        $patientId,
-        $branchId,
-        $startDate,
-        $timeSlot
-    ]);
+    // --- NEW: Automated Appointment Generation for Physio ---
+    // Logic: For 'daily', 'advance', and 'package', schedule appointments for the number of days specified.
+    if ($treatmentDays > 0) {
+        $apptStmt = $pdo->prepare("
+            INSERT INTO patient_appointments (patient_id, branch_id, appointment_date, time_slot, service_type, status)
+            VALUES (?, ?, ?, ?, 'physio', 'scheduled')
+        ");
+
+        $currentAppointmentDate = new DateTime($startDate);
+
+        for ($i = 0; $i < $treatmentDays; $i++) {
+            // Schedule for consecutive days.
+            // Future enhancement: Add logic here to skip Sundays or holidays if needed.
+            $apptStmt->execute([
+                $patientId,
+                $branchId,
+                $currentAppointmentDate->format('Y-m-d'),
+                $timeSlot
+            ]);
+            $currentAppointmentDate->modify('+1 day');
+        }
+    }
 
     // CRITICAL FIX: Insert into payments table if there was an advance payment
     if ($advancePayment > 0) {

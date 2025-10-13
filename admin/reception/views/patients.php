@@ -43,6 +43,21 @@ try {
         $filterOptions[$key] = $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
+    // --- NEW: Fetch comprehensive list of referrers (from dashboard.php) ---
+    try {
+        $stmtReferrers = $pdo->prepare("
+            (SELECT DISTINCT reffered_by FROM registration WHERE branch_id = :branch_id AND reffered_by IS NOT NULL AND reffered_by != '')
+            UNION
+            (SELECT DISTINCT reffered_by FROM test_inquiry WHERE branch_id = :branch_id AND reffered_by IS NOT NULL AND reffered_by != '')
+            UNION
+            (SELECT DISTINCT referred_by AS reffered_by FROM tests WHERE branch_id = :branch_id AND referred_by IS NOT NULL AND referred_by != '')
+            ORDER BY reffered_by ASC
+        ");
+        $stmtReferrers->execute([':branch_id' => $branchId]);
+        $allReferrers = $stmtReferrers->fetchAll(PDO::FETCH_COLUMN);
+    } catch (PDOException $e) {
+        $allReferrers = []; // Default to empty array on error
+    }
 
     // Fetch all necessary patient data, including costs and payments
     $stmt = $pdo->prepare("
@@ -99,10 +114,11 @@ try {
     $tokenStmt->execute([':branch_id' => $branchId]);
     $tokensTodayMap = array_flip($tokenStmt->fetchAll(PDO::FETCH_COLUMN));
 
-    //branch name
-    $stmt = $pdo->prepare("SELECT branch_name FROM branches WHERE branch_id = :branch_id");
-    $stmt->execute(['branch_id' => $branchId]);
-    $branchName = $stmt->fetch()['branch_name'] ?? '';
+    // Branch name
+    $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
+    $stmtBranch->execute([':branch_id' => $branchId]);
+    $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
+    $branchName = $branchDetails['branch_name'];
 
     // For each patient, get their attendance count and effective balance
     // We must do this in a loop for each patient, as it's a dynamic calculation
@@ -153,8 +169,17 @@ try {
     }
     unset($patient); // Break the reference
 } catch (PDOException $e) {
-    error_log("Error fetching patients or attendance: " . $e->getMessage());
-    die("Error fetching patients. Please try again later.");
+    // Log the full error for server-side records
+    error_log("Database Error in patients.php: " . $e->getMessage() . " on line " . $e->getLine());
+
+    // Display a more detailed error message for easier debugging
+    // This is safe because you have error reporting enabled at the top of the file.
+    echo "<div style='padding: 20px; background-color: #ffcccc; border: 1px solid #ff0000; margin: 20px;'>";
+    echo "<h2>Database Query Failed</h2>";
+    echo "<p><strong>Error:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "<p>This error occurred while trying to fetch patient data. Please check the database query and ensure all required tables and columns exist.</p>";
+    echo "</div>";
+    exit; // Stop further execution
 }
 
 ?>
@@ -191,6 +216,139 @@ try {
                 margin-right: 20px;
             }
         }
+
+        .schedule-bar {
+            padding: 6px;
+            margin-top: 5px;
+            margin-left: 10px;
+            align-items: center;
+        }
+
+        .schedule-bar button {
+            padding: 8px 20px;
+        }
+
+
+        /* --- NEW: Comprehensive Modal Styles --- */
+        .modal-overlay {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place even when scrolling */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            /* Semi-transparent background */
+            z-index: 10000;
+            /* High z-index to appear on top */
+            justify-content: center;
+            /* Center horizontally */
+            align-items: center;
+            /* Center vertically */
+            overflow-y: auto;
+            /* Allow scrolling if content is too tall */
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+            padding: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.is-visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-overlay.is-visible .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--card-bg, #fff);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        body.dark .modal-content {
+            background-color: #111;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color, #e5e7eb);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--text-color, #111827);
+        }
+
+        .close-modal-btn {
+            background: none;
+            border: none;
+            font-size: 1.75rem;
+            line-height: 1;
+            color: var(--text-muted, #6b7280);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .close-modal-btn:hover {
+            background-color: var(--bg-tertiary, #f3f4f6);
+            color: var(--text-primary, #111827);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+
+        .form-actions {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color, #e5e7eb);
+            /* Corrected from duplicate */
+            text-align: right;
+        }
+
+        .modal-content.large {
+            width: 90%;
+            max-width: 1100px;
+        }
+
+        /* This is the style your JS will apply to show the modal */
+        .modal-overlay.is-visible {
+            display: flex;
+        }
+
+        /* --- END FIX --- */
     </style>
 </head>
 
@@ -290,6 +448,9 @@ try {
                             <i class="fa-solid fa-sort"></i>
                         </button>
                     </div>
+                </div>
+                <div class="schedule-bar">
+                    <button onclick="window.location.href='schedules.php'">View Schedules</button>
                 </div>
             </div>
             <div class="table-container modern-table">
@@ -398,12 +559,11 @@ try {
                                         <?php if ($hasTokenToday): ?>
                                             <button class="action-btn2" disabled title="Token already generated today.">Printed</button>
                                         <?php else: ?>
-                                            <button class="action-btn2 print-token-btn" 
+                                            <button class="action-btn2 print-token-btn"
                                                 data-patient-id="<?= htmlspecialchars((string)$pid) ?>"
                                                 data-patient-name="<?= htmlspecialchars((string)($row['patient_name'] ?? '')) ?>"
                                                 data-assigned-doctor="<?= htmlspecialchars((string)($row['assigned_doctor'] ?? 'N/A')) ?>"
-                                                data-attendance-progress="<?= htmlspecialchars((string)($row['attendance_count'] ?? 0)) ?> / <?= htmlspecialchars((string)($row['treatment_days'] ?? '-')) ?>"
-                                            >Print</button>
+                                                data-attendance-progress="<?= htmlspecialchars((string)($row['attendance_count'] ?? 0)) ?> / <?= htmlspecialchars((string)($row['treatment_days'] ?? '-')) ?>">Print</button>
                                         <?php endif; ?>
                                     </td>
                                     <td data-label="Action">
@@ -430,10 +590,145 @@ try {
 
                     <button id="drawerPrintBillBtn">Print Bill</button>
                     <button id="drawerViewProfileBtn">View Profile</button>
+                    <button id="drawerAddTestBtn">Add Test</button>
                     <button id="closeDrawer" class="drawer-close-btn">&times;</button>
                 </div>
             </div>
             <div class="drawer-body" id="drawer-body"></div>
+        </div>
+    </div>
+
+    <!-- NEW: Add Test Modal -->
+    <div id="add-test-modal" class="modal-overlay" style="z-index: 10000;">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Add New Test for Patient</h3>
+                <button id="close-test-modal-btn" class="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addTestForPatientForm">
+                    <input type="hidden" name="patient_id" id="test_patient_id">
+                    <div class="form-grid">
+                        <!-- Row 1 -->
+                        <div class="form-group">
+                            <label>Patient Name *</label>
+                            <input type="text" name="patient_name" id="test_patient_name" readonly style="background: var(--bg-tertiary);">
+                        </div>
+                        <div class="form-group">
+                            <label>Age *</label>
+                            <input type="number" name="age" id="test_age" readonly style="background: var(--bg-tertiary);">
+                        </div>
+                        <div class="form-group">
+                            <label>Gender *</label>
+                            <input type="text" name="gender" id="test_gender" readonly style="background: var(--bg-tertiary);">
+                        </div>
+                        <!-- Row 2 -->
+                        <div class="form-group">
+                            <label>Phone No *</label>
+                            <input type="text" name="phone_number" id="test_phone_number" readonly style="background: var(--bg-tertiary);">
+                        </div>
+                        <div class="form-group">
+                            <label>Alternate Phone No</label>
+                            <input type="text" name="alternate_phone_no" placeholder="+91..." maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth</label>
+                            <input type="date" name="dob">
+                        </div>
+                        <!-- Row 3 -->
+                        <div class="form-group">
+                            <label>Parents/Guardian</label>
+                            <input type="text" name="parents" placeholder="Parents/Guardian Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Relation</label>
+                            <input type="text" name="relation" placeholder="e.g., Father, Mother">
+                        </div>
+                        <div class="form-group">
+                            <label>Referred By *</label>
+                            <input list="modal-referrers-list" name="referred_by" required>
+                            <datalist id="modal-referrers-list"> <!-- FIX: Unique ID for the modal's datalist -->
+                                <?php foreach ($allReferrers as $referrer): ?>
+                                    <option value="<?= htmlspecialchars($referrer) ?>">
+                                    <?php endforeach; ?>
+                            </datalist>
+                        </div>
+                        <!-- Row 4 -->
+                        <div class="form-group">
+                            <label>Test Name *</label>
+                            <select name="test_name" required>
+                                <option value="">Select Test</option>
+                                <option value="eeg">EEG</option>
+                                <option value="ncv">NCV</option>
+                                <option value="emg">EMG</option>
+                                <option value="rns">RNS</option>
+                                <option value="bera">BERA</option>
+                                <option value="vep">VEP</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Limb</label>
+                            <select name="limb">
+                                <option value="">Select Limb</option>
+                                <option value="upper_limb">Upper Limb</option>
+                                <option value="lower_limb">Lower Limb</option>
+                                <option value="both">Both Limbs</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Test Done By *</label>
+                            <select name="test_done_by" required>
+                                <option value="">Select Staff</option>
+                                <option value="achal">Achal</option>
+                                <option value="ashish">Ashish</option>
+                                <option value="pancham">Pancham</option>
+                                <option value="sayan">Sayan</option>
+                            </select>
+                        </div>
+                        <!-- Row 5 -->
+                        <div class="form-group">
+                            <label>Date of Visit *</label>
+                            <input type="date" name="visit_date" value="<?= date('Y-m-d') ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Assigned Test Date *</label>
+                            <input type="date" name="assigned_test_date" value="<?= date('Y-m-d') ?>" required>
+                        </div>
+                        <!-- Row 6 -->
+                        <div class="form-group">
+                            <label>Total Amount *</label>
+                            <input type="number" name="total_amount" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Discount</label>
+                            <input type="number" name="discount" step="0.01" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Advance Amount</label>
+                            <input type="number" name="advance_amount" step="0.01" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Due Amount</label>
+                            <input type="number" name="due_amount" step="0.01" value="0" readonly style="background: var(--bg-tertiary);">
+                        </div>
+                        <!-- Row 7 -->
+                        <div class="form-group">
+                            <label>Payment Method *</label>
+                            <select name="payment_method" required>
+                                <option value="cash">Cash</option>
+                                <option value="upi-boi">UPI-BOI</option>
+                                <option value="upi-hdfc">UPI-HDFC</option>
+                                <option value="card">Card</option>
+                                <option value="cheque">Cheque</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions"><button type="submit" class="action-btn">Save Test</button></div>
+                </form>
+            </div>
         </div>
     </div>
 

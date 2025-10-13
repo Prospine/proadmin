@@ -426,6 +426,12 @@ try {
                             <input type="date" id="endDate" name="endDate" readonly>
                         </div>
                         <div class="form-group">
+                            <label for="treatmentTimeSlot">Time Slot *</label>
+                            <select id="treatmentTimeSlot" name="treatment_time_slot" required>
+                                <option value="">Select a date first</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label for="totalCost">Total Cost</label>
                             <input type="number" id="totalCost" name="totalCost" readonly>
                         </div>
@@ -472,9 +478,6 @@ try {
         </div>
     </div>
 
-    </div>
-    </div>
-
     <!-- NEW: Add Speech Patient Drawer -->
     <div class="add-to-patient-drawer" id="addSpeechPatientDrawer" aria-hidden="true" role="dialog" aria-modal="true">
         <div class="add-drawer-header">
@@ -516,6 +519,12 @@ try {
                         <div class="form-group">
                             <label for="speechEndDate">End Date</label>
                             <input type="date" id="speechEndDate" name="endDate" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="speechTreatmentTimeSlot">Time Slot *</label>
+                            <select id="speechTreatmentTimeSlot" name="treatment_time_slot" required>
+                                <option value="">Select a date first</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="speechTotalCost">Total Cost</label>

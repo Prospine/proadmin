@@ -58,10 +58,11 @@ try {
     $tests = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-    // Fetch branch name
-    $stmtBranch = $pdo->prepare("SELECT branch_name FROM branches WHERE branch_id = :branch_id");
-    $stmtBranch->execute(['branch_id' => $branchId]);
-    $branchName = $stmtBranch->fetchColumn() ?? '';
+    // Branch name
+    $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
+    $stmtBranch->execute([':branch_id' => $branchId]);
+    $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
+    $branchName = $branchDetails['branch_name'];
 } catch (PDOException $e) {
     die("Error fetching test records: " . $e->getMessage());
 }
@@ -168,6 +169,65 @@ try {
                 height: 90vh;
                 z-index: 99999999;
             }
+        }
+
+        /* --- NEW: Modal Styles --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 100000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.is-visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--card-bg, #fff);
+            border-radius: 8px;
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        body.dark .modal-content {
+            background-color: #333;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color, #e5e7eb);
+        }
+
+        .form-grid-condensed {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            min-width: 700px;
+        }
+
+        .drawer-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            text-align: right;
+        }
+
+        .drawer-footer .action-btn {
+            padding: 0.6rem 1.2rem;
         }
     </style>
 
@@ -323,6 +383,92 @@ try {
         </div>
         <div class="drawer-content">
             <!-- Dynamic content goes here -->
+        </div>
+    </div>
+
+    <!-- NEW: Add Test Item Modal -->
+    <div id="add-test-item-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Test Item</h3>
+                <button class="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addTestItemForm">
+                    <input type="hidden" name="test_id" id="item_test_id"> <!-- This links to the main test order -->
+                    <div class="form-grid-condensed">
+                        <div class="form-group">
+                            <label>Test Name *</label>
+                            <select name="test_name" required>
+                                <option value="">Select Test</option>
+                                <option value="eeg">EEG</option>
+                                <option value="ncv">NCV</option>
+                                <option value="emg">EMG</option>
+                                <option value="rns">RNS</option>
+                                <option value="bera">BERA</option>
+                                <option value="vep">VEP</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Limb</label>
+                            <select name="limb">
+                                <option value="">Select Limb</option>
+                                <option value="upper_limb">Upper Limb</option>
+                                <option value="lower_limb">Lower Limb</option>
+                                <option value="both">Both Limbs</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Assigned Test Date *</label>
+                            <input type="date" name="assigned_test_date" value="<?= date('Y-m-d') ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Test Done By *</label>
+                            <select name="test_done_by" required>
+                                <option value="">Select Staff</option>
+                                <option value="achal">Achal</option>
+                                <option value="ashish">Ashish</option>
+                                <option value="pancham">Pancham</option>
+                                <option value="sayan">Sayan</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Referred By</label>
+                            <input type="text" name="referred_by" placeholder="Dr. Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Amount *</label>
+                            <input type="number" name="total_amount" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Discount</label>
+                            <input type="number" name="discount" step="0.01" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Advance Amount</label>
+                            <input type="number" name="advance_amount" step="0.01" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Due Amount</label>
+                            <input type="number" name="due_amount" step="0.01" value="0" readonly style="background: var(--bg-tertiary);">
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Method *</label>
+                            <select name="payment_method" required>
+                                <option value="cash">Cash</option>
+                                <option value="upi-boi">UPI-BOI</option>
+                                <option value="upi-hdfc">UPI-HDFC</option>
+                                <option value="card">Card</option>
+                                <option value="cheque">Cheque</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions"><button type="submit" class="action-btn">Save Test Item</button></div>
+                </form>
+            </div>
         </div>
     </div>
 

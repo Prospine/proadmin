@@ -240,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalCostInput = $('#totalCost', addDrawer);
     const discountApprovedByInput = $('#discountApprovedBy', addDrawer);
     const dueAmountInput = $('#dueAmount', addDrawer);
+    const treatmentTimeSlotSelect = $('#treatmentTimeSlot', addDrawer);
     const treatmentOptions = $$('input[name="treatmentType"]', addDrawer); // might be empty
 
     // NEW: Speech Drawer element references
@@ -255,6 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const speechTotalCostInput = $('#speechTotalCost', addSpeechDrawer);
     const speechDiscountApprovedByInput = $('#speechDiscountApprovedBy', addSpeechDrawer);
     const speechDueAmountInput = $('#speechDueAmount', addSpeechDrawer);
+    const speechTreatmentTimeSlotSelect = $('#speechTreatmentTimeSlot', addSpeechDrawer);
     const speechTreatmentOptions = $$('input[name="treatmentType"]', addSpeechDrawer);
 
     /* ------------------------------
@@ -271,15 +273,27 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const openAddPatientDrawer = (regId = '') => {
-        if (registrationIdInput) registrationIdInput.value = regId;
-        addDrawer.classList.add('is-open');
+        if (!addDrawer) return;
+        if (addPatientForm) addPatientForm.reset(); // Reset form first
+
+        if (registrationIdInput) registrationIdInput.value = regId; // Set new ID
+
+        // NEW: Set today's date and fetch slots every time the drawer opens
+        if (startDateInput && treatmentTimeSlotSelect) {
+            const today = new Date().toISOString().split('T')[0];
+            startDateInput.value = today;
+            fetchAndPopulateSlots(today, treatmentTimeSlotSelect, 'physio');
+        }
+
+        addDrawer.classList.add('is-open'); // Show the drawer
         addDrawer.setAttribute('aria-hidden', 'false');
     };
     const closeAddPatientDrawer = () => {
+        if (!addDrawer) return;
         addDrawer.classList.remove('is-open');
         addDrawer.setAttribute('aria-hidden', 'true');
         if (addPatientForm) addPatientForm.reset();
-        // reset calculated fields
+        // NEW: Also reset date and time slot fields
         if (totalCostInput) totalCostInput.value = '';
         if (dueAmountInput) dueAmountInput.value = '';
     };
@@ -287,16 +301,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // NEW: Speech Drawer helpers
     const openAddSpeechPatientDrawer = (regId = '') => {
         if (speechRegistrationIdInput) speechRegistrationIdInput.value = regId;
+
+        // NEW: Set today's date and fetch slots every time the drawer opens
+        if (speechStartDateInput && speechTreatmentTimeSlotSelect) {
+            const today = new Date().toISOString().split('T')[0];
+            speechStartDateInput.value = today;
+            fetchAndPopulateSlots(today, speechTreatmentTimeSlotSelect, 'speech_therapy');
+        }
+
         addSpeechDrawer.classList.add('is-open');
         addSpeechDrawer.setAttribute('aria-hidden', 'false');
     };
     const closeAddSpeechPatientDrawer = () => {
+        if (!addSpeechDrawer) return;
         addSpeechDrawer.classList.remove('is-open');
         addSpeechDrawer.setAttribute('aria-hidden', 'true');
         if (addSpeechPatientForm) addSpeechPatientForm.reset();
-        // reset calculated fields
+        // NEW: Also reset date and time slot fields
         if (speechTotalCostInput) speechTotalCostInput.value = '';
         if (speechDueAmountInput) speechDueAmountInput.value = '';
+        if (speechStartDateInput) speechStartDateInput.value = '';
+        if (speechTreatmentTimeSlotSelect) speechTreatmentTimeSlotSelect.innerHTML = '<option value="">Select a date first</option>';
     };
 
     // Close buttons
@@ -425,23 +450,23 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="info-item"><strong>Remarks</strong><span id="remarksDisplay">${safeText(data.remarks) || 'No remarks available.'}</span></div>
           </div>
           <div class="footer-grid">
+          <div class="addToPatient">
+          <p><strong>Add to Patients</strong></p>
+          <div class="btn-group" style="display: flex; gap: 10px;">
+          <button id="addToPatientBtn" data-id="${safeText(data.registration_id)}" data-open="add-patient">Add to Physio</button>
+          <button id="addToPatientBtnSpch" data-id="${safeText(data.registration_id)}">Add to Speech</button>
+          </div>
+          <div id="patientMessage" class="patient-message">
+              <p><strong>Patient Message</strong></p>
+              ${safeText(data.patient_message)}
+          </div
+          </div>
+          </div>
                 <div class="addremarks">
                     <h3 class="section-title">Add Remarks</h3>
                     <textarea id="remarksTextarea"></textarea>
                     <button id="submitRemarkBtn" data-id="${safeText(data.registration_id)}">Submit</button>
                 </div>
-                <div class="addToPatient">
-                    <p><strong>Add to Patients</strong></p>
-                    <div class="btn-group" style="display: flex; gap: 10px;">
-                    <button id="addToPatientBtn" data-id="${safeText(data.registration_id)}" data-open="add-patient">Add to Physio</button>
-                    <button id="addToPatientBtnSpch" data-id="${safeText(data.registration_id)}">Add to Speech</button>
-                    </div>
-                </div>
-                </div>
-                <div id="patientMessage" class="patient-message">
-                    <p><strong>Patient Message</strong></p>
-                    ${safeText(data.patient_message)}
-                </div
         `;
 
                 // Attach event handlers inside drawer via delegation
@@ -585,6 +610,68 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- NEW: Treatment Time Slot Logic ---
+    const generateTimeSlots = (serviceType = 'physio') => {
+        const slots = [];
+        let start, end, interval;
+
+        if (serviceType === 'physio') {
+            start = new Date('1970-01-01T09:00:00');
+            end = new Date('1970-01-01T19:00:00');
+            interval = 90; // 1.5 hours in minutes
+        } else { // speech_therapy
+            start = new Date('1970-01-01T15:00:00');
+            end = new Date('1970-01-01T19:00:00');
+            interval = 60; // 1 hour in minutes
+        }
+
+        while (start < end) {
+            const time = start.toTimeString().substring(0, 5); // HH:mm
+            const label = start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            slots.push({ time, label });
+            start.setMinutes(start.getMinutes() + interval);
+        }
+        return slots;
+    };
+
+    const fetchAndPopulateSlots = async (dateString, slotSelect, serviceType) => {
+        if (!dateString || !slotSelect) return;
+
+        slotSelect.innerHTML = '<option value="">Loading slots...</option>';
+        slotSelect.disabled = true;
+
+        try {
+            const res = await fetch(`../api/get_treatment_slots.php?date=${dateString}&service_type=${serviceType}`);
+            const data = await res.json();
+
+            slotSelect.innerHTML = ''; // Clear loading message
+
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to load slots.');
+            }
+
+            const capacity = serviceType === 'physio' ? 10 : 1;
+            const allSlots = generateTimeSlots(serviceType);
+
+            allSlots.forEach(slot => {
+                const bookedCount = data.booked[`${slot.time}:00`] || 0;
+                const isFull = bookedCount >= capacity;
+                const option = document.createElement('option');
+                option.value = slot.time;
+                option.textContent = `${slot.label} (${bookedCount}/${capacity} booked)`;
+                option.disabled = isFull;
+                slotSelect.appendChild(option);
+            });
+
+        } catch (error) {
+            console.error(`Error fetching ${serviceType} slots:`, error);
+            slotSelect.innerHTML = `<option value="">Error loading slots</option>`;
+        } finally {
+            slotSelect.disabled = false;
+        }
+    };
+
+
     // NEW: Speech Drawer Calculation Logic
     let selectedSpeechTreatmentCost = 0;
 
@@ -661,14 +748,29 @@ document.addEventListener('DOMContentLoaded', () => {
         updateEndDate();
     });
     if (startDateInput) startDateInput.addEventListener('change', updateEndDate);
-    if (discountInput) discountInput.addEventListener('input', updateCalculations);
-    if (advancePaymentInput) advancePaymentInput.addEventListener('input', updateCalculations);
+    if (discountInput) discountInput.addEventListener('input', updateCalculations); // Physio
+    if (advancePaymentInput) advancePaymentInput.addEventListener('input', updateCalculations); // Physio
 
-    // NEW: Speech calculation event listeners
-    if (speechTreatmentDaysInput) speechTreatmentDaysInput.addEventListener('input', () => { updateSpeechCalculations(); updateSpeechEndDate(); });
-    if (speechStartDateInput) speechStartDateInput.addEventListener('change', updateSpeechEndDate);
-    if (speechDiscountInput) speechDiscountInput.addEventListener('input', updateSpeechCalculations);
-    if (speechAdvancePaymentInput) speechAdvancePaymentInput.addEventListener('input', updateSpeechCalculations);
+    // --- NEW: Consolidated Date Change Listeners ---
+    // Physio Drawer: When start date changes, update end date AND fetch slots.
+    if (startDateInput) {
+        startDateInput.addEventListener('change', (event) => {
+            updateEndDate(); // Update the end date based on treatment days
+            if (treatmentTimeSlotSelect) {
+                fetchAndPopulateSlots(event.target.value, treatmentTimeSlotSelect, 'physio');
+            }
+        });
+    }
+
+    // Speech Drawer: When start date changes, update end date AND fetch slots.
+    if (speechStartDateInput) {
+        speechStartDateInput.addEventListener('change', (event) => {
+            updateSpeechEndDate(); // Update the end date based on treatment days
+            if (speechTreatmentTimeSlotSelect) {
+                fetchAndPopulateSlots(event.target.value, speechTreatmentTimeSlotSelect, 'speech_therapy');
+            }
+        });
+    }
 
     // Add patient form submit
     if (addPatientForm) {

@@ -37,7 +37,7 @@ $discount = filter_var($data['discount'] ?? 0, FILTER_VALIDATE_FLOAT);
 $dueAmount = filter_var($data['dueAmount'] ?? 0, FILTER_VALIDATE_FLOAT);
 $paymentMethod = $data['payment_method'] ?? null;
 $discountApprovedBy = filter_var($data['discount_approved_by'] ?? null, FILTER_VALIDATE_INT);
-$timeSlot = $data['time_slot'] ?? null; // NEW: Get time slot
+$timeSlot = $data['treatment_time_slot'] ?? null; // FIX: Get time slot from correct key
 
 if (!$registrationId || !$treatmentType || !$treatmentDays || !$startDate || !$paymentMethod) {
     http_response_code(400);
@@ -105,17 +105,29 @@ try {
     ]);
     $newPatientId = $pdo->lastInsertId();
 
-    // NEW: Insert the first appointment into the new table
-    $apptStmt = $pdo->prepare("
-        INSERT INTO patient_appointments (patient_id, branch_id, appointment_date, time_slot, service_type, status)
-        VALUES (?, ?, ?, ?, 'speech_therapy', 'scheduled')
-    ");
-    $apptStmt->execute([
-        $newPatientId,
-        $branchId,
-        $startDate,
-        $timeSlot
-    ]);
+    // --- NEW: Automated Appointment Generation ---
+    // Logic: For both 'daily' and 'package', schedule appointments for the number of days specified.
+    // We assume the initial payment covers these days.
+    if ($treatmentDays > 0) {
+        $apptStmt = $pdo->prepare("
+            INSERT INTO patient_appointments (patient_id, branch_id, appointment_date, time_slot, service_type, status)
+            VALUES (?, ?, ?, ?, 'speech_therapy', 'scheduled')
+        ");
+
+        $currentAppointmentDate = new DateTime($startDate);
+
+        for ($i = 0; $i < $treatmentDays; $i++) {
+            // You can add logic here to skip Sundays or other non-working days if needed
+            // For now, we schedule for consecutive days.
+            $apptStmt->execute([
+                $newPatientId,
+                $branchId,
+                $currentAppointmentDate->format('Y-m-d'),
+                $timeSlot
+            ]);
+            $currentAppointmentDate->modify('+1 day');
+        }
+    }
 
     // 4. If there was an advance payment, record it in the payments table
     if ($advancePayment > 0) {

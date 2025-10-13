@@ -224,15 +224,15 @@ try {
             <i class="fa-solid fa-mobile-screen-button popup-icon"></i>
             <h2>Mobile View Not Supported</h2>
             <p>The admin panel is designed for desktop use. For the best experience on your mobile device, please download our dedicated application.</p>
-            <a href="/proadmin/download-app/index.html" class="mobile-download-btn">
+            <a href="/download-app/index.html" class="mobile-download-btn">
                 <i class="fa-solid fa-download"></i> Download App
             </a>
         </div>
     </div>
 
     <header>
-       
-    <div class="logo-container">
+
+        <div class="logo-container">
             <div class="logo">
                 <?php if (!empty($branchDetails['logo_primary_path'])): ?>
                     <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">

@@ -30,11 +30,11 @@ if (!$registration) {
     die("Record not found for the given registration ID.");
 }
 
-// 2. Fetch the full details for the branch associated with this registration
-$branchId = $registration['branch_id'];
+// Branch name
 $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
 $stmtBranch->execute([':branch_id' => $branchId]);
 $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
+$branchName = $branchDetails['branch_name'];
 
 if (!$branchDetails) {
     die("Branch details could not be found for this record.");

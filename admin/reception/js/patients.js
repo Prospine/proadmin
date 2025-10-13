@@ -16,6 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
         hour: '2-digit',
         minute: '2-digit'
     }) : '-';
+    const formatTime12hr = timeStr => {
+        if (!timeStr || !/^\d{2}:\d{2}(:\d{2})?$/.test(timeStr)) {
+            return '-';
+        }
+        const [hours, minutes] = timeStr.split(':');
+        const h = parseInt(hours, 10);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const hour12 = h % 12 || 12; // Convert 0 to 12 for 12 AM
+        const paddedHour = String(hour12).padStart(2, '0');
+        return `${paddedHour}:${minutes} ${ampm}`;
+    };
     const showToast = (message, type = 'info') => {
         const toastContainer = document.getElementById('toast-container');
         const toast = document.createElement('div');
@@ -168,6 +179,108 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- NEW: Add Test Modal Logic ---
+    const addTestModal = document.getElementById('add-test-modal');
+    const openAddTestBtn = document.getElementById('drawerAddTestBtn');
+    const closeAddTestBtn = document.getElementById('close-test-modal-btn');
+
+    if (openAddTestBtn) {
+        openAddTestBtn.addEventListener('click', () => {
+            // CORRECTED: Find the data store element *inside* the drawer
+            const dataStore = document.getElementById('drawer-patient-data-store');
+            if (dataStore && dataStore.dataset.patientData) {
+                const patientData = JSON.parse(dataStore.dataset.patientData);
+                document.getElementById('test_patient_id').value = patientData.patient_id || '';
+                // Pre-fill form fields from the detailed patient data
+                const form = document.getElementById('addTestForPatientForm');
+                form.querySelector('[name="patient_name"]').value = patientData.patient_name || '';
+                form.querySelector('[name="age"]').value = patientData.age || '';
+                form.querySelector('[name="gender"]').value = patientData.gender || '';
+                form.querySelector('[name="phone_number"]').value = patientData.phone_number || '';
+                form.querySelector('[name="dob"]').value = patientData.dob || '';
+                form.querySelector('[name="referred_by"]').value = ''; // Ensure this is blank on open
+                // Now, show the modal
+                addTestModal.classList.add('is-visible');
+            } else {
+                showToast('Could not find patient data to open the test form.', 'error');
+            }
+        });
+    }
+
+    function closeTestModal() {
+        if (addTestModal) addTestModal.classList.remove('is-visible');
+    }
+
+    if (closeAddTestBtn) closeAddTestBtn.addEventListener('click', closeTestModal);
+    if (addTestModal) addTestModal.addEventListener('click', (e) => {
+        if (e.target === addTestModal) closeTestModal();
+    });
+
+    // --- NEW: Due Amount Calculator for Test Modal (from dashboard.js) ---
+    const testModal = document.getElementById('add-test-modal');
+    if (testModal) {
+        const totalAmountInput = testModal.querySelector('input[name="total_amount"]');
+        const advanceAmountInput = testModal.querySelector('input[name="advance_amount"]'); // Corrected label in HTML
+        const discountInput = testModal.querySelector('input[name="discount"]');
+        const dueAmountInput = testModal.querySelector('input[name="due_amount"]'); // Reference to the new field
+
+        function calculateTestDue() {
+            const total = parseFloat(totalAmountInput.value) || 0;
+            const advance = parseFloat(advanceAmountInput.value) || 0;
+            const discount = parseFloat(discountInput.value) || 0;
+            let due = total - discount - advance;
+            
+            // Update the 'due_amount' input field in real-time
+            if (dueAmountInput) {
+                dueAmountInput.value = Math.max(0, due).toFixed(2);
+            }
+        }
+
+        // Initial calculation on modal open
+        calculateTestDue();
+        
+        totalAmountInput.addEventListener('input', calculateTestDue);
+        advanceAmountInput.addEventListener('input', calculateTestDue);
+        discountInput.addEventListener('input', calculateTestDue);
+    }
+
+    // --- NEW: Add Test Form Submission ---
+    const addTestForm = document.getElementById('addTestForPatientForm');
+    if (addTestForm) {
+        addTestForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const submitBtn = addTestForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+            const formData = new FormData(addTestForm);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch('../api/add_test_for_patient.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    showToast(result.message || 'Test added successfully!', 'success');
+                    closeTestModal();
+                    addTestForm.reset();
+                    // Optional: reload the page to see the new test in other modules
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    showToast(result.message || 'Failed to add test.', 'error');
+                }
+            })
+            .catch(error => showToast('An error occurred: ' + error.message, 'error'))
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save Test';
+            });
+        });
+    }
+
     document.querySelectorAll('.action-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const id = btn.getAttribute('data-id');
@@ -184,6 +297,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         patientDrawerBody.innerHTML = `<p style="color: red; text-align: center;">${data.error}</p>`;
                     } else {
                         patientDrawerBody.innerHTML = `
+                        <div id="drawer-patient-data-store" 
+                             data-patient-id="${data.patient_id || ''}"
+                             data-patient-data='${JSON.stringify(data)}'>
+                        </div>
                                    <div class="drawer-section" data-collapsible>
     <h3><i class="fas fa-user-circle"></i> Patient Info</h3>
     <div class="info-grid">
@@ -192,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="info-item"><span class="label">Age</span><span class="value">${data.age ?? '-'}</span></div>
         <div class="info-item"><span class="label">Gender</span><span class="value">${data.gender ?? '-'}</span></div>
         <div class="info-item"><span class="label">Phone</span><span class="value">${data.phone_number ?? '-'}</span></div>
-        <div class="info-item"><span class="label">Email</span><span class="value">${data.email ?? 'N/A'}</span></div>
+        <div class="info-item"><span class="label">Email</span><span class="value">${data.email ?? '-'}</span></div>
         <div class="info-item"><span class="label">Assigned Doctor</span><span class="value">${data.assigned_doctor ?? '-'}</span></div>
         <div class="info-item"><span class="label">Service Type</span><span class="value">${ucFirst(data.service_type?.replace('_', ' ') ?? '-')}</span></div>
         <div class="info-item"><span class="label">Chief Complaint</span><span class="value">${ucFirst(data.chief_complain ?? '-')}</span></div>
@@ -230,11 +347,12 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="info-grid">
         <div class="info-item"><span class="label">Treatment Type</span><span class="value">${ucFirst(data.treatment_type ?? '-')}</span></div>
         <div class="info-item"><span class="label">Treatment Days</span><span class="value">${data.treatment_days ?? '-'}</span></div>
+        <div class="info-item"><span class="label">Session Schedule</span><span class="value">${formatTime12hr(data.treatment_time_slot)}</span></div>
         <div class="info-item"><span class="label">Start Date</span><span class="value">${formatDate(data.start_date)}</span></div>
         <div class="info-item"><span class="label">End Date</span><span class="value">${formatDate(data.end_date)}</span></div>
         <div class="info-item"><span class="label">Consultation Type</span><span class="value">${ucFirst(data.consultation_type ?? 'N/A')}</span></div>
         <div class="info-item"><span class="label">Appointment Date</span><span class="value">${formatDate(data.appointment_date)}</span></div>
-        <div class="info-item"><span class="label">Appointment Time</span><span class="value">${data.appointment_time ?? '-'}</span></div>
+        <div class="info-item"><span class="label">Appointment Time</span><span class="value">${formatTime12hr(data.appointment_time)}</span></div>
         <div class="info-item"><span class="label">Follow-up Date</span><span class="value">${formatDate(data.follow_up_date)}</span></div>
     </div>
 

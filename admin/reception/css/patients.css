@@ -275,9 +275,9 @@ body.dark .sort-btn {
 
 /* Buttons */
 .btn {
-  padding: 0.75rem 1.5rem;
+  padding: 0.45rem 1.5rem;
   border: none;
-  border-radius: 0.5rem;
+  /* border-radius: 0.5rem; */
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -584,6 +584,7 @@ body.dark .modal .modal-content {
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   margin-top: 20px;
+  padding: 20px;
 }
 
 .modal label {

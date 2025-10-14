@@ -47,7 +47,7 @@ try {
 
     // Handle Test Status Update
     if (isset($data['test_status'])) {
-        $statusColumn = ($table === 'test_items') ? 'item_status' : 'test_status';
+        $statusColumn = ($table === 'test_items') ? 'test_status' : 'test_status';
         $stmt = $pdo->prepare("UPDATE {$table} SET {$statusColumn} = ? WHERE {$idColumn} = ?");
         $stmt->execute([$data['test_status'], $idValue]);
         log_activity($pdo, $_SESSION['uid'], $_SESSION['username'], $_SESSION['branch_id'], 'UPDATE', $table, $idValue, ['test_status' => 'previous'], ['test_status' => $data['test_status']]);

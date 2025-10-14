@@ -29,7 +29,7 @@ function showToast(message, type = 'success') {
 
 // Modal controls
 const attendanceModal = document.getElementById('attendanceModal');
-const closeModalBtn = attendanceModal.querySelector('.close-modal');
+const closeModalBtn = attendanceModal.querySelector('.close-modal-btn');
 const attendanceCancel = document.getElementById('attendanceCancel');
 const attendanceForm = document.getElementById('attendanceForm');
 
@@ -54,7 +54,7 @@ let currentEffectiveBalance = 0;
 
 function openModalForRow(row) {
     const pid = row.dataset.patientId || row.getAttribute('data-id');
-    const pname = row.querySelector('td:nth-child(2)') ? row.querySelector('td:nth-child(2)').innerText.trim() : '';
+    const pname = row.querySelector('td:nth-child(3)') ? row.querySelector('td:nth-child(3)').innerText.trim() : '';
     const treatmentType = row.dataset.treatmentType || '';
     const costPerDay = parseFloat(row.dataset.costPerDay || 0);
     const effectiveBalance = parseFloat(row.dataset.effectiveBalance || 0);
@@ -89,19 +89,19 @@ function openModalForRow(row) {
 }
 
 function showModal() {
-    attendanceModal.style.display = 'flex';
+    attendanceModal.classList.add('is-visible');
     attendanceModal.setAttribute('aria-hidden', 'false');
 }
 
 function hideModal() {
-    attendanceModal.style.display = 'none';
+    attendanceModal.classList.remove('is-visible');
     attendanceModal.setAttribute('aria-hidden', 'true');
 }
 
 closeModalBtn.addEventListener('click', hideModal);
 attendanceCancel.addEventListener('click', hideModal);
 attendanceModal.addEventListener('click', function (e) {
-    if (e.target === attendanceModal) hideModal();
+    if (e.target.id === 'attendanceModal') hideModal();
 });
 
 // Auto mark function (if enough balance)

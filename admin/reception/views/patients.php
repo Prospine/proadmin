@@ -275,7 +275,7 @@ try {
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -733,11 +733,11 @@ try {
     </div>
 
     <!-- Attendance Modal (only used for daily/advance) -->
-    <div id="attendanceModal" class="modal" aria-hidden="true">
+    <div id="attendanceModal" class="modal-overlay" aria-hidden="true">
         <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
             <div class="modal-header">
                 <h3 id="modalTitle">Mark Attendance</h3>
-                <button class="close-modal" aria-label="Close">&times;</button>
+                <button class="close-modal-btn" aria-label="Close">&times;</button>
             </div>
 
             <form id="attendanceForm">
@@ -760,11 +760,11 @@ try {
 
                 <div>
                     <label for="remarks">Remarks for Attendance</label>
-                    <textarea id="remarks" name="remarks" placeholder="Notes for today's attendance"></textarea>
+                    <textarea id="remarks" name="remarks" placeholder="Notes for today's attendance" style="height: 50px; width: 90%;"></textarea>
                 </div>
 
                 <div style="margin-top:12px; text-align:right;">
-                    <button type="button" class="btn btn-cancel" id="attendanceCancel">Cancel</button>
+                    <button type="button" class="action-btn secondary" id="attendanceCancel">Cancel</button>
                     <button type="submit" class="btn btn-save">Save Attendance</button>
                 </div>
             </form>

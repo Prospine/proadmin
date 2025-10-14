@@ -1312,7 +1312,7 @@ $success = false;
             // Example Usage: You can call these from your browser's console to test
             // To show: toggleSystemUpdate(true)
             // To hide: toggleSystemUpdate(false)
-            window.toggleSystemUpdate = toggleSystemUpdate(true);
+            window.toggleSystemUpdate = toggleSystemUpdate();
 
             // ==========================================================
             // NEW: System Update Banner Control
@@ -1366,7 +1366,7 @@ $success = false;
             // To show pre-update banner: toggleUpdateBanner(true, 1, "System will be down at 10 PM.")
             // To show post-update banner: toggleUpdateBanner(true, 2)
             // To hide: toggleUpdateBanner(false)
-            window.toggleUpdateBanner = toggleUpdateBanner(true, 1, "System is going to be Updated. Please STOP any work for 5 Minutes");
+            window.toggleUpdateBanner = toggleUpdateBanner(true, 2, "System is going to be Updated. Please STOP any work for 5 Minutes");
 
             // ==========================================================
             // 1. Core Utilities: Toast Notifications

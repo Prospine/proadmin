@@ -377,13 +377,6 @@ CREATE TABLE `chat_messages` (
 -- Dumping data for table `chat_messages`
 --
 
-INSERT INTO `chat_messages` (`message_id`, `sender_id`, `receiver_id`, `message_text`, `is_read`, `created_at`) VALUES
-(4, 2, 1, '7t8KSrjnpnG0nNVjB2/vUg==:Q1hCQUZ3ZWVvNFFmY0pDTy9nNUNpUT09', 1, '2025-10-01 10:35:38'),
-(5, 1, 2, 'ZZyrgkTf3jQhNk0X3gGyVQ==:NkZOcTE1NExoekxTZU1qYXE4RFpLQT09', 1, '2025-10-01 19:49:14'),
-(6, 2, 1, 'PgyYOagCUIf1QwDFNShjfQ==:eEwyQWszZWN2RCtWY2F0SFk1VHRsdz09', 1, '2025-10-02 09:35:01'),
-(7, 2, 1, 'Guu+gn1o5mlspiTWeqCRug==:NVpHU0FEUVI3eWwvanJyUmJONlJmQT09', 0, '2025-10-02 17:50:15'),
-(8, 2, 1, 'pN2ydpfA8M/Dd01I/+KYZQ==:ZFhpTkdYTzJFUmhoaUROVTlzWHkrUT09', 1, '2025-10-02 21:28:30'),
-(9, 2, 1, '0bUihKs2I/AZtaa+cvCJ5A==:S0I2eng5U3NONmx2S0hLWDJXS1dHUT09', 0, '2025-10-11 18:34:27');
 
 -- --------------------------------------------------------
 

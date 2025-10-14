@@ -542,7 +542,7 @@ $success = false;
             <i class="fa-solid fa-mobile-screen-button popup-icon"></i>
             <h2>Mobile View Not Supported</h2>
             <p>The admin panel is designed for desktop use. For the best experience on your mobile device, please download our dedicated application.</p>
-            <a href="/proadmin/download-app/index.html" class="mobile-download-btn">
+            <a href="/download-app/index.html" class="mobile-download-btn">
                 <i class="fa-solid fa-download"></i> Download App
             </a>
         </div>
@@ -1312,7 +1312,7 @@ $success = false;
             // Example Usage: You can call these from your browser's console to test
             // To show: toggleSystemUpdate(true)
             // To hide: toggleSystemUpdate(false)
-            window.toggleSystemUpdate = toggleSystemUpdate();
+            window.toggleSystemUpdate = toggleSystemUpdate(true);
 
             // ==========================================================
             // NEW: System Update Banner Control
@@ -1366,7 +1366,7 @@ $success = false;
             // To show pre-update banner: toggleUpdateBanner(true, 1, "System will be down at 10 PM.")
             // To show post-update banner: toggleUpdateBanner(true, 2)
             // To hide: toggleUpdateBanner(false)
-            window.toggleUpdateBanner = toggleUpdateBanner(true, 2, "System is going to be Updated. Please STOP any work for 5 Minutes");
+            window.toggleUpdateBanner = toggleUpdateBanner(true, 1, "System is going to be Updated. Please STOP any work for 5 Minutes");
 
             // ==========================================================
             // 1. Core Utilities: Toast Notifications

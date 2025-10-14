@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchTerm = searchInput.value.toLowerCase();
         const doctorValue = doctorFilter.value.toLowerCase();
         const treatmentValue = treatmentFilter.value.toLowerCase();
-        const serviceValue = serviceTypeFilter.value.toLowerCase(); // NEW
+        const serviceValue = serviceTypeFilter.value.toLowerCase();
         const statusValue = statusFilter.value.toLowerCase();
         const rows = Array.from(tableBody.querySelectorAll('tr'));
         let visibleRows = 0;
@@ -77,23 +77,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const rowText = row.textContent.toLowerCase();
-            const doctorCell = row.querySelector('td:nth-child(5)'); // Corrected: Doctor is in the 5th column
-            const serviceCell = row.querySelector('td:nth-child(7)'); // NEW: Service Type is in the 7th column
-            const treatmentCell = row.querySelector('td:nth-child(8)'); // Corrected: Treatment Type is now in the 8th column
-            const statusCell = row.querySelector('td:nth-child(12) .pill'); // Corrected: Status is now in the 12th column
+            const doctorCell = row.querySelector('td:nth-child(5)');
+            const serviceCell = row.querySelector('td:nth-child(6)');
+            const treatmentCell = row.querySelector('td:nth-child(7)');
+            const statusCell = row.querySelector('td:nth-child(11) .pill');
 
             const rowDoctor = doctorCell ? doctorCell.textContent.trim().toLowerCase() : '';
-            const rowService = serviceCell ? serviceCell.textContent.trim().toLowerCase() : ''; // NEW
+            const rowService = serviceCell ? serviceCell.textContent.trim().toLowerCase().replace(/ /g, '_') : '';
             const rowTreatment = treatmentCell ? treatmentCell.textContent.trim().toLowerCase() : '';
             const rowStatus = statusCell ? statusCell.textContent.trim().toLowerCase() : '';
 
             const matchesSearch = rowText.includes(searchTerm);
             const matchesDoctor = doctorValue ? rowDoctor === doctorValue : true;
             const matchesTreatment = treatmentValue ? rowTreatment === treatmentValue : true;
-            const matchesService = serviceValue ? rowService === serviceValue : true; // NEW
+            const matchesService = serviceValue ? rowService === serviceValue : true;
             const matchesStatus = statusValue ? rowStatus === statusValue : true;
 
-            if (matchesSearch && matchesDoctor && matchesTreatment && matchesService && matchesStatus) {
+            if (matchesSearch && matchesDoctor && matchesTreatment && matchesService && matchesStatus) { // Corrected condition
                 row.style.display = '';
                 visibleRows++;
             } else {

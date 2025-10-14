@@ -36,19 +36,24 @@ body.dark {
 
 /* === Filter & Search Bar === */
 .filter-bar {
-  margin-left: 100px;
+  /* margin-left: 100px; */
   display: flex;
+  /* justify-content: space-between; */
+  /* align-items: center; */
   gap: 1rem;
-  flex-wrap: wrap; /* Allow the entire bar to wrap on small screens */
+  flex-wrap: wrap;
   align-items: center;
   margin-bottom: 1rem;
   padding: 0.5rem 1rem;
   /* background: #f1f1f1; */
   border-radius: 0.75rem;
+  /* border: 1px solid; */
+  /* max-width: 1300px; */
 }
 .search-container {
   flex: 1 1 300px; /* Allow search to grow and shrink, with a base width */
-  min-width: 250px; /* Prevent it from becoming too small */
+  min-width: 350px;
+  max-width: 380px; /* Prevent it from becoming too small */
   position: relative;
 }
 
@@ -70,13 +75,14 @@ body.dark {
 
 .filter-options {
   display: flex;
+
   gap: 0.75rem; /* A bit more space between filters */
-  align-items: center;
-  flex-wrap: wrap; /* Allow filters to wrap on smaller screens */
+  /* align-items: center; */
+  /* flex-wrap: wrap; */
 }
 
 .filter-options select {
-  width: 200px;
+  /* width: 200px; */
   padding: 0.6rem 1rem;
   border-radius: 1rem;
   border: 1px solid #ddd;

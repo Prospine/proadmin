@@ -22,13 +22,20 @@ if (!isset($_SESSION['uid'], $_SESSION['branch_id'], $_SESSION['username'])) {
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-$testId = filter_var($data['test_id'] ?? null, FILTER_VALIDATE_INT);
-$itemId = filter_var($data['item_id'] ?? null, FILTER_VALIDATE_INT);
+$testId = filter_var($data['test_id'] ?? null, FILTER_VALIDATE_INT); // This is the main order ID
+$itemId = filter_var($data['item_id'] ?? null, FILTER_VALIDATE_INT); // This is the specific item ID
 
-if (!$testId) {
+if (!$testId && !$itemId) {
     http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Invalid Test ID.']);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid Test or Item ID.']);
     exit;
+}
+
+// If only item_id is provided, we need to find the parent test_id for logging.
+if ($itemId && !$testId) {
+    $stmtFindTest = $pdo->prepare("SELECT test_id FROM test_items WHERE item_id = ?");
+    $stmtFindTest->execute([$itemId]);
+    $testId = $stmtFindTest->fetchColumn();
 }
 
 $table = $itemId ? 'test_items' : 'tests';
@@ -40,7 +47,8 @@ try {
 
     // Handle Test Status Update
     if (isset($data['test_status'])) {
-        $stmt = $pdo->prepare("UPDATE {$table} SET test_status = ? WHERE {$idColumn} = ?");
+        $statusColumn = ($table === 'test_items') ? 'item_status' : 'test_status';
+        $stmt = $pdo->prepare("UPDATE {$table} SET {$statusColumn} = ? WHERE {$idColumn} = ?");
         $stmt->execute([$data['test_status'], $idValue]);
         log_activity($pdo, $_SESSION['uid'], $_SESSION['username'], $_SESSION['branch_id'], 'UPDATE', $table, $idValue, ['test_status' => 'previous'], ['test_status' => $data['test_status']]);
         $pdo->commit();

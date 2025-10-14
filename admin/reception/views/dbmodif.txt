@@ -58,4 +58,17 @@ CREATE TABLE `test_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 ALTER TABLE `test_items`
-ADD COLUMN `payment_status` ENUM('pending', 'partial', 'paid') NOT NULL DEFAULT 'pending' AFTER `item_status`;
+ADD COLUMN `payment_status` ENUM('pending', 'partial', 'paid') NOT NULL DEFAULT 'pending' AFTER `test_status`;
+
+----------done---------------------
+
+-- Add refund_status to the main tests table
+ALTER TABLE `tests`
+ADD COLUMN `refund_status` ENUM('no', 'initiated', 'completed') NOT NULL DEFAULT 'no' AFTER `payment_status`;
+
+-- Add refund_status to the test_items table
+ALTER TABLE `test_items`
+ADD COLUMN `refund_status` ENUM('no', 'initiated', 'completed') NOT NULL DEFAULT 'no' AFTER `payment_status`;
+
+ALTER TABLE `registration`
+ADD COLUMN `refund_status` ENUM('no', 'initiated', 'completed') NOT NULL DEFAULT 'no' AFTER `status`;

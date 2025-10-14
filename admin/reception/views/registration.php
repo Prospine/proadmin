@@ -76,7 +76,7 @@ try {
         LEFT JOIN
             patient_master AS pm ON reg.master_patient_id = pm.master_patient_id
         WHERE
-            reg.branch_id = :branch_id
+            reg.branch_id = :branch_id AND status != 'closed'
         ORDER BY
             reg.registration_id DESC
     ");
@@ -147,41 +147,54 @@ try {
             width: auto;
         }
 
-        @media screen and (max-width: 1024px) {
-            .filter-bar {
-                margin: 0;
-                display: flex;
-            }
+        .filter-bar {
+            margin: 0;
+            display: flex;
+            margin-left: 40px;
+        }
 
-            #searchInput {
-                width: 500px;
-            }
+        #searchInput {
+            max-width: 500px;
+        }
 
-            .filter-options {
-                display: flex;
-                width: auto;
-            }
+        .filter-options {
+            display: flex;
+            width: auto;
+        }
 
-            .filter-options select {
-                max-width: 80px !important;
-            }
+        .filter-options select {
+            max-width: 140px !important;
+        }
 
-            .sort-btn {
-                margin: 0;
-            }
+        .sort-btn {
+            margin: 0;
+        }
 
-            .drawer {
-                max-height: 80vh;
-            }
+        .drawer {
+            max-height: 80vh;
+        }
 
-            .add-to-patient-drawer {
-                left: 50%;
-                z-index: 99999999999999999;
-            }
+        .add-to-patient-drawer {
+            left: 50%;
+            z-index: 99999999999999999;
+        }
+
+        .drawer {
+            min-height: 98%;
         }
 
         #closeDrawer {
             font-size: 28px;
+        }
+
+        .button-box {
+            margin-top: 10px;
+            margin-right: 20px;
+            margin-left: -150px;
+            height: 70px;
+            align-items: center;
+            text-align: center;
+            /* border: 1px solid; */
         }
     </style>
 </head>
@@ -285,12 +298,15 @@ try {
                             <?php endforeach; ?>
                         </select>
                         <button id="sortDirectionBtn" class="sort-btn" title="Toggle Sort Direction">
-                            <i class="fa-solid fa-sort"></i>
+                            <i class="fa-solid fa-sort"></i>Sort
                         </button>
                         <button class="sort-btn" onclick="window.location.reload();">
                             <i class="fa-solid fa-rotate"></i>&nbsp; <span>Reset</span>
                         </button>
                     </div>
+                </div>
+                <div class="button-box">
+                    <button onclick="window.location.href='cancelledregistrations.php'">Cancelled Registrations</button>
                 </div>
             </div>
 

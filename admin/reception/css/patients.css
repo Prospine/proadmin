@@ -54,6 +54,8 @@ body.dark {
   padding: 0.5rem 1rem;
   /* background: #f1f1f1; */
   border-radius: 0.75rem;
+  /* border: 1px solid; */
+  max-width: 1000px;
 }
 
 .search-container {
@@ -82,7 +84,7 @@ body.dark {
   display: flex;
   gap: 0.75rem;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .filter-options select,

@@ -1,41 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProSpine Admin Portal</title>
+    <link rel="icon" href="reception/image/favicon.png" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-
 <body>
     <header>
         <div class="logo-container">
-            <img src="assets/images/image.png" alt="Pro Physio Logo" class="logo" />
+            <img src="assets/images/image.png" alt="ProSpine Logo" class="logo" />
         </div>
     </header>
 
     <div class="main-container">
-        <h1>Welcome to the ProSpine Staff Portal</h1>
-        <p>This is the central login point for all authorized personnel.</p>
+        <div class="hero-section">
+            <h1>Welcome to the ProSpine Staff Portal</h1>
+            <p>The central hub for managing clinic operations, patient care, and staff collaboration efficiently and securely.</p>
+        </div>
 
         <div class="card-row">
             <!-- Unified Login -->
             <div class="card">
-                <h2>Staff Login</h2>
-                <p>Admin, Doctor, and Reception staff use the same portal. You will be redirected based on your role
-                    after
-                    login.</p>
-                <a href="login.php" class="btn">Proceed to Login</a>
+                <div class="card-icon">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                </div>
+                <div class="card-content">
+                    <h2>Staff Login</h2>
+                    <p>Secure access for all authorized personnel. You will be redirected based on your role.</p>
+                    <a href="login.php" class="btn">Proceed to Login <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
             </div>
         </div>
     </div>
 
     <footer>
         <p>&copy; 2025 ProSpine. All rights reserved.</p>
-        <p>Created by <a href="#">Sumit Srivastava</a></p>
     </footer>
 
 </body>
-
 </html>

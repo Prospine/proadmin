@@ -425,12 +425,17 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="registration_bill.php?registration_id=${safeText(data.registration_id)}"><button id="printBillBtn">Print Bill</button></a>
           </div>
           <div class="drawer-header2">
-            <div>
-              <h2>${safeText(data.patient_name)}</h2>
-              <br>
-              <small>ID: ${safeText(data.registration_id)} • ${safeText(data.created_at)}</small>
+            <div class="drawer-title">
+                <h2 data-field="patient_name">${safeText(data.patient_name)}</h2>
+                <br>
+                <small>ID: ${safeText(data.registration_id)} • ${safeText(data.created_at)}</small>
             </div>
-            <span class="pill status ${safeText((data.status || '').toLowerCase())}">${safeText(data.status)}</span>
+            <div class="drawer-actions">
+                <button id="editRegistrationBtn" class="action-btn" data-id="${safeText(data.registration_id)}">Edit</button>
+                <button id="saveRegistrationBtn" class="action-btn" data-id="${safeText(data.registration_id)}" style="display: none;">Save</button>
+                <button id="cancelEditBtn" class="action-btn secondary" style="display: none;">Cancel</button>
+                <span class="pill status ${safeText((data.status || '').toLowerCase())}">${safeText(data.status)}</span>
+            </div>
           </div>
           <div class="info-grid">
             <div class="info-item"><strong>Phone</strong><span>${safeText(data.phone_number)}</span></div>
@@ -468,6 +473,126 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button id="submitRemarkBtn" data-id="${safeText(data.registration_id)}">Submit</button>
                 </div>
         `;
+
+                // --- NEW: Edit/Save/Cancel Logic ---
+                const originalData = { ...data }; // Store original data for cancellation
+
+                const toggleEditMode = (isEditing) => {
+                    const infoItems = $$('.info-item', drawerBody);
+                    const patientNameH2 = $('h2[data-field="patient_name"]', drawerBody);
+
+                    // Toggle buttons
+                    $('#editRegistrationBtn', drawerBody).style.display = isEditing ? 'none' : 'inline-block';
+                    $('#saveRegistrationBtn', drawerBody).style.display = isEditing ? 'inline-block' : 'none';
+                    $('#cancelEditBtn', drawerBody).style.display = isEditing ? 'inline-block' : 'none';
+
+                    // Toggle patient name
+                    if (isEditing) {
+                        const currentName = patientNameH2.textContent;
+                        patientNameH2.innerHTML = `<input type="text" class="inline-edit" data-field="patient_name" value="${currentName}">`;
+                    } else {
+                        patientNameH2.textContent = originalData.patient_name;
+                    }
+
+                    // Toggle info grid items
+                    infoItems.forEach(item => {
+                        let label = item.querySelector('strong').textContent.toLowerCase().replace(/ /g, '_');
+                        
+                        // --- FIX: Map UI labels to correct database column names ---
+                        const fieldMap = {
+                            'phone': 'phone_number',
+                            'condition': 'chief_complain',
+                            'inquiry_type': 'consultation_type',
+                            'source': 'referralSource',
+                            'referral_by': 'reffered_by',
+                            'consultation': 'consultation_amount',
+                            'payment': 'payment_method'
+                        };
+
+                        if (fieldMap[label]) {
+                            label = fieldMap[label];
+                        }
+
+                        const valueSpan = item.querySelector('span');
+                        if (!valueSpan) return;
+
+                        const currentValue = originalData[label] || '';
+
+                        if (isEditing) {
+                            let inputHtml = `<input type="text" class="inline-edit" data-field="${label}" value="${currentValue}">`;
+                            
+                            // Special case for consultation amount to remove currency symbol
+                            if (label === 'consultation_amount') {
+                                const numericValue = currentValue.replace(/[^0-9.-]+/g, "") || '0';
+                                inputHtml = `<input type="number" class="inline-edit" data-field="${label}" value="${numericValue}">`;
+                            }
+                            if (label === 'gender') {
+                                inputHtml = `
+                                    <select class="inline-edit" data-field="gender">
+                                        <option value="Male" ${currentValue === 'Male' ? 'selected' : ''}>Male</option>
+                                        <option value="Female" ${currentValue === 'Female' ? 'selected' : ''}>Female</option>
+                                        <option value="Other" ${currentValue === 'Other' ? 'selected' : ''}>Other</option>
+                                    </select>`;
+                            } else if (label === 'age') {
+                                inputHtml = `<input type="number" class="inline-edit" data-field="age" value="${currentValue}">`;
+                            } else if (label.includes('date')) {
+                                inputHtml = `<input type="date" class="inline-edit" data-field="${label}" value="${currentValue}">`;
+                            }
+                            valueSpan.innerHTML = inputHtml;
+                        } else {
+                            valueSpan.innerHTML = currentValue || 'N/A';
+                        }
+                    });
+                };
+
+                $('#editRegistrationBtn', drawerBody).addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent the main document click listener from re-firing
+                    toggleEditMode(true);
+                });
+                $('#cancelEditBtn', drawerBody).addEventListener('click', () => toggleEditMode(false));
+
+                $('#saveRegistrationBtn', drawerBody).addEventListener('click', async (e) => {
+                    const button = e.target;
+                    button.disabled = true;
+                    button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+                    const updatedData = {
+                        registration_id: button.dataset.id
+                    };
+
+                    $$('.inline-edit', drawerBody).forEach(input => {
+                        updatedData[input.dataset.field] = input.value;
+                    });
+
+                    try {
+                        const res = await fetch('../api/update_registration_details.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(updatedData)
+                        });
+                        const result = await res.json();
+
+                        if (result.success) {
+                            showToast('Details updated successfully!', 'success');
+                            // Update originalData with new data and exit edit mode
+                            Object.assign(originalData, updatedData);
+                            toggleEditMode(false);
+                            // Manually update the displayed name
+                            $('h2[data-field="patient_name"]', drawerBody).textContent = updatedData.patient_name;
+                            // Optionally, reload the page to reflect table changes
+                            setTimeout(() => window.location.reload(), 1500);
+                        } else {
+                            showToast(result.message || 'Failed to save changes.', 'error');
+                        }
+                    } catch (err) {
+                        console.error('Save error:', err);
+                        showToast('A network error occurred.', 'error');
+                    } finally {
+                        button.disabled = false;
+                        button.textContent = 'Save';
+                    }
+                });
+
 
                 // Attach event handlers inside drawer via delegation
                 // Submit remark

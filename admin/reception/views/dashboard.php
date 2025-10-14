@@ -151,17 +151,18 @@ try {
     // New, more specific queries for today's collections breakdown
     $stmtRegPayments = $pdo->prepare("
         SELECT SUM(consultation_amount) FROM registration 
-        WHERE branch_id = :branch_id AND DATE(created_at) = :today
+        WHERE branch_id = :branch_id AND DATE(created_at) = :today AND status != 'close'
     ");
     $stmtRegPayments->execute(['branch_id' => $branchId, 'today' => $today]);
     $todayRegistrationPaid = (float)$stmtRegPayments->fetchColumn();
 
     $stmtTestPayments = $pdo->prepare("
         SELECT SUM(advance_amount) FROM tests 
-        WHERE branch_id = :branch_id AND DATE(visit_date) = :today
+        WHERE branch_id = :branch_id AND DATE(visit_date) = :today AND test_status != 'cancelled'
     ");
     $stmtTestPayments->execute(['branch_id' => $branchId, 'today' => $today]);
     $todayTestPaid = (float)$stmtTestPayments->fetchColumn();
+
 
     $stmtPatientPayments = $pdo->prepare("
         SELECT SUM(p.amount) 
@@ -183,13 +184,13 @@ try {
     $tests = $pdo->prepare("SELECT total_amount, updated_at 
                             FROM tests 
                             WHERE branch_id = :branch_id 
-                              AND payment_status IN ('paid', 'partial')");
+                              AND payment_status IN ('paid', 'partial') AND test_status != 'cancelled'");
     $tests->execute(['branch_id' => $branchId]);
     $tests = $tests->fetchAll(PDO::FETCH_ASSOC);
 
     $inquiries = $pdo->prepare("SELECT consultation_amount, created_at 
                                 FROM registration 
-                                WHERE branch_id = :branch_id");
+                                WHERE branch_id = :branch_id AND status != 'closed'");
     $inquiries->execute(['branch_id' => $branchId]);
     $inquiries = $inquiries->fetchAll(PDO::FETCH_ASSOC);
 
@@ -349,6 +350,10 @@ $success = false;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php
+    // NEW: Add CSP header to allow Font Awesome
+    header("Content-Security-Policy: style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;");
+    ?>
     <title>Dashboard</title>
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/chat.css">
@@ -523,6 +528,10 @@ $success = false;
         body.dark .event-title {
             color: #111;
         }
+
+        .card-body3{
+            min-height: 70px;
+        }
     </style>
 </head>
 
@@ -543,7 +552,7 @@ $success = false;
         <div class="logo-container">
             <div class="logo">
                 <?php if (!empty($branchDetails['logo_primary_path'])): ?>
-                    <img src="admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
                 <?php else: ?>
                     <div class="logo-placeholder">Primary Logo N/A</div>
                 <?php endif; ?>
@@ -729,7 +738,7 @@ $success = false;
                         </div>
                     </div>
                     <div>
-                        <div class="card-body">
+                        <div class="card-body card-body3">
                             <div class="card-title">Payment Received Today: ₹<?= number_format($todayPaid, 2) ?></div>
                             <div class="card-sub">Total Payment Received: ₹<?= number_format($totalPaid, 2) ?></div>
                         </div>
@@ -1357,7 +1366,7 @@ $success = false;
             // To show pre-update banner: toggleUpdateBanner(true, 1, "System will be down at 10 PM.")
             // To show post-update banner: toggleUpdateBanner(true, 2)
             // To hide: toggleUpdateBanner(false)
-            window.toggleUpdateBanner = toggleUpdateBanner(true, 1, "System is going to be Updated. Please STOP any work for 5 Minutes");
+            window.toggleUpdateBanner = toggleUpdateBanner(true, 2, "System is going to be Updated. Please STOP any work for 5 Minutes");
 
             // ==========================================================
             // 1. Core Utilities: Toast Notifications

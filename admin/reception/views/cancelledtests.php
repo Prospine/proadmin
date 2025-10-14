@@ -34,9 +34,8 @@ try {
     // --- NEW: Fetch distinct values for filters ---
     $filterOptions = [];
     $filterQueries = [
-        'test_names' => "SELECT DISTINCT test_name FROM tests WHERE branch_id = ? ORDER BY test_name",
-        'payment_statuses' => "SELECT DISTINCT payment_status FROM tests WHERE branch_id = ? ORDER BY payment_status",
-        'test_statuses' => "SELECT DISTINCT test_status FROM tests WHERE branch_id = ? ORDER BY test_status",
+        'test_names' => "SELECT DISTINCT test_name FROM tests WHERE branch_id = ? AND test_status = 'cancelled' ORDER BY test_name",
+        'payment_statuses' => "SELECT DISTINCT payment_status FROM tests WHERE branch_id = ? AND test_status = 'cancelled' ORDER BY payment_status",
     ];
 
     foreach ($filterQueries as $key => $query) {
@@ -45,16 +44,41 @@ try {
         $filterOptions[$key] = $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    // Fetch all tests for the branch
+    // Fetch all cancelled tests from both `tests` and `test_items` tables
     $stmt = $pdo->prepare("
-    SELECT 
-        t.*,
-        t.test_uid -- Fetch the new UID
-    FROM tests t
-    WHERE t.branch_id = :branch_id AND t.test_status != 'cancelled'
-    ORDER BY t.created_at DESC
-");
-    $stmt->execute([':branch_id' => $branchId]);
+        (SELECT
+            test_id AS id,
+            'main' AS type,
+            test_uid,
+            patient_name,
+            test_name,
+            advance_amount,
+            due_amount,
+            payment_status,
+            test_status,
+            refund_status,
+            created_at
+        FROM tests
+        WHERE branch_id = :branch_id1 AND test_status = 'cancelled')
+        UNION ALL
+        (SELECT
+            ti.item_id AS id,
+            'item' AS type,
+            t.test_uid,
+            t.patient_name,
+            ti.test_name,
+            ti.advance_amount,
+            ti.due_amount,
+            ti.payment_status,
+            ti.test_status AS test_status,
+            ti.refund_status,
+            ti.created_at
+        FROM test_items ti
+        JOIN tests t ON ti.test_id = t.test_id
+        WHERE t.branch_id = :branch_id2 AND ti.test_status = 'cancelled')
+        ORDER BY created_at
+    ");
+    $stmt->execute([':branch_id1' => $branchId, ':branch_id2' => $branchId]);
     $tests = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
@@ -74,7 +98,7 @@ try {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tests</title>
+    <title>Cancelled Tests</title>
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/dark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -231,9 +255,20 @@ try {
         }
 
         .button-box {
+            margin: 0;
+            height: 70px;
+            align-items: center;
+            text-align: center;
+        }
+
+        .form-group textarea {
+            height: 50px;
+        }
+
+        .button-box {
             margin-top: 10px;
             margin-right: 20px;
-            margin-left: -170px;
+            /* margin-left: -170px; */
             height: 70px;
             align-items: center;
             text-align: center;
@@ -302,40 +337,11 @@ try {
     <main class="main">
         <div class="dashboard-container">
             <div class="top-bar">
-                <h2>Tests Overview</h2>
+                <h2>Cancelled Tests Overview</h2>
 
                 <!-- NEW: Filter and Search Bar -->
-                <div class="filter-bar">
-                    <div class="search-container">
-                        <i class="fa-solid fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search by Patient Name, Test Name...">
-                    </div>
-                    <div class="filter-options">
-                        <select id="testNameFilter">
-                            <option value="">All Tests</option>
-                            <?php foreach ($filterOptions['test_names'] as $option): ?>
-                                <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars(strtoupper($option)) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <select id="paymentStatusFilter">
-                            <option value="">All Payment Statuses</option>
-                            <?php foreach ($filterOptions['payment_statuses'] as $option): ?>
-                                <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars(ucfirst($option)) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <select id="testStatusFilter">
-                            <option value="">All Test Statuses</option>
-                            <?php foreach ($filterOptions['test_statuses'] as $option): ?>
-                                <option value="<?= htmlspecialchars($option) ?>"><?= htmlspecialchars(ucfirst($option)) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <button id="sortDirectionBtn" class="sort-btn" title="Toggle Sort Direction">
-                            <i class="fa-solid fa-sort"></i>
-                        </button>
-                    </div>
-                </div>
                 <div class="button-box">
-                    <button onclick="window.location.href='cancelledtests.php'">Cancelled Test</button>
+                    <button onclick="window.location.href='tests.php'">Active Tests</button>
                 </div>
             </div>
 
@@ -346,7 +352,7 @@ try {
                     <thead>
                         <tr>
                             <th data-key="id" class="sortable">Test UID</th>
-                            <th data-key="name" class="sortable">Name</th>
+                            <th data-key="name" class="sortable">Patient Name</th>
                             <th data-key="test_name" class="sortable">Test Name</th>
                             <th data-key="due" class="sortable numeric">Paid Amount</th>
                             <th data-key="due" class="sortable numeric">Due Amount</th>
@@ -358,10 +364,10 @@ try {
                     <tbody id="testsTableBody">
                         <?php foreach ($tests as $row): ?>
                             <tr>
-                                <td data-label="Test UID"><?= htmlspecialchars($row['test_uid'] ?: (string)$row['test_id']) ?></td>
+                                <td data-label="Test UID"><?= htmlspecialchars($row['test_uid'] ?: 'N/A') ?></td>
                                 <td data-label="Name"><?= htmlspecialchars($row['patient_name']) ?></td>
                                 <td data-label="Test Name"><?= htmlspecialchars(strtoupper(str_replace('_', ' ', (string) $row['test_name']))) ?></td>
-                                <td data-label="Due Amount">₹<?= number_format((float)$row['advance_amount'], 2) ?></td>
+                                <td data-label="Paid Amount">₹<?= number_format((float)$row['advance_amount'], 2) ?></td>
                                 <td data-label="Due Amount">₹<?= number_format((float)$row['due_amount'], 2) ?></td>
                                 <td data-label="Payment Status">
                                     <span class="pill <?php echo strtolower($row['payment_status']); ?>">
@@ -369,12 +375,20 @@ try {
                                     </span>
                                 </td>
                                 <td data-label="Test Status">
-                                    <span class="pill <?php echo strtolower($row['test_status']); ?>">
-                                        <?php echo ucfirst($row['test_status']); ?>
-                                    </span>
+                                    <select class="status-select" data-id="<?= (int)$row['id'] ?>" data-type="<?= htmlspecialchars($row['type']) ?>" <?php if ($row['refund_status'] !== 'no') echo 'disabled title="Cannot change status after refund is initiated."'; ?>>
+                                        <option value="cancelled" selected>Cancelled</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="completed">Completed</option>
+                                    </select>
                                 </td>
                                 <td data-label="Actions">
-                                    <button class="action-btn open-drawer" data-id="<?= (int)$row['test_id'] ?>">View</button>
+                                    <?php if ($row['refund_status'] === 'no' && (float)$row['advance_amount'] > 0): ?>
+                                        <button class="action-btn refund-btn" data-id="<?= (int)$row['id'] ?>" data-type="<?= htmlspecialchars($row['type']) ?>" data-paid="<?= (float)$row['advance_amount'] ?>">Refund</button>
+                                    <?php elseif ($row['refund_status'] === 'initiated'): ?>
+                                        <span class="pill cancelled">Refunded</span>
+                                    <?php else: ?>
+                                        <button class="action-btn" disabled title="Refund already processed or no payment was made."><?= ucfirst($row['refund_status']) ?></button>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -387,98 +401,33 @@ try {
     <!-- Toast Container -->
     <div id="toast-container"></div>
 
-
-    <div id="test-drawer" class="drawer">
-        <div class="drawer-header">
-            <h3>Test Details</h3>
-            <button class="close-drawer">&times;</button>
-        </div>
-        <div class="drawer-content">
-            <!-- Dynamic content goes here -->
-        </div>
-    </div>
-
-    <!-- NEW: Add Test Item Modal -->
-    <div id="add-test-item-modal" class="modal-overlay">
+    <!-- NEW: Refund Modal -->
+    <div id="refund-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Add New Test Item</h3>
+                <h3>Initiate Refund</h3>
                 <button class="close-modal-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="addTestItemForm">
-                    <input type="hidden" name="test_id" id="item_test_id"> <!-- This links to the main test order -->
+                <form id="refundForm">
+                    <input type="hidden" name="id" id="refund_id">
+                    <input type="hidden" name="type" id="refund_type">
+
                     <div class="form-grid-condensed">
                         <div class="form-group">
-                            <label>Test Name *</label>
-                            <select name="test_name" required>
-                                <option value="">Select Test</option>
-                                <option value="eeg">EEG</option>
-                                <option value="ncv">NCV</option>
-                                <option value="emg">EMG</option>
-                                <option value="rns">RNS</option>
-                                <option value="bera">BERA</option>
-                                <option value="vep">VEP</option>
-                                <option value="other">Other</option>
-                            </select>
+                            <label>Amount Paid</label>
+                            <input type="text" id="refund_paid_amount" readonly style="background: var(--bg-tertiary);">
                         </div>
                         <div class="form-group">
-                            <label>Limb</label>
-                            <select name="limb">
-                                <option value="">Select Limb</option>
-                                <option value="upper_limb">Upper Limb</option>
-                                <option value="lower_limb">Lower Limb</option>
-                                <option value="both">Both Limbs</option>
-                                <option value="none">None</option>
-                            </select>
+                            <label>Refund Amount *</label>
+                            <input type="number" name="refund_amount" id="refund_amount_input" step="0.01" required>
                         </div>
-                        <div class="form-group">
-                            <label>Assigned Test Date *</label>
-                            <input type="date" name="assigned_test_date" value="<?= date('Y-m-d') ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Test Done By *</label>
-                            <select name="test_done_by" required>
-                                <option value="">Select Staff</option>
-                                <option value="achal">Achal</option>
-                                <option value="ashish">Ashish</option>
-                                <option value="pancham">Pancham</option>
-                                <option value="sayan">Sayan</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Referred By</label>
-                            <input type="text" name="referred_by" placeholder="Dr. Name">
-                        </div>
-                        <div class="form-group">
-                            <label>Total Amount *</label>
-                            <input type="number" name="total_amount" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Discount</label>
-                            <input type="number" name="discount" step="0.01" value="0">
-                        </div>
-                        <div class="form-group">
-                            <label>Advance Amount</label>
-                            <input type="number" name="advance_amount" step="0.01" value="0">
-                        </div>
-                        <div class="form-group">
-                            <label>Due Amount</label>
-                            <input type="number" name="due_amount" step="0.01" value="0" readonly style="background: var(--bg-tertiary);">
-                        </div>
-                        <div class="form-group">
-                            <label>Payment Method *</label>
-                            <select name="payment_method" required>
-                                <option value="cash">Cash</option>
-                                <option value="upi-boi">UPI-BOI</option>
-                                <option value="upi-hdfc">UPI-HDFC</option>
-                                <option value="card">Card</option>
-                                <option value="cheque">Cheque</option>
-                                <option value="other">Other</option>
-                            </select>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Reason for Refund</label>
+                            <textarea name="refund_reason" rows="3" cols="3"></textarea>
                         </div>
                     </div>
-                    <div class="form-actions"><button type="submit" class="action-btn">Save Test Item</button></div>
+                    <div class="form-actions"><button type="submit" class="action-btn">Initiate Refund</button></div>
                 </form>
             </div>
         </div>
@@ -486,7 +435,7 @@ try {
 
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
-    <script src="../js/test.js"></script>
+    <script src="../js/refund.js"></script>
     <script src="../js/nav_toggle.js"></script>
 
 </body>

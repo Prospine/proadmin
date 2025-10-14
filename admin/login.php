@@ -22,7 +22,7 @@ session_start();
 header("X-Frame-Options: DENY");
 header("X-Content-Type-Options: nosniff");
 header("Referrer-Policy: no-referrer");
-header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;");
+header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data:;");
 
 // CSRF helpers
 function csrf_token(): string
@@ -53,7 +53,7 @@ function role_redirect(string $role): never
             header('Location: /admin/superadmin/dashboard.php');
             exit;
         case 'admin':
-            header('Location: /admin/admin/dashboard.php');
+            header('Location: admin/index.html');
             exit;
         case 'doctor':
             header('Location: /admin/doctor/dashboard.php');
@@ -208,6 +208,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ProSpine Login</title>
+    <?php
+    // NEW: Add CSP header to allow Font Awesome
+    header("Content-Security-Policy: style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;");
+    ?>
     <link rel="stylesheet" href="assets/css/login.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>

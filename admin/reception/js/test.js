@@ -168,6 +168,19 @@ function createInfoItem(label, value) {
 document.querySelectorAll('.open-drawer').forEach(btn => {
     btn.addEventListener('click', () => {
         const testId = btn.dataset.id;
+
+        // --- NEW: Add Edit/Save/Cancel buttons to the main drawer header ---
+        const drawerHeader = drawer.querySelector('.drawer-header');
+        let actionsContainer = drawerHeader.querySelector('.drawer-header-actions');
+        if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'drawer-header-actions';
+            drawerHeader.appendChild(actionsContainer);
+        }
+        actionsContainer.innerHTML = `<button class="action-btn edit-test-btn">Edit</button>
+                                  <button class="action-btn save-test-btn" style="display:none;">Save</button>
+                                  <button class="action-btn secondary cancel-test-btn" style="display:none;">Cancel</button>`;
+
         fetch(`../api/fetch_test.php?id=${testId}`)
             .then(res => res.json())
             .then(data => {
@@ -185,7 +198,7 @@ document.querySelectorAll('.open-drawer').forEach(btn => {
                 patientCard.appendChild(patientGrid);
                 drawerContent.appendChild(patientCard);
 
-                // --- NEW: Function to create a detailed card for a single test item ---
+                // --- Function to create a detailed card for a single test item ---
                 const createTestItemCard = (itemData, title) => {
                     const card = document.createElement('div');
                     card.className = 'drawer-card';
@@ -199,7 +212,7 @@ document.querySelectorAll('.open-drawer').forEach(btn => {
                     const testGrid = document.createElement('div');
                     testGrid.className = 'info-grid';
                     ['test_name', 'limb', 'referred_by', 'test_done_by', 'assigned_test_date'].forEach(key => {
-                        let value = itemData[key] || 'N/A';
+                        let value = (itemData[key] !== null && itemData[key] !== undefined) ? itemData[key] : 'N/A';
                         if (key === 'test_name') value = value.toUpperCase();
                         testGrid.appendChild(createInfoItem(key.replace(/_/g, ' '), value));
                     });
@@ -295,6 +308,116 @@ document.querySelectorAll('.open-drawer').forEach(btn => {
                 const originalTestCard = createTestItemCard(data, 'Original Test Details');
                 drawerContent.appendChild(originalTestCard);
 
+                // --- NEW: Edit/Save/Cancel Logic for the main test card ---
+                const editBtn = drawer.querySelector('.edit-test-btn');
+                const saveBtn = drawer.querySelector('.save-test-btn');
+                const cancelBtn = drawer.querySelector('.cancel-test-btn');
+                const originalDataStore = { ...data };
+
+                const toggleEditMode = (isEditing) => {
+                    const editableCards = [patientCard, originalTestCard]; // Both cards are now editable
+                    
+                    editBtn.style.display = isEditing ? 'none' : 'inline-block';
+                    saveBtn.style.display = isEditing ? 'inline-block' : 'none';
+                    cancelBtn.style.display = isEditing ? 'inline-block' : 'none';
+
+                    editableCards.forEach(card => {
+                        card.querySelectorAll('.info-grid .info-item').forEach(item => {
+                            const labelEl = item.querySelector('.label');
+                            if (!labelEl) return;
+
+                            const key = labelEl.textContent.toLowerCase().replace(/ /g, '_');
+                            const valueSpan = item.querySelector('.value');
+                            if (!valueSpan) return;
+
+                            const currentValue = originalDataStore[key] || '';
+                            const isFinancial = ['total_amount', 'advance_amount', 'discount'].includes(key);
+
+                            if (isEditing) {
+                                let inputHtml = `<input type="text" class="inline-edit" data-field="${key}" value="${currentValue}">`;
+                                if (isFinancial) {
+                                    inputHtml = `<input type="number" class="inline-edit financial-input" data-field="${key}" value="${parseFloat(currentValue) || 0}">`;
+                                } else if (key.includes('date') || key === 'dob') {
+                                    inputHtml = `<input type="date" class="inline-edit" data-field="${key}" value="${currentValue}">`;
+                                } else if (key === 'age') {
+                                    inputHtml = `<input type="number" class="inline-edit" data-field="${key}" value="${currentValue}">`;
+                                }
+                                valueSpan.innerHTML = inputHtml;
+                            } else {
+                                // Revert to original text
+                                let displayValue = originalDataStore[key] || 'N/A';
+                                if (key === 'test_name') displayValue = displayValue.toUpperCase();
+                                if (key.includes('amount') || key.includes('discount')) {
+                                    displayValue = `₹${parseFloat(displayValue).toFixed(2)}`;
+                                }
+                                valueSpan.textContent = displayValue;
+                            }
+                        });
+                    });
+
+                    // Add live calculation for financial fields
+                    if (isEditing) {
+                        const dueAmountValueSpan = originalTestCard.querySelector('.info-item .value');
+                        const financialInputs = originalTestCard.querySelectorAll('.financial-input');
+                        
+                        const calculateDue = () => {
+                            const total = parseFloat(originalTestCard.querySelector('[data-field="total_amount"]').value) || 0;
+                            const advance = parseFloat(originalTestCard.querySelector('[data-field="advance_amount"]').value) || 0;
+                            const discount = parseFloat(originalTestCard.querySelector('[data-field="discount"]').value) || 0;
+                            const due = total - discount - advance;
+                            const dueValueSpan = Array.from(originalTestCard.querySelectorAll('.info-item')).find(item => item.textContent.includes('due_amount'))?.querySelector('.value');
+                            if (dueValueSpan) {
+                                dueValueSpan.textContent = `₹${Math.max(0, due).toFixed(2)}`;
+                            }
+                        };
+
+                        financialInputs.forEach(input => input.addEventListener('input', calculateDue));
+                    }
+                };
+
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleEditMode(true);
+                });
+
+                cancelBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleEditMode(false);
+                });
+
+                saveBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+                    const updatedData = { test_id: data.test_id };
+                    drawerContent.querySelectorAll('.inline-edit').forEach(input => {
+                        updatedData[input.dataset.field] = input.value;
+                    });
+
+                    try {
+                        const res = await fetch('../api/update_test_details.php', { // This API needs to be updated
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(updatedData)
+                        });
+                        const result = await res.json();
+
+                        if (result.success) {
+                            showToast('Test details updated successfully!', 'success');
+                            // To see the changes, we reload the page.
+                            setTimeout(() => window.location.reload(), 1500);
+                        } else {
+                            showToast(result.message || 'Failed to save changes.', 'error');
+                        }
+                    } catch (err) {
+                        console.error('Save error:', err);
+                        showToast('A network error occurred. Check console.', 'error');
+                    } finally {
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = 'Save';
+                    }
+                });
 
                 // --- Render Additional Test Item Cards ---
                 if (data.test_items && Array.isArray(data.test_items) && data.test_items.length > 0) {

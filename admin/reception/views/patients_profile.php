@@ -253,7 +253,7 @@ function errorPage(string $title, string $message): string
 
                         <div id="profile-photo-wrapper" class="profile-photo-container">
                             <?php if (! empty($patient['patient_photo_path'])): ?>
-                                <img id="patient-profile-photo" src="/proadmin/admin/<?php echo htmlspecialchars($patient['patient_photo_path']) ?>?v=<?php echo time() ?>" alt="Patient Photo" class="w-48 h-48 rounded-full object-cover">
+                                <img id="patient-profile-photo" src="/admin/<?php echo htmlspecialchars($patient['patient_photo_path']) ?>?v=<?php echo time() ?>" alt="Patient Photo" class="w-48 h-48 rounded-full object-cover">
                                 <div id="patient-initials-placeholder" class="hidden"></div>
                             <?php else: ?>
                                 <img id="patient-profile-photo" src="" alt="Patient Photo" class="w-48 h-48 rounded-full object-cover hidden">

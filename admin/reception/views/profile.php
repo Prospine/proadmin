@@ -355,7 +355,7 @@ $branchDetails['logo_primary_path'] = $userDetails['logo_primary_path'] ?? null;
                 <div class="profile-avatar-container" onclick="document.getElementById('photo-upload-input').click();" title="Change Profile Photo">
                     <div class="profile-avatar-large">
                         <?php if ($photoPath): ?>
-                            <img src="/proadmin/admin/<?= htmlspecialchars($photoPath) ?>?v=<?= time() ?>" alt="Profile Photo">
+                            <img src="/admin/<?= htmlspecialchars($photoPath) ?>?v=<?= time() ?>" alt="Profile Photo">
                         <?php else: ?>
                             <?= htmlspecialchars($displayInitial) ?>
                         <?php endif; ?>

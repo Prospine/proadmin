@@ -339,7 +339,7 @@ try {
                                     <td data-label="Photo">
                                         <div class="photo-cell" data-registration-id="<?= htmlspecialchars((string)$row['registration_id']) ?>" title="Click to capture/update photo">
                                             <?php if (!empty($row['patient_photo_path'])): ?>
-                                                <img src="/proadmin/admin/<?= htmlspecialchars($row['patient_photo_path']) ?>?v=<?= time() ?>" alt="Photo" class="table-photo">
+                                                <img src="/admin/<?= htmlspecialchars($row['patient_photo_path']) ?>?v=<?= time() ?>" alt="Photo" class="table-photo">
                                             <?php else: ?>
                                                 <div class="table-initials"><?= $initial ?></div>
                                             <?php endif; ?>

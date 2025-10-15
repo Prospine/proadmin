@@ -16,9 +16,12 @@ require_once '../../common/db.php';
 
 try {
     // Fetch all users EXCEPT superadmins, and their branch names
+    // LEFT JOIN with employees table to get personal details
     $stmt = $pdo->query("
-        SELECT u.id, u.username, u.email, u.role, u.is_active, u.branch_id, b.branch_name
+        SELECT u.id, u.username, u.email, u.role, u.is_active, u.branch_id, b.branch_name,
+               e.employee_id, e.first_name, e.last_name
         FROM users u
+        LEFT JOIN employees e ON u.id = e.user_id
         LEFT JOIN branches b ON u.branch_id = b.branch_id
         WHERE u.role != 'superadmin'
         ORDER BY u.id
@@ -27,6 +30,9 @@ try {
 
     // Fetch all branches for the dropdown in the edit modal
     $branches = $pdo->query("SELECT branch_id, branch_name FROM branches ORDER BY branch_name")->fetchAll(PDO::FETCH_ASSOC);
+
+    // Fetch all unassigned employees for the dropdown
+    $unassignedEmployees = $pdo->query("SELECT employee_id, first_name, last_name FROM employees WHERE user_id IS NULL ORDER BY first_name, last_name")->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     die("Error fetching user data: " . $e->getMessage());
 }
@@ -477,6 +483,7 @@ try {
             <div class="nav-links">
                 <a href="dashboard.php">Dashboard</a>
                 <a href="manage_users.php" class="active">Manage Users</a>
+                <a href="manage_employees.php">Manage Employees</a>
             </div>
         </nav>
         <div class="nav-actions">
@@ -505,9 +512,14 @@ try {
     <main class="main">
         <div class="top-bar">
             <h2>User Management</h2>
-            <button id="create-user-btn" class="action-btn">
-                <i class="fa-solid fa-plus"></i> Create New User
-            </button>
+            <div>
+                <button id="create-employee-btn" class="action-btn secondary" style="margin-right: 10px;">
+                    <i class="fa-solid fa-user-tie"></i> Create New Employee
+                </button>
+                <button id="create-user-btn" class="action-btn">
+                    <i class="fa-solid fa-user-plus"></i> Create New User
+                </button>
+            </div>
         </div>
 
         <div class="table-container modern-table">
@@ -515,8 +527,8 @@ try {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Username</th>
-                        <th>Email</th>
+                        <th>Employee Name</th>
+                        <th>Login/Username</th>
                         <th>Role</th>
                         <th>Branch</th>
                         <th>Status</th>
@@ -527,8 +539,14 @@ try {
                     <?php foreach ($users as $user) : ?>
                         <tr>
                             <td><?= htmlspecialchars((string)$user['id']) ?></td>
+                            <td>
+                                <?php if ($user['first_name']): ?>
+                                    <?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?>
+                                <?php else: ?>
+                                    <span style="color: #9ca3af;">Not Linked</span>
+                                <?php endif; ?>
+                            </td>
                             <td><?= htmlspecialchars($user['username']) ?></td>
-                            <td><?= htmlspecialchars($user['email'] ?? 'N/A') ?></td>
                             <td><?= htmlspecialchars(ucfirst($user['role'])) ?></td>
                             <td><?= htmlspecialchars($user['branch_name'] ?? 'N/A') ?></td>
                             <td>
@@ -563,10 +581,6 @@ try {
                             <input type="text" id="username" name="username" required>
                         </div>
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email">
-                        </div>
-                        <div class="form-group">
                             <label for="role">Role</label>
                             <select id="role" name="role" required>
                                 <option value="reception">Reception</option>
@@ -575,6 +589,10 @@ try {
                                 <option value="admin">Admin</option>
                                 
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email">
                         </div>
                         <div class="form-group">
                             <label for="branch_id">Branch</label>
@@ -590,6 +608,20 @@ try {
                             <select id="is_active" name="is_active" required>
                                 <option value="1">Active</option>
                                 <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="employee_id">Link to Employee Profile</label>
+                            <select id="employee_id" name="employee_id">
+                                <option value="">-- Do not link --</option>
+                                <!-- Current employee will be added here by JS -->
+                                <optgroup label="Unassigned Employees">
+                                    <?php foreach ($unassignedEmployees as $employee) : ?>
+                                        <option value="<?= $employee['employee_id'] ?>">
+                                            <?= htmlspecialchars($employee['first_name'] . ' ' . $employee['last_name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </optgroup>
                             </select>
                         </div>
                     </div>
@@ -648,15 +680,15 @@ try {
                             <input type="text" id="create_username" name="username" required>
                         </div>
                         <div class="form-group">
-                            <label for="create_email">Email</label>
-                            <input type="email" id="create_email" name="email">
-                        </div>
-                        <div class="form-group full-width">
                             <label for="create_password">Password</label>
                             <div class="password-input-container">
                                 <input type="password" id="create_password" name="password" required minlength="8">
                                 <i class="fa-solid fa-eye toggle-password-btn"></i>
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="create_email">Email</label>
+                            <input type="email" id="create_email" name="email">
                         </div>
                         <div class="form-group">
                             <label for="create_role">Role</label>
@@ -687,6 +719,45 @@ try {
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="action-btn">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Employee Modal -->
+    <div id="create-employee-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Employee</h3>
+                <button class="close-modal-btn">&times;</button>
+            </div>
+            <form id="createEmployeeForm">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="emp_first_name">First Name</label>
+                            <input type="text" id="emp_first_name" name="first_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="emp_last_name">Last Name</label>
+                            <input type="text" id="emp_last_name" name="last_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="emp_phone_number">Phone Number</label>
+                            <input type="tel" id="emp_phone_number" name="phone_number">
+                        </div>
+                        <div class="form-group">
+                            <label for="emp_date_of_joining">Date of Joining</label>
+                            <input type="date" id="emp_date_of_joining" name="date_of_joining" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="emp_address">Address</label>
+                            <input type="text" id="emp_address" name="address">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="action-btn">Create Employee</button>
                 </div>
             </form>
         </div>

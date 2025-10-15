@@ -308,7 +308,7 @@ try {
                 <i id="theme-icon" class="fa-solid fa-moon"></i>
             </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
-            <div class="profile" onclick="openForm()">S</div>
+            <div class="profile" onclick="openForm()">R</div>
         </div>
 
         <div class="hamburger-menu" id="hamburger-menu">
@@ -316,12 +316,12 @@ try {
         </div>
     </header>
 
-    <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
+    <div class="menu" id="myMenu">
         <div class="popup">
+            <span class="closebtn" onclick="closeForm()">&times;</span>
             <ul>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="logout.php">Logout</a></li>
+                <li><a href="profile.php"><i class="fa-solid fa-user-circle"></i> Profile</a></li>
+                <li class="logout"><a href="logout.php"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
     </div>

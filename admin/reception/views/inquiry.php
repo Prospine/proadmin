@@ -165,7 +165,7 @@ ORDER BY created_at DESC
             <div class="icon-btn" title="Settings"><?php echo $branchName; ?> Branch</div>
             <div class="icon-btn" id="theme-toggle"><i id="theme-icon" class="fa-solid fa-moon"></i></div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
-            <div class="profile" onclick="openForm()">S</div>
+            <div class="profile" onclick="openForm()">R</div>
         </div>
         <!-- Hamburger Menu Icon (for mobile) -->
         <div class="hamburger-menu" id="hamburger-menu">
@@ -176,8 +176,7 @@ ORDER BY created_at DESC
         <div class="popup">
             <span class="closebtn" onclick="closeForm()">&times;</span>
             <ul>
-                <li><a href="#"><i class="fa-solid fa-user-circle"></i> Profile</a></li>
-                <li><a href="#"><i class="fa-solid fa-cog"></i> Settings</a></li>
+                <li><a href="profile.php"><i class="fa-solid fa-user-circle"></i> Profile</a></li>
                 <li class="logout"><a href="logout.php"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
@@ -187,9 +186,6 @@ ORDER BY created_at DESC
         <div class="popup">
             <ul>
                 <li><a href="changelog.html" class="active2">View Changes (1) </a></li>
-                <li><a href="#">You have 3 new appointments.</a></li>
-                <li><a href="#">Dr. Smith is available for consultation.</a></li>
-                <li><a href="#">New patient registered: John Doe.</a></li>
             </ul>
         </div>
     </div>

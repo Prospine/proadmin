@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtCheck = $pdo->prepare("SELECT 1 FROM expenses WHERE branch_id = ? AND voucher_no = ?");
             $stmtCheck->execute([$branchId, $voucher_no]);
             if ($stmtCheck->fetch()) {
-            $errors[] = "Voucher No. '{$voucher_no}' already exists for this branch. Please use a unique number.";
+                $errors[] = "Voucher No. '{$voucher_no}' already exists for this branch. Please use a unique number.";
             }
         }
 
@@ -267,7 +267,7 @@ unset($_SESSION['errors'], $_SESSION['success']);
 
         /* form{
             } */
-        
+
         .date-picker-form {
             /* margin: 4px; */
             padding: 4px;
@@ -289,7 +289,7 @@ unset($_SESSION['errors'], $_SESSION['success']);
             font-size: 0.9rem;
         }
 
-        button{
+        button {
             margin: 4px;
         }
 
@@ -329,15 +329,15 @@ unset($_SESSION['errors'], $_SESSION['success']);
                 <i id="theme-icon" class="fa-solid fa-moon"></i>
             </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
-            <div class="profile" onclick="openForm()">S</div>
+            <div class="profile" onclick="openForm()">R</div>
         </div>
     </header>
-    <div class="menu" id="myMenu"><span class="closebtn" onclick="closeForm()">&times;</span>
+    <div class="menu" id="myMenu">
         <div class="popup">
+            <span class="closebtn" onclick="closeForm()">&times;</span>
             <ul>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="logout.php">Logout</a></li>
+                <li><a href="profile.php"><i class="fa-solid fa-user-circle"></i> Profile</a></li>
+                <li class="logout"><a href="logout.php"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
     </div>
@@ -345,9 +345,6 @@ unset($_SESSION['errors'], $_SESSION['success']);
         <div class="popup">
             <ul>
                 <li><a href="changelog.html" class="active2">View Changes (1) </a></li>
-                <li><a href="#">You have 3 new appointments.</a></li>
-                <li><a href="#">Dr. Smith is available for consultation.</a></li>
-                <li><a href="#">New patient registered: John Doe.</a></li>
             </ul>
         </div>
     </div>
@@ -443,7 +440,7 @@ unset($_SESSION['errors'], $_SESSION['success']);
                             ₹<?= number_format($remainingBudget, 2) ?>
                         </span>
                     </p>
-                    
+
                     <div class="filter-bar">
                         <!-- The search and filter inputs have been removed. Only the date picker remains. -->
                         <form method="GET" action="" class="date-picker-form">
@@ -455,7 +452,7 @@ unset($_SESSION['errors'], $_SESSION['success']);
                             </a>
                         </form>
                     </div>
-                    
+
                     <button id="add-expense-btn" class="action-btn"><i class="fa fa-plus"></i> Add New Expense</button>
                 </div>
             </div>
@@ -500,9 +497,9 @@ unset($_SESSION['errors'], $_SESSION['success']);
                                     <!-- NEW: Action Buttons -->
                                     <td>
                                         <?php $isUploaded = !empty($expense['bill_image_path']); ?>
-                                        <button 
-                                            class="action-btn upload-btn" 
-                                            data-expense-id="<?= $expense['expense_id'] ?>" 
+                                        <button
+                                            class="action-btn upload-btn"
+                                            data-expense-id="<?= $expense['expense_id'] ?>"
                                             <?= $isUploaded ? 'disabled title="A bill has already been uploaded."' : '' ?>>
                                             <i class="fa <?= $isUploaded ? 'fa-check' : 'fa-upload' ?>"></i> <?= $isUploaded ? 'Uploaded' : 'Upload' ?>
                                         </button>

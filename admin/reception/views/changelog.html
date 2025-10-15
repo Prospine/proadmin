@@ -222,6 +222,33 @@
       </div>
 
       <div class="log-entry">
+        <h2>v2.2.9 <span class="badge live">Feature &amp; UX</span></h2>
+        <div class="meta">
+          October 15, 2025 · Directional Page Transitions, UI/UX Improvements
+        </div>
+        <ul class="changes">
+          <li><span class="tag added">Added</span> <strong>Directional Page Transitions:</strong>
+            <ul>
+              <li>Implemented a new, app-like page transition system that slides pages in from the right or left based on the user's navigation direction in the main menu.</li>
+              <li>Navigating forward (e.g., Dashboard → Inquiry) slides the new page in from the right.</li>
+              <li>Navigating backward (e.g., Inquiry → Dashboard) slides the new page in from the left.</li>
+            </ul>
+          </li>
+          <li><span class="tag added">Added</span> <strong>New Transition Logic:</strong>
+            <ul>
+              <li>Created <code>page_transition.js</code> to track navigation history using <code>sessionStorage</code> and apply the correct animation class.</li>
+              <li>Created <code>page_transition.css</code> with new `slideInFromLeft` and `slideInFromRight` animations.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Page Structure for Animations:</strong>
+            <ul>
+              <li>Wrapped the content of all views in a <code>.page-wrapper</code> div. This was a critical fix to ensure the slide animations are visible and not clipped by the browser's default overflow settings.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="log-entry">
         <h2>v2.2.8 <span class="badge live">Feature Release</span></h2>
         <div class="meta">
           October 14, 2025 · Advanced Schedule & Slot Management, UI/UX Improvements

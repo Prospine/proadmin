@@ -72,3 +72,26 @@ ADD COLUMN `refund_status` ENUM('no', 'initiated', 'completed') NOT NULL DEFAULT
 
 ALTER TABLE `registration`
 ADD COLUMN `refund_status` ENUM('no', 'initiated', 'completed') NOT NULL DEFAULT 'no' AFTER `status`;
+
+___________done________________________
+
+CREATE TABLE `employees` (
+  `employee_id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `first_name` VARCHAR(100) NOT NULL,
+  `last_name` VARCHAR(100) NOT NULL,
+  `job_title` VARCHAR(100) DEFAULT NULL COMMENT 'e.g., Receptionist, Senior Physiotherapist',
+  `phone_number` VARCHAR(20) DEFAULT NULL,
+  `address` TEXT DEFAULT NULL,
+  `date_of_birth` DATE DEFAULT NULL,
+  `date_of_joining` DATE NOT NULL,
+  `is_active` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1 = Active, 0 = Inactive',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`employee_id`),
+  UNIQUE KEY `user_id_unique` (`user_id`),
+  CONSTRAINT `fk_employees_users`
+    FOREIGN KEY (`user_id`) 
+    REFERENCES `users`(`id`) 
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

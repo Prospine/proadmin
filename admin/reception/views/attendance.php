@@ -65,7 +65,7 @@ try {
     ]);
     $attendance_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-   // Branch name
+    // Branch name
     $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
     $stmtBranch->execute([':branch_id' => $branchId]);
     $branchDetails = $stmtBranch->fetch(PDO::FETCH_ASSOC);
@@ -155,19 +155,19 @@ try {
                 <i id="theme-icon" class="fa-solid fa-moon"></i>
             </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
-            <div class="profile" onclick="openForm()">S</div>
+            <div class="profile" onclick="openForm()">R</div>
         </div>
         <div class="hamburger-menu" id="hamburger-menu">
             <i class="fa-solid fa-bars"></i>
         </div>
     </header>
 
-    <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
+    <div class="menu" id="myMenu">
         <div class="popup">
+            <span class="closebtn" onclick="closeForm()">&times;</span>
             <ul>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="logout.php">Logout</a></li>
+                <li><a href="profile.php"><i class="fa-solid fa-user-circle"></i> Profile</a></li>
+                <li class="logout"><a href="logout.php"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
     </div>

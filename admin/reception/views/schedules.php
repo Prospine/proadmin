@@ -415,19 +415,19 @@ foreach ($period as $dt) {
             <div class="icon-btn" title="Settings"> <?php echo $branchName; ?> Branch </div>
             <div class="icon-btn" id="theme-toggle"> <i id="theme-icon" class="fa-solid fa-moon"></i> </div>
             <div class="icon-btn icon-btn2" title="Notifications" onclick="openNotif()">🔔</div>
-            <div class="profile" onclick="openForm()">S</div>
+            <div class="profile" onclick="openForm()">R</div>
         </div>
         <!-- Hamburger Menu Icon (for mobile) -->
         <div class="hamburger-menu" id="hamburger-menu">
             <i class="fa-solid fa-bars"></i>
         </div>
     </header>
-    <div class="menu" id="myMenu"> <span class="closebtn" onclick="closeForm()">&times;</span>
+    <div class="menu" id="myMenu">
         <div class="popup">
+            <span class="closebtn" onclick="closeForm()">&times;</span>
             <ul>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="logout.php">Logout</a></li>
+                <li><a href="profile.php"><i class="fa-solid fa-user-circle"></i> Profile</a></li>
+                <li class="logout"><a href="logout.php"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
     </div>
@@ -502,11 +502,17 @@ foreach ($period as $dt) {
                                                     $cardClass = 'scheduled'; // Default
                                                     if ($appointment['attended']) {
                                                         $cardClass = 'completed';
-                                                    } else if (new DateTime($appointment['appointment_date']) < new DateTime('today')) {
+                                                    } elseif (new DateTime($appointment['appointment_date']) < new DateTime('today')) {
                                                         $cardClass = 'missed';
                                                     }
                                                 ?>
-                                                    <div class="appointment-card <?= $cardClass ?>" data-patient-id="<?= $patientId ?>">
+                                                    <div class="appointment-card <?= $cardClass ?>"
+                                                        data-patient-id="<?= $patientId ?>"
+                                                        data-appointment-id="<?= htmlspecialchars((string)($appointment['appointment_id'] ?? '')) ?>"
+                                                        data-patient-name="<?= htmlspecialchars($appointment['patient_name']) ?>"
+                                                        data-appointment-date="<?= htmlspecialchars($appointment['appointment_date']) ?>"
+                                                        title="Click to reschedule">
+
                                                         <span class="appointment-uid"><?= $uid ?: 'ID: ' . $patientId ?></span>
                                                         <?= htmlspecialchars($appointment['patient_name']) ?>
                                                     </div>
@@ -566,11 +572,17 @@ foreach ($period as $dt) {
                                                     $cardClass = 'scheduled'; // Default
                                                     if ($appointment['attended']) {
                                                         $cardClass = 'completed';
-                                                    } else if (new DateTime($appointment['appointment_date']) < new DateTime('today')) {
+                                                    } elseif (new DateTime($appointment['appointment_date']) < new DateTime('today')) {
                                                         $cardClass = 'missed';
                                                     }
                                                 ?>
-                                                    <div class="appointment-card <?= $cardClass ?>" data-patient-id="<?= $patientId ?>">
+                                                    <div class="appointment-card <?= $cardClass ?>"
+                                                        data-patient-id="<?= $patientId ?>"
+                                                        data-appointment-id="<?= htmlspecialchars((string)($appointment['appointment_id'] ?? '')) ?>"
+                                                        data-patient-name="<?= htmlspecialchars($appointment['patient_name']) ?>"
+                                                        data-appointment-date="<?= htmlspecialchars($appointment['appointment_date']) ?>"
+                                                        title="Click to reschedule">
+
                                                         <span class="appointment-uid"><?= $uid ?: 'ID: ' . $patientId ?></span>
                                                         <?= htmlspecialchars($appointment['patient_name']) ?>
                                                     </div>

@@ -290,6 +290,7 @@ try {
         FROM registration 
         WHERE branch_id = :branch_id 
           AND appointment_date >= :today
+          AND status NOT IN ('closed', 'cancelled')
         ORDER BY appointment_date, appointment_time DESC
         LIMIT 20
     ");
@@ -529,7 +530,7 @@ $success = false;
             color: #111;
         }
 
-        .card-body3{
+        .card-body3 {
             min-height: 70px;
         }
     </style>
@@ -1155,10 +1156,11 @@ $success = false;
                             <label for="inquiry_communication_type">Inquiry Communication Type *</label>
                             <select id="inquiry_communication_type" name="communication_type" required>
                                 <option value="" disabled selected>Select</option>
+                                <option value="by_visit">By Visit</option>
                                 <option value="phone">Phone</option>
                                 <option value="web">Web</option>
                                 <option value="email">Email</option>
-                            </select>
+                        </select>
                         </div>
                     </div>
 

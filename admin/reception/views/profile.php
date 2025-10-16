@@ -98,22 +98,24 @@ $branchDetails['logo_primary_path'] = $userDetails['logo_primary_path'] ?? null;
             text-transform: uppercase;
             flex-shrink: 0;
         }
-        
+
         /* --- NEW: Photo Upload Styles --- */
         .profile-avatar-container {
             position: relative;
             cursor: pointer;
         }
+
         .profile-avatar-large img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: 50%;
         }
+
         .upload-overlay {
             position: absolute;
             inset: 0;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             color: white;
             display: flex;
             align-items: center;
@@ -122,6 +124,7 @@ $branchDetails['logo_primary_path'] = $userDetails['logo_primary_path'] ?? null;
             opacity: 0;
             transition: opacity 0.2s ease;
         }
+
         .profile-avatar-container:hover .upload-overlay {
             opacity: 1;
         }
@@ -256,12 +259,15 @@ $branchDetails['logo_primary_path'] = $userDetails['logo_primary_path'] ?? null;
                 flex-direction: column;
                 text-align: center;
             }
+
             .profile-header-actions {
                 margin-top: 1rem;
             }
+
             .main {
                 padding: 1rem;
             }
+
             .detail-card {
                 padding: 1.5rem;
             }
@@ -277,6 +283,7 @@ $branchDetails['logo_primary_path'] = $userDetails['logo_primary_path'] ?? null;
             flex-direction: column;
             gap: 10px;
         }
+
         .toast {
             padding: 1rem 1.5rem;
             border-radius: 8px;
@@ -287,9 +294,19 @@ $branchDetails['logo_primary_path'] = $userDetails['logo_primary_path'] ?? null;
             color: #ffffff;
             font-weight: 500;
         }
-        .toast.success { background-color: var(--color-success); }
-        .toast.error { background-color: var(--color-error); }
-        .toast.info { background-color: var(--color-info); }
+
+        .toast.success {
+            background-color: var(--color-success);
+        }
+
+        .toast.error {
+            background-color: var(--color-error);
+        }
+
+        .toast.info {
+            background-color: var(--color-info);
+        }
+
         .toast.show {
             opacity: 1;
             transform: translateX(0);
@@ -325,8 +342,17 @@ $branchDetails['logo_primary_path'] = $userDetails['logo_primary_path'] ?? null;
         <div class="nav-actions">
             <div class="icon-btn" title="Branch"><?= htmlspecialchars($branchName) ?> Branch</div>
             <div class="icon-btn" id="theme-toggle"><i id="theme-icon" class="fa-solid fa-moon"></i></div>
+            <!-- ✅ FIXED: Removed undefined $_SESSION['username'] reference -->
             <div class="profile" onclick="openForm()">
-                <?= !empty($_SESSION['username']) ? strtoupper(substr($_SESSION['username'], 0, 1)) : 'U' ?>
+                <?php
+                if (!empty($userDetails['first_name'])) {
+                    echo strtoupper(substr($userDetails['first_name'], 0, 1));
+                } elseif (!empty($userDetails['username'])) {
+                    echo strtoupper(substr($userDetails['username'], 0, 1));
+                } else {
+                    echo 'U';
+                }
+                ?>
             </div>
         </div>
         <div class="hamburger-menu" id="hamburger-menu"><i class="fa-solid fa-bars"></i></div>
@@ -345,17 +371,23 @@ $branchDetails['logo_primary_path'] = $userDetails['logo_primary_path'] ?? null;
     <main class="main">
         <div class="profile-page-container">
             <?php
-                $displayName = $userDetails['first_name'] ?? $userDetails['username'];
-                $displayInitial = !empty($displayName) ? strtoupper(substr($displayName, 0, 1)) : '?';
-                $fullName = trim(($userDetails['first_name'] ?? '') . ' ' . ($userDetails['last_name'] ?? ''));
-                $photoPath = $userDetails['photo_path'] ?? null;
+            $displayName = !empty($userDetails['first_name'])
+                ? $userDetails['first_name']
+                : ($userDetails['username'] ?? 'User');
+
+            $displayInitial = strtoupper(substr($displayName, 0, 1));
+            $fullName = trim(
+                (($userDetails['first_name'] ?? '') . ' ' . ($userDetails['last_name'] ?? ''))
+            );
+            $photoPath = $userDetails['photo_path'] ?? null;
             ?>
+
             <!-- Modern Profile Header -->
             <div class="profile-header-modern">
                 <div class="profile-avatar-container" onclick="document.getElementById('photo-upload-input').click();" title="Change Profile Photo">
                     <div class="profile-avatar-large">
                         <?php if ($photoPath): ?>
-                            <img src="/admin/<?= htmlspecialchars($photoPath) ?>?v=<?= time() ?>" alt="Profile Photo">
+                            <img src="/proadmin/admin/<?= htmlspecialchars($photoPath) ?>?v=<?= time() ?>" alt="Profile Photo">
                         <?php else: ?>
                             <?= htmlspecialchars($displayInitial) ?>
                         <?php endif; ?>
@@ -365,7 +397,7 @@ $branchDetails['logo_primary_path'] = $userDetails['logo_primary_path'] ?? null;
                 <input type="file" id="photo-upload-input" accept="image/jpeg,image/png,image/gif" style="display: none;">
 
                 <div class="profile-header-info">
-                    <h2><?= !empty($fullName) ? htmlspecialchars($fullName) : htmlspecialchars($userDetails['username'] ?? 'N/A') ?></h2>
+                    <h2><?= !empty($fullName) ? htmlspecialchars($fullName) : htmlspecialchars($displayName ?? 'N/A') ?></h2>
                     <p><?= htmlspecialchars($userDetails['job_title'] ?? ucfirst($userDetails['role'] ?? 'N/A')) ?></p>
                 </div>
                 <!-- <div class="profile-header-actions">
@@ -457,7 +489,11 @@ $branchDetails['logo_primary_path'] = $userDetails['logo_primary_path'] ?? null;
 
             setTimeout(() => {
                 toast.classList.remove('show');
-                setTimeout(() => { if (toastContainer.contains(toast)) { toastContainer.removeChild(toast); } }, 500);
+                setTimeout(() => {
+                    if (toastContainer.contains(toast)) {
+                        toastContainer.removeChild(toast);
+                    }
+                }, 500);
             }, 5000);
         }
 

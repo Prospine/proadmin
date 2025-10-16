@@ -36,6 +36,14 @@ function getRegistrationData($pdo, $branchId, $filters)
                 r.consultation_amount, r.payment_method, r.status
             FROM registration r";
 
+    // SQL for calculating totals
+    $totalsSql = "SELECT 
+                    SUM(CASE WHEN r.status = 'consulted' THEN r.consultation_amount ELSE 0 END) as consulted_sum,
+                    SUM(CASE WHEN r.status = 'pending' THEN r.consultation_amount ELSE 0 END) as pending_sum,
+                    SUM(CASE WHEN r.status = 'closed' THEN r.consultation_amount ELSE 0 END) as closed_sum
+                  FROM registration r";
+
+
     // Prepare WHERE clauses and parameters
     $whereClauses = ['r.branch_id = :branch_id'];
     $params = [':branch_id' => $branchId];
@@ -73,21 +81,31 @@ function getRegistrationData($pdo, $branchId, $filters)
     // Combine WHERE clauses
     if (!empty($whereClauses)) {
         $sql .= " WHERE " . implode(' AND ', $whereClauses);
+        $totalsSql .= " WHERE " . implode(' AND ', $whereClauses);
     }
 
     $sql .= " ORDER BY r.appointment_date DESC";
 
+    // Fetch main data
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Fetch totals
+    $totalsStmt = $pdo->prepare($totalsSql);
+    $totalsStmt->execute($params);
+    $totals = $totalsStmt->fetch(PDO::FETCH_ASSOC);
+
+    return ['data' => $data, 'totals' => $totals];
 }
 
 // Check if this is a JavaScript fetch (AJAX) request
 if (isset($_GET['fetch'])) {
     try {
-        $registrations = getRegistrationData($pdo, $branchId, $_GET);
+        $result = getRegistrationData($pdo, $branchId, $_GET);
+        $registrations = $result['data'];
         header('Content-Type: application/json');
-        echo json_encode(['registrations' => $registrations]);
+        echo json_encode(['registrations' => $registrations, 'totals' => $result['totals']]);
         exit();
     } catch (PDOException $e) {
         http_response_code(500);
@@ -100,6 +118,7 @@ if (isset($_GET['fetch'])) {
 // For initial page load, fetch data for filters and default view
 $filterOptions = [];
 $registrations = [];
+$totals = ['consulted_sum' => 0, 'pending_sum' => 0, 'closed_sum' => 0];
 $branchName = '';
 try {
     // Get distinct values for filter dropdowns
@@ -123,7 +142,9 @@ try {
         'start_date' => $_GET['start_date'] ?? $today->format('Y-m-01'),
         'end_date' => $_GET['end_date'] ?? $today->format('Y-m-d')
     ];
-    $registrations = getRegistrationData($pdo, $branchId, $defaultFilters);
+    $result = getRegistrationData($pdo, $branchId, $defaultFilters);
+    $registrations = $result['data'];
+    $totals = $result['totals'];
 
     // Branch name
     $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
@@ -156,6 +177,124 @@ try {
             margin-bottom: 15px;
         }
 
+        /* --- Elegant Amount Styling (from reports.php) --- */
+        .modern-table .amount-total {
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            text-align: right;
+            padding-right: 1.5em;
+            color: var(--text-color);
+        }
+
+        /* --- Elegant Summary Bar Styling (from reports.php) --- */
+        .summary-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            margin: 20px auto;
+        }
+
+        .summary-item {
+            background: var(--bg-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            flex: 1;
+            min-width: 200px;
+            max-width: 200px;
+        }
+
+        .summary-item h4 {
+            margin: 0 0 5px 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .summary-item span {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            display: block;
+        }
+
+        /* Color coding for summary amounts */
+        #consulted-total {
+            color: #28a745;
+        }
+
+        /* Green */
+        #pending-total {
+            color: #ffc107;
+        }
+
+        /* Yellow */
+        #closed-total {
+            color: #dc3545;
+        }
+
+        /* Red */
+
+        body.dark #consulted-total {
+            color: #33c152;
+        }
+
+        body.dark #pending-total {
+            color: #ffd040;
+        }
+
+        body.dark #closed-total {
+            color: #ff5b6a;
+        }
+
+        /* --- NEW: Status Pill Styling (from reports.php) --- */
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: capitalize;
+            white-space: nowrap;
+        }
+
+        .status-pill.status-pending {
+            background-color: #fffbe6;
+            color: #8a6d3b;
+        }
+
+        .status-pill.status-consulted,
+        .status-pill.status-completed {
+            background-color: #e6f7ed;
+            color: #1a7f37;
+        }
+
+        .status-pill.status-closed {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        body.dark .status-pill.status-pending {
+            background-color: #4d3c1a;
+            color: #ffeca7;
+        }
+
+        body.dark .status-pill.status-consulted,
+        body.dark .status-pill.status-completed {
+            background-color: #1c3b2a;
+            color: #a7f0ba;
+        }
+
+        body.dark .status-pill.status-closed {
+            background-color: #492428;
+            color: #f5c6cb;
+        }
+
+        /* --- END --- */
+
+
         @media (max-width: 1024px) {
             .main {
                 margin: 0;
@@ -174,6 +313,18 @@ try {
                 max-width: 175px !important;
             }
 
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .toggle-container {
+            display: flex;
+            max-width: 600px;
         }
     </style>
 </head>
@@ -235,13 +386,28 @@ try {
         <div class="dashboard-container">
             <div class="top-bar">
                 <h2>Registration Reports</h2>
-                <div class="toggle-container">
+                <div class="summary-bar">
+                    <div class="summary-item">
+                        <h4>Consulted Revenue</h4>
+                        <span id="consulted-total">₹<?= number_format((float)($totals['consulted_sum'] ?? 0), 2) ?></span>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Pending Revenue</h4>
+                        <span id="pending-total">₹<?= number_format((float)($totals['pending_sum'] ?? 0), 2) ?></span>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Closed/Lost Revenue</h4>
+                        <span id="closed-total">₹<?= number_format((float)($totals['closed_sum'] ?? 0), 2) ?></span>
+                    </div>
+                </div>
+                <div class="toggle-container" style="flex-grow: 1; justify-content: flex-end;">
                     <button class="toggle-btn" onclick="window.location.href = 'reports.php';">Tests Report</button>
                     <button class="toggle-btn active">Registration Reports</button>
                     <button class="toggle-btn" onclick="window.location.href = 'patient_reports.php';">Patient Reports</button>
                     <button class="toggle-btn" onclick="window.location.href = 'inquiry_reports.php';">Inquiry Reports</button>
                 </div>
             </div>
+
 
             <div class="filter-bar">
                 <form id="filter-form">
@@ -330,7 +496,7 @@ try {
                                     <td data-label="Source"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $reg['referralSource']))) ?></td>
                                     <td data-label="Referred By"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $reg['reffered_by']))) ?></td>
                                     <td data-label="Consultation"><?= htmlspecialchars(ucfirst(str_replace('-', ' ', $reg['consultation_type']))) ?></td>
-                                    <td data-label="Amount"><?= number_format((float)$reg['consultation_amount'], 2) ?></td>
+                                    <td data-label="Amount" class="amount-total">₹<?= number_format((float)$reg['consultation_amount'], 2) ?></td>
                                     <td data-label="Pay Mode"><?= htmlspecialchars(ucfirst($reg['payment_method'])) ?></td>
                                     <td data-label="Status"><span class="status-pill status-<?= htmlspecialchars(strtolower($reg['status'])) ?>"><?= htmlspecialchars($reg['status']) ?></span></td>
                                 </tr>

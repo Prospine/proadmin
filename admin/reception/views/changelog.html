@@ -222,6 +222,37 @@
       </div>
 
       <div class="log-entry">
+        <h2>v2.3.0 <span class="badge live">Feature &amp; Fix</span></h2>
+        <div class="meta">
+          October 16, 2025 · Dynamic Reporting & Schedule Logic Fix
+        </div>
+        <ul class="changes">
+          <li><span class="tag added">Added</span> <strong>Dynamic Summary Totals for Reports:</strong>
+            <ul>
+              <li>All major report pages (Tests, Registrations, Patients) now feature dynamic summary cards that calculate and display aggregate financial data (e.g., Total Billed, Paid, Due) based on the currently applied filters.</li>
+              <li>Registration reports provide a detailed revenue breakdown by status: Consulted (Green), Pending (Yellow), and Closed (Red).</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Report UI &amp; UX:</strong>
+            <ul>
+              <li>Enhanced the styling of all report tables with color-coded, right-aligned amount columns for better financial clarity.</li>
+              <li>Standardized status pill styling across all report pages for a consistent user experience.</li>
+            </ul>
+          </li>
+          <li><span class="tag fixed">Fixed</span> <strong>Critical Scheduling Logic:</strong>
+            <ul>
+              <li>Resolved a major bug where time slots for 'closed' or 'cancelled' appointments remained blocked. The <code>get_slots.php</code> API now correctly frees up these slots, allowing them to be booked again.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Schedule Views:</strong>
+            <ul>
+              <li>The schedule views on the Dashboard, Weekly Schedule page, and Today's Appointments page have been updated to hide 'closed' and 'cancelled' events, providing a cleaner and more accurate view of the active agenda.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="log-entry">
         <h2>v2.2.9 <span class="badge live">Feature &amp; UX</span></h2>
         <div class="meta">
           October 15, 2025 · Directional Page Transitions, UI/UX Improvements

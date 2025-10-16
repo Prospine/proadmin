@@ -3,8 +3,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const reportTbody = document.getElementById('report-tbody');
     const loader = document.getElementById('loader');
     const form = document.getElementById('filter-form');
-    // NEW: Get the message element
     const filterStatusMessage = document.getElementById('filter-status-message');
+
+    // Get the summary total elements
+    const consultedTotalSpan = document.getElementById('consulted-total');
+    const pendingTotalSpan = document.getElementById('pending-total');
+    const closedTotalSpan = document.getElementById('closed-total');
 
     applyFilterBtn.addEventListener('click', function () {
         const formData = new FormData(form);
@@ -12,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         loader.style.display = 'block';
         reportTbody.style.display = 'none';
-        // NEW: Hide the status message while loading
         filterStatusMessage.style.display = 'none';
 
         const url = `?fetch=true&${params.toString()}`;
@@ -22,58 +25,58 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 reportTbody.innerHTML = '';
 
-                // The key change is here: using 'data.registrations'
+                // Update Summary Total
+                if (data.totals) {
+                    const formatCurrency = (value) => `₹${parseFloat(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    if (consultedTotalSpan) consultedTotalSpan.textContent = formatCurrency(data.totals.consulted_sum);
+                    if (pendingTotalSpan) pendingTotalSpan.textContent = formatCurrency(data.totals.pending_sum);
+                    if (closedTotalSpan) closedTotalSpan.textContent = formatCurrency(data.totals.closed_sum);
+                }
+
                 const resultCount = data.registrations ? data.registrations.length : 0;
                 let statusText = '';
 
-                // NEW: Create a dynamic message based on the result count
                 if (resultCount > 1) {
-                    statusText = `Filtering complete! Found <strong>${resultCount}</strong> registrations matching your criteria.`;
+                    statusText = `Filtering complete! Found <strong>${resultCount}</strong> records matching your criteria.`;
                 } else if (resultCount === 1) {
-                    statusText = `Filtering complete! Found <strong>1</strong> registration matching your criteria.`;
+                    statusText = `Filtering complete! Found <strong>1</strong> record matching your criteria.`;
                 } else {
-                    statusText = `Filtering complete. <strong>No registrations</strong> found for the selected filters.`;
+                    statusText = `Filtering complete. <strong>No records</strong> found for the selected criteria.`;
                 }
 
-                // NEW: Update and show the message bar
                 filterStatusMessage.innerHTML = `<i class="fa-solid fa-circle-info"></i> ${statusText}`;
                 filterStatusMessage.style.display = 'flex';
 
                 if (resultCount > 0) {
                     data.registrations.forEach(reg => {
                         const row = `
-                                <tr>
-                                    <td>${escapeHTML(reg.appointment_date)}</td>
-                                    <td>${escapeHTML(reg.patient_name)}</td>
-                                    <td>${escapeHTML(reg.age)}</td>
-                                    <td>${escapeHTML(reg.gender)}</td>
-                                    <td>${ucfirst(escapeHTML(reg.chief_complain).replace(/_/g, ' '))}</td>
-                                    <td>${ucfirst(escapeHTML(reg.referralSource).replace(/_/g, ' '))}</td>
-                                    <td>${ucfirst(escapeHTML(reg.reffered_by).replace(/_/g, ' '))}</td>
-                                    <td>${ucfirst(escapeHTML(reg.consultation_type).replace(/-/g, ' '))}</td>
-                                    <td>${parseFloat(reg.consultation_amount).toFixed(2)}</td>
-                                    <td>${ucfirst(escapeHTML(reg.payment_method))}</td>
-                                    <td>
-                                        <span class="status-pill status-${escapeHTML(reg.status).toLowerCase()}">
-                                            ${escapeHTML(reg.status)}
-                                        </span>
-                                    </td>
-                                </tr>
-                            `;
+                            <tr>
+                                <td data-label="Appt. Date">${escapeHTML(reg.appointment_date)}</td>
+                                <td data-label="Patient Name">${escapeHTML(reg.patient_name)}</td>
+                                <td data-label="Age">${escapeHTML(String(reg.age))}</td>
+                                <td data-label="Condition">${ucfirst(escapeHTML(reg.chief_complain).replace(/_/g, ' '))}</td>
+                                <td data-label="Source">${ucfirst(escapeHTML(reg.referralSource).replace(/_/g, ' '))}</td>
+                                <td data-label="Referred By">${ucfirst(escapeHTML(reg.reffered_by).replace(/_/g, ' '))}</td>
+                                <td data-label="Consultation">${ucfirst(escapeHTML(reg.consultation_type).replace(/-/g, ' '))}</td>
+                                <td data-label="Amount" class="amount-total">₹${parseFloat(reg.consultation_amount).toFixed(2)}</td>
+                                <td data-label="Pay Mode">${ucfirst(escapeHTML(reg.payment_method))}</td>
+                                <td data-label="Status"><span class="status-pill status-${escapeHTML(reg.status).toLowerCase()}">${escapeHTML(reg.status)}</span></td>
+                            </tr>
+                        `;
                         reportTbody.innerHTML += row;
                     });
                 } else {
-                    reportTbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">No registration records found for the selected filters.</td></tr>';
+                    reportTbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">No records found.</td></tr>';
                 }
             })
             .catch(error => {
                 console.error('Fetch error:', error);
                 reportTbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">Failed to load data. Please try again.</td></tr>';
-
-                // NEW: Show an error message in the status bar
                 filterStatusMessage.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> An error occurred while fetching data.`;
                 filterStatusMessage.style.display = 'flex';
-                filterStatusMessage.style.borderColor = '#dc3545'; // Use an error color
+                filterStatusMessage.style.color = '#842029';
+                filterStatusMessage.style.backgroundColor = '#f8d7da';
+                filterStatusMessage.style.borderColor = '#f5c2c7';
             })
             .finally(() => {
                 loader.style.display = 'none';
@@ -84,11 +87,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Helper functions
     function escapeHTML(str) {
         if (str === null || str === undefined) return '';
-        const p = document.createElement('p');
-        p.textContent = str;
-        return p.innerHTML;
+        return String(str).replace(/[&<>"']/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[match]));
     }
-
     function ucfirst(str) {
         return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
     }

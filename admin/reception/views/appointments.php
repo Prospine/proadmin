@@ -48,6 +48,7 @@ try {
         WHERE r.branch_id = :branch_id
           AND r.appointment_date = :today
           AND r.appointment_time IS NOT NULL
+          AND r.status NOT IN ('closed', 'cancelled')
     ");
     $stmtSchedule->execute([':branch_id' => $branchId, ':today' => $today]);
     $todaysAppointments = $stmtSchedule->fetchAll(PDO::FETCH_ASSOC);

@@ -44,6 +44,13 @@ function getPatientData($pdo, $branchId, $filters)
             FROM patients p
             JOIN registration r ON p.registration_id = r.registration_id";
 
+    // SQL for calculating totals
+    $totalsSql = "SELECT 
+                    SUM(p.total_amount) as total_sum,
+                    SUM(p.advance_payment) as paid_sum,
+                    SUM(p.due_amount) as due_sum
+                FROM patients p";
+
     // Prepare WHERE clauses and parameters
     $whereClauses = ['p.branch_id = :branch_id'];
     $params = [':branch_id' => $branchId];
@@ -73,21 +80,31 @@ function getPatientData($pdo, $branchId, $filters)
     // Combine WHERE clauses
     if (!empty($whereClauses)) {
         $sql .= " WHERE " . implode(' AND ', $whereClauses);
+        $totalsSql .= " WHERE " . implode(' AND ', $whereClauses);
     }
 
     $sql .= " ORDER BY p.start_date DESC";
 
+    // Fetch main data
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Fetch totals
+    $totalsStmt = $pdo->prepare($totalsSql);
+    $totalsStmt->execute($params);
+    $totals = $totalsStmt->fetch(PDO::FETCH_ASSOC);
+
+    return ['data' => $data, 'totals' => $totals];
 }
 
 // Check if this is a JavaScript fetch (AJAX) request
 if (isset($_GET['fetch'])) {
     try {
-        $patients = getPatientData($pdo, $branchId, $_GET);
+        $result = getPatientData($pdo, $branchId, $_GET);
+        $patients = $result['data'];
         header('Content-Type: application/json');
-        echo json_encode(['patients' => $patients]);
+        echo json_encode(['patients' => $patients, 'totals' => $result['totals']]);
         exit();
     } catch (PDOException $e) {
         http_response_code(500);
@@ -100,6 +117,7 @@ if (isset($_GET['fetch'])) {
 // For initial page load, fetch data for filters and default view
 $filterOptions = [];
 $patients = [];
+$totals = ['total_sum' => 0, 'paid_sum' => 0, 'due_sum' => 0];
 $branchName = '';
 try {
     // Get distinct values for filter dropdowns
@@ -121,7 +139,9 @@ try {
         'start_date' => $_GET['start_date'] ?? $today->format('Y-m-01'),
         'end_date' => $_GET['end_date'] ?? $today->format('Y-m-d')
     ];
-    $patients = getPatientData($pdo, $branchId, $defaultFilters);
+    $result = getPatientData($pdo, $branchId, $defaultFilters);
+    $patients = $result['data'];
+    $totals = $result['totals'];
 
     // Branch name
     $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
@@ -153,6 +173,134 @@ try {
             /* height: 50px; */
             margin-bottom: 15px;
         }
+
+        /* --- START: Copied from reports.php for consistency --- */
+        .modern-table .amount-total,
+        .modern-table .amount-paid,
+        .modern-table .amount-due {
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            text-align: right;
+            padding-right: 1.5em;
+        }
+
+        .modern-table .amount-total {
+            color: var(--text-color);
+        }
+
+        .modern-table .amount-paid {
+            color: #28a745;
+        }
+
+        .modern-table .amount-due {
+            color: #dc3545;
+        }
+
+        body.dark .modern-table .amount-paid {
+            color: #33c152;
+        }
+
+        body.dark .modern-table .amount-due {
+            color: #ff5b6a;
+        }
+
+        .summary-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            margin: 20px auto;
+        }
+
+        .summary-item {
+            background: var(--bg-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            flex: 1;
+            min-width: 200px;
+            max-width: 200px;
+        }
+
+        .summary-item h4 {
+            margin: 0 0 5px 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .summary-item span {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            display: block;
+        }
+
+        #total-billed-sum {
+            color: var(--text-primary);
+        }
+
+        #total-paid-sum {
+            color: #28a745;
+        }
+
+        /* Green */
+        #total-due-sum {
+            color: #dc3545;
+        }
+
+        /* Red */
+
+        body.dark #total-paid-sum {
+            color: #33c152;
+        }
+
+        body.dark #total-due-sum {
+            color: #ff5b6a;
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: capitalize;
+            white-space: nowrap;
+        }
+
+        .status-pill.status-active {
+            background-color: #e6f7ed;
+            color: #1a7f37;
+        }
+
+        .status-pill.status-completed {
+            background-color: #eef7ff;
+            color: #005a9e;
+        }
+
+        .status-pill.status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        body.dark .status-pill.status-active {
+            background-color: #1c3b2a;
+            color: #a7f0ba;
+        }
+
+        body.dark .status-pill.status-completed {
+            background-color: #1c3b55;
+            color: #cce4ff;
+        }
+
+        body.dark .status-pill.status-cancelled {
+            background-color: #492428;
+            color: #f5c6cb;
+        }
+
+        /* --- END: Copied Styles --- */
 
         @media (max-width: 1024px) {
             .main {
@@ -233,6 +381,20 @@ try {
         <div class="dashboard-container">
             <div class="top-bar">
                 <h2>Patient Reports</h2>
+                <div class="summary-bar">
+                    <div class="summary-item">
+                        <h4>Total Billed</h4>
+                        <span id="total-billed-sum">₹<?= number_format((float)($totals['total_sum'] ?? 0), 2) ?></span>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Total Paid</h4>
+                        <span id="total-paid-sum">₹<?= number_format((float)($totals['paid_sum'] ?? 0), 2) ?></span>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Expected Due</h4>
+                        <span id="total-due-sum">₹<?= number_format((float)($totals['due_sum'] ?? 0), 2) ?></span>
+                    </div>
+                </div>
                 <div class="toggle-container">
                     <button class="toggle-btn" onclick="window.location.href = 'reports.php';">Tests Report</button>
                     <button class="toggle-btn" onclick="window.location.href = 'clinic_reports.php';">Registration Reports</button>
@@ -240,6 +402,8 @@ try {
                     <button class="toggle-btn" onclick="window.location.href = 'inquiry_reports.php';">Inquiry Reports</button>
                 </div>
             </div>
+
+
 
             <div class="filter-bar">
                 <form id="filter-form">
@@ -311,9 +475,9 @@ try {
                                     <td data-label="Patient Name"><?= htmlspecialchars($patient['patient_name']) ?></td>
                                     <td data-label="Assigned Doctor"><?= htmlspecialchars($patient['assigned_doctor']) ?></td>
                                     <td data-label="Treatment"><?= htmlspecialchars(ucfirst($patient['treatment_type'])) ?></td>
-                                    <td data-label="Total Amt"><?= number_format((float)$patient['total_amount'], 2) ?></td>
-                                    <td data-label="Paid"><?= number_format((float)$patient['advance_payment'], 2) ?></td>
-                                    <td data-label="Due"><?= number_format((float)$patient['due_amount'], 2) ?></td>
+                                    <td data-label="Total Amt" class="amount-total">₹<?= number_format((float)$patient['total_amount'], 2) ?></td>
+                                    <td data-label="Paid" class="amount-paid">₹<?= number_format((float)$patient['advance_payment'], 2) ?></td>
+                                    <td data-label="Due" class="amount-due">₹<?= number_format((float)$patient['due_amount'], 2) ?></td>
                                     <td data-label="Start Date"><?= htmlspecialchars($patient['start_date']) ?></td>
                                     <td data-label="End Date"><?= htmlspecialchars($patient['end_date']) ?></td>
                                     <td data-label="Status"><span class="status-pill status-<?= htmlspecialchars(strtolower($patient['status'])) ?>"><?= htmlspecialchars(ucfirst($patient['status'])) ?></span></td>

@@ -35,6 +35,14 @@ function getTestData($pdo, $branchId, $filters)
                 t.test_done_by, t.total_amount, t.advance_amount, t.due_amount, t.payment_status
             FROM tests t";
 
+    // SQL for calculating totals
+    $totalsSql = "SELECT 
+                    SUM(t.total_amount) as total_sum,
+                    SUM(t.advance_amount) as paid_sum,
+                    SUM(t.due_amount) as due_sum
+                FROM tests t";
+
+
     // Prepare WHERE clauses and parameters
     $whereClauses = ['t.branch_id = :branch_id'];
     $params = [':branch_id' => $branchId];
@@ -68,21 +76,31 @@ function getTestData($pdo, $branchId, $filters)
     // Combine WHERE clauses
     if (!empty($whereClauses)) {
         $sql .= " WHERE " . implode(' AND ', $whereClauses);
+        $totalsSql .= " WHERE " . implode(' AND ', $whereClauses);
     }
 
     $sql .= " ORDER BY t.assigned_test_date DESC";
 
+    // Fetch main data
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Fetch totals
+    $totalsStmt = $pdo->prepare($totalsSql);
+    $totalsStmt->execute($params);
+    $totals = $totalsStmt->fetch(PDO::FETCH_ASSOC);
+
+    return ['data' => $data, 'totals' => $totals];
 }
 
 // Check if this is a JavaScript fetch (AJAX) request
 if (isset($_GET['fetch'])) {
     try {
-        $tests = getTestData($pdo, $branchId, $_GET);
+        $result = getTestData($pdo, $branchId, $_GET);
+        $tests = $result['data'];
         header('Content-Type: application/json');
-        echo json_encode(['tests' => $tests]);
+        echo json_encode(['tests' => $tests, 'totals' => $result['totals']]);
         exit();
     } catch (PDOException $e) {
         http_response_code(500);
@@ -95,6 +113,7 @@ if (isset($_GET['fetch'])) {
 // For initial page load, fetch data for filters and default view
 $filterOptions = [];
 $tests = [];
+$totals = ['total_sum' => 0, 'paid_sum' => 0, 'due_sum' => 0];
 $branchName = '';
 try {
     // Get distinct values for filter dropdowns
@@ -117,7 +136,9 @@ try {
         'start_date' => $_GET['start_date'] ?? $today->format('Y-m-01'),
         'end_date' => $_GET['end_date'] ?? $today->format('Y-m-d')
     ];
-    $tests = getTestData($pdo, $branchId, $defaultFilters);
+    $result = getTestData($pdo, $branchId, $defaultFilters);
+    $tests = $result['data'];
+    $totals = $result['totals'];
 
     // Branch name
     $stmtBranch = $pdo->prepare("SELECT * FROM branches WHERE branch_id = :branch_id LIMIT 1");
@@ -149,6 +170,100 @@ try {
             /* height: 50px; */
             margin-bottom: 15px;
         }
+
+        /* --- NEW: Elegant Amount Styling --- */
+        .modern-table .amount-total,
+        .modern-table .amount-paid,
+        .modern-table .amount-due {
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            /* text-align: right; */
+            padding-right: 1.5em;
+        }
+
+        .modern-table .amount-total {
+            color: var(--text-color);
+        }
+
+        .modern-table .amount-paid {
+            color: #28a745;
+            /* A pleasant green */
+        }
+
+        .modern-table .amount-due {
+            color: #dc3545;
+            /* A clear red */
+        }
+
+        body.dark .modern-table .amount-paid {
+            color: #33c152;
+        }
+
+        body.dark .modern-table .amount-due {
+            color: #ff5b6a;
+        }
+
+        /* --- END: Elegant Amount Styling --- */
+        .summary-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            margin: 20px auto;
+
+        }
+
+        .summary-item {
+            background: var(--bg-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            flex: 1;
+            min-width: 200px;
+            max-width: 200px;
+        }
+
+        /* --- NEW: Elegant Summary Bar Amount Styling --- */
+        .summary-item h4 {
+            margin: 0 0 5px 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .summary-item span {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            display: block;
+        }
+
+
+        #total-amount-sum {
+            color: var(--text-primary);
+        }
+
+        #total-paid-sum {
+            color: #28a745;
+            /* Green */
+        }
+
+        #total-due-sum {
+            color: #dc3545;
+            /* Red */
+        }
+
+        body.dark #total-paid-sum {
+            color: #33c152;
+        }
+
+        body.dark #total-due-sum {
+            color: #ff5b6a;
+        }
+
+        /* --- END: Elegant Summary Bar Amount Styling --- */
 
         @media (max-width: 1024px) {
             .main {
@@ -229,6 +344,20 @@ try {
         <div class="dashboard-container">
             <div class="top-bar">
                 <h2>Test Reports</h2>
+                <div class="summary-bar">
+                    <div class="summary-item">
+                        <h4>Total Amount</h4>
+                        <span id="total-amount-sum">₹<?= number_format((float)($totals['total_sum'] ?? 0), 2) ?></span>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Total Paid</h4>
+                        <span id="total-paid-sum">₹<?= number_format((float)($totals['paid_sum'] ?? 0), 2) ?></span>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Total Due</h4>
+                        <span id="total-due-sum">₹<?= number_format((float)($totals['due_sum'] ?? 0), 2) ?></span>
+                    </div>
+                </div>
                 <div class="toggle-container">
                     <button class="toggle-btn active">Tests Report</button>
                     <button class="toggle-btn" onclick="window.location.href = 'clinic_reports.php';">Registration Reports</button>
@@ -285,6 +414,7 @@ try {
         </div>
         <div id="filter-status-message" class="filter-status" style="display: none;"></div>
 
+
         <div class="table-container modern-table">
             <div id="loader" class="loader" style="display: none;">Loading...</div>
             <table id="testsReportTable">
@@ -313,10 +443,10 @@ try {
                                 <td data-label="Patient Name"><?= htmlspecialchars($test['patient_name']) ?></td>
                                 <td data-label="Test Name"><?= htmlspecialchars(strtoupper(str_replace('_', ' ', (string) $test['test_name']))) ?></td>
                                 <td data-label="Referred By"><?= htmlspecialchars($test['referred_by']) ?></td>
-                                <td data-label="Performed By"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $test['test_done_by']))) ?></td>
-                                <td data-label="Amount"><?= number_format((float)$test['total_amount'], 2) ?></td>
-                                <td data-label="Paid"><?= number_format((float)$test['advance_amount'], 2) ?></td>
-                                <td data-label="Due"><?= number_format((float)$test['due_amount'], 2) ?></td>
+                                <td data-label="Performed By"><?= htmlspecialchars(ucwords(str_replace('_', ' ', (string) $test['test_done_by']))) ?></td>
+                                <td data-label="Amount" class="amount-total">₹<?= number_format((float)$test['total_amount'], 2) ?></td>
+                                <td data-label="Paid" class="amount-paid">₹<?= number_format((float)$test['advance_amount'], 2) ?></td>
+                                <td data-label="Due" class="amount-due">₹<?= number_format((float)$test['due_amount'], 2) ?></td>
                                 <td data-label="Payment Status"><span class="status-pill status-<?= htmlspecialchars(strtolower($test['payment_status'])) ?>"><?= ucfirst(htmlspecialchars($test['payment_status'])) ?></span></td>
                             </tr>
                         <?php endforeach; ?>

@@ -39,6 +39,7 @@ try {
         WHERE appointment_date = :selected_date -- Changed from DATE(created_at)
           AND branch_id = :branch_id
           AND appointment_time IS NOT NULL
+          AND status NOT IN ('closed', 'cancelled')
     ");
     $stmt->execute([
         ':selected_date' => $selectedDate, // Changed from $today

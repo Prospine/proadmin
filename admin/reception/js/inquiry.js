@@ -8,32 +8,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const quickInquiryFilters = document.getElementById('quickInquiryFilters');
     const testInquiryFilters = document.getElementById('testInquiryFilters');
     const quickStatusFilter = document.getElementById('quickStatusFilter');
+    const testStatusFilter = document.getElementById('testStatusFilter');
+    // --- PAGINATION ELEMENTS ---
+    const quickPagination = document.getElementById('quickPagination');
+    const testPagination = document.getElementById('testPagination');
+
+
+    // --- DRAWER ELEMENTS ---
+    const drawer = document.getElementById('rightDrawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const drawerBody = drawer.querySelector('.drawer-body');
+    const drawerTitle = document.getElementById('drawerTitle');
+    const quickForm = document.getElementById('quickForm');
+    const testForm = document.getElementById('testForm');
+    const drawerMessage = document.getElementById('drawerMessage');
+    const closeDrawerButton = drawer.querySelector('.close-drawer');
+
+    // --- TIME SLOT ELEMENTS ---
+    const slotSelect = document.getElementById("appointment_time");
+    const dateInput = document.querySelector("input[name='appointment_date']");
 
     // --- CORE FILTERING FUNCTION ---
     const filterTable = () => {
-        const searchTerm = searchInput.value.toLowerCase();
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
         let activeTableBody, statusFilter;
 
         // Determine which table and filters are active
         if (!quickTable.classList.contains('hidden')) {
             activeTableBody = quickTable.querySelector('tbody');
-            statusFilter = quickStatusFilter.value;
+            statusFilter = quickStatusFilter ? quickStatusFilter.value : '';
         } else {
             activeTableBody = testTable.querySelector('tbody');
-            // In the future, you would get the test status filter value here
-            // statusFilter = document.getElementById('testStatusFilter').value;
-            statusFilter = ''; // No status filter for test table yet
+            statusFilter = testStatusFilter ? testStatusFilter.value : '';
         }
 
         if (!activeTableBody) return;
 
         const rows = activeTableBody.querySelectorAll('tr');
         let visibleRows = 0;
+        let noResultsRow = activeTableBody.querySelector('.no-results-row');
+        const colCount = activeTableBody.closest('table')?.querySelector('thead th')?.length || 1;
 
         rows.forEach(row => {
-            // Hide the "No data" row if it exists
-            if (row.querySelector('td[colspan]')) {
-                row.style.display = 'none';
+            if (row.classList.contains('no-results-row')) {
                 return;
             }
 
@@ -46,70 +63,81 @@ document.addEventListener("DOMContentLoaded", () => {
             const matchesStatus = statusFilter ? rowStatus === statusFilter : true;
 
             if (matchesSearch && matchesStatus) {
-                row.style.display = '';
+                row.classList.remove('hidden');
                 visibleRows++;
             } else {
-                row.style.display = 'none';
+                row.classList.add('hidden');
             }
         });
 
         // Show a "no results" message if no rows are visible
-        const noResultsRow = activeTableBody.querySelector('.no-results-row');
         if (visibleRows === 0) {
             if (!noResultsRow) {
                 const newRow = activeTableBody.insertRow();
                 newRow.className = 'no-results-row';
                 const cell = newRow.insertCell();
-                cell.colSpan = activeTableBody.closest('table').querySelector('thead th').length;
-                cell.textContent = 'No inquiries match your search criteria.';
-                cell.style.textAlign = 'center';
+                cell.colSpan = colCount;
+                cell.className = 'px-6 py-4 text-center text-gray-500 dark:text-gray-400';
+                cell.textContent = 'No inquiries match your search.';
             }
         } else {
-            if (noResultsRow) {
-                noResultsRow.remove();
-            }
+            if (noResultsRow) noResultsRow.remove();
         }
     };
 
     // --- TABLE TOGGLE LOGIC ---
     if (quickBtn && testBtn && quickTable && testTable) {
+        const sliderIndicator = document.querySelector('.slider-indicator');
+
         quickBtn.addEventListener('click', () => {
-            quickBtn.classList.add('active');
-            testBtn.classList.remove('active');
+            quickBtn.classList.add('bg-white', 'dark:bg-gray-800', 'shadow', 'text-gray-800', 'dark:text-white');
+            testBtn.classList.remove('bg-white', 'dark:bg-gray-800', 'shadow', 'text-gray-800', 'dark:text-white');
+            testBtn.classList.add('text-gray-500', 'dark:text-gray-400');
+
             quickTable.classList.remove('hidden');
             testTable.classList.add('hidden');
 
-            // Toggle filters
-            quickInquiryFilters.classList.remove('hidden');
-            testInquiryFilters.classList.add('hidden');
+            if (quickInquiryFilters) quickInquiryFilters.classList.replace('hidden', 'md:flex');
+            if (testInquiryFilters) testInquiryFilters.classList.add('hidden');
 
-            // Reset and apply filters for the new table
-            searchInput.value = '';
-            quickStatusFilter.value = '';
+            // Toggle pagination
+            if (quickPagination) quickPagination.classList.remove('hidden');
+            if (testPagination) testPagination.classList.add('hidden');
+
+            if (searchInput) searchInput.value = '';
+            if (quickStatusFilter) quickStatusFilter.value = '';
             filterTable();
+
+            if (sliderIndicator) sliderIndicator.style.transform = 'translateX(0%)';
         });
 
         testBtn.addEventListener('click', () => {
-            testBtn.classList.add('active');
-            quickBtn.classList.remove('active');
+            testBtn.classList.add('bg-white', 'dark:bg-gray-800', 'shadow', 'text-gray-800', 'dark:text-white');
+            quickBtn.classList.remove('bg-white', 'dark:bg-gray-800', 'shadow', 'text-gray-800', 'dark:text-white');
+            quickBtn.classList.add('text-gray-500', 'dark:text-gray-400');
+
             testTable.classList.remove('hidden');
             quickTable.classList.add('hidden');
 
-            // Toggle filters
-            testInquiryFilters.classList.remove('hidden');
-            quickInquiryFilters.classList.add('hidden');
+            if (testInquiryFilters) testInquiryFilters.classList.replace('hidden', 'md:flex');
+            if (quickInquiryFilters) quickInquiryFilters.classList.add('hidden');
 
-            // Reset and apply filters for the new table
-            searchInput.value = '';
-            // testStatusFilter.value = ''; // For future use
+            // Toggle pagination
+            if (testPagination) testPagination.classList.remove('hidden');
+            if (quickPagination) quickPagination.classList.add('hidden');
+
+            if (searchInput) searchInput.value = '';
+            if (testStatusFilter) testStatusFilter.value = '';
             filterTable();
+
+            if (sliderIndicator) sliderIndicator.style.transform = 'translateX(100%)';
         });
     }
 
     // --- EVENT LISTENERS FOR FILTERS ---
-    searchInput.addEventListener('input', filterTable);
-    quickStatusFilter.addEventListener('change', filterTable);
-    // document.getElementById('testStatusFilter').addEventListener('change', filterTable); // For future use
+    if (searchInput) searchInput.addEventListener('input', filterTable);
+    if (quickStatusFilter) quickStatusFilter.addEventListener('change', filterTable);
+    if (testStatusFilter) testStatusFilter.addEventListener('change', filterTable);
 
     // --- STATUS UPDATE LOGIC ---
     document.querySelectorAll("table select").forEach(select => {
@@ -121,248 +149,250 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 const res = await fetch("../api/update_inquiry_status.php", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: new URLSearchParams({
                         id,
                         type,
                         status,
-                        // Note: We don't need CSRF token for this action, but if you did, you'd use it here
                     })
                 });
-
                 const data = await res.json();
-
                 if (data.success) {
                     const pill = this.closest("tr").querySelector(".pill");
                     pill.textContent = status;
-
-                    pill.className = "pill";
-                    if (status.toLowerCase() === "visited") {
-                        pill.classList.add("visited");
-                    } else if (status.toLowerCase() === "cancelled") {
-                        pill.classList.add("cancelled");
-                    } else {
-                        pill.classList.add("pending");
-                    }
+                    pill.className = `pill ${status.toLowerCase()}`;
                 } else {
                     showToast(data.message || "Update failed", 'error');
                 }
             } catch (err) {
                 console.error("Error:", err);
-                showToast("Network error", 'error');
+                showToast("Network error during status update.", 'error');
             }
         });
     });
-});
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Expose PHP CSRF token to JS safely (escaped server-side).
-    const drawer = document.getElementById('rightDrawer');
-    const drawerTitle = document.getElementById('drawerTitle');
-    const closeBtn = drawer.querySelector('.close-drawer');
-    const quickForm = document.getElementById('quickForm');
-    const testForm = document.getElementById('testForm');
-    const inquiryIdInput = document.getElementById('inquiry_id'); // hidden input
-
-    // Consolidated Toast helper
+    // --- TOAST NOTIFICATION ---
     function showToast(message, type = 'success') {
         const container = document.getElementById('toast-container');
         if (!container) return;
-
         const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.innerText = message;
-
+        const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+        const color = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+        toast.className = `flex items-center gap-3 p-4 rounded-lg text-white shadow-lg transform transition-all duration-300 ease-in-out translate-x-full opacity-0 ${color}`;
+        toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
         container.appendChild(toast);
-
-        setTimeout(() => toast.classList.add('show'), 100);
-
         setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
+            toast.classList.remove('translate-x-full', 'opacity-0');
+        }, 100);
+        setTimeout(() => {
+            toast.classList.add('translate-x-full', 'opacity-0');
+            toast.addEventListener('transitionend', () => toast.remove());
+        }, 5000);
     }
 
-    function openDrawer(inquiryId, rowData) {
-        // set inquiry id in dataset + hidden input
-        quickForm.dataset.inquiryId = inquiryId;
-        if (inquiryIdInput) inquiryIdInput.value = inquiryId;
-
-        // optional: fill form with row data
-        if (rowData) fillForm(quickForm, rowData);
-
-        drawer.classList.add('open');
+    // --- DRAWER LOGIC ---
+    function openDrawer() {
+        if (!drawer || !drawerOverlay) return;
+        drawer.classList.remove('translate-x-full');
         drawer.setAttribute('aria-hidden', 'false');
-        document.body.classList.add('drawer-open');
+        drawerOverlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
     }
-
     function closeDrawer() {
-        drawer.classList.remove('open');
+        if (!drawer || !drawerOverlay) return;
+        drawer.classList.add('translate-x-full');
         drawer.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('drawer-open');
+        drawerOverlay.classList.add('hidden');
+        document.body.style.overflow = '';
     }
-
-    // universal fill: sets form field values from object keys that match input/select/textarea names
     function fillForm(form, data) {
-        if (!form || !data) return; 
-        form.querySelectorAll('[name]').forEach(el => {
-            const key = el.getAttribute('name');
-            if (key === 'csrf') return; // *** IMPORTANT: Do not overwrite the CSRF token! ***
+        if (!form || !data) return;
+        for (const key in data) {
             if (Object.prototype.hasOwnProperty.call(data, key)) {
-                el.value = data[key] == null ? '' : data[key];
+                const input = form.querySelector(`[name="${key}"]`);
+                if (input) {
+                    input.value = data[key] || '';
+                }
             }
-        });
+        }
     }
 
-    // Delegated click for opening drawer
     document.addEventListener('click', async (ev) => {
         const btn = ev.target.closest('.open-drawer');
         if (!btn) return;
-
         ev.preventDefault();
         const inquiryId = btn.getAttribute('data-id');
         const inquiryType = btn.getAttribute('data-type') || 'quick';
 
-        // hide both forms
         quickForm.classList.add('hidden');
         testForm.classList.add('hidden');
-
-        drawerTitle.textContent = inquiryType === 'quick' ? 'Quick Inquiry Details' : 'Test Inquiry Details';
+        drawerMessage.classList.add('hidden');
+        drawerBody.innerHTML = '<p class="text-center p-8 text-gray-500 dark:text-gray-400">Loading details...</p>';
+        drawerTitle.textContent = 'Loading...';
         openDrawer();
-
-        // show loading while fetching
-        const targetBody = drawer.querySelector('.drawer-body');
-        if (targetBody) targetBody.classList.add('loading');
 
         try {
             const resp = await fetch(`../api/fetch_inquiry.php?id=${encodeURIComponent(inquiryId)}&type=${encodeURIComponent(inquiryType)}`);
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             const data = await resp.json();
 
-            // show registered/not registered message
-            const drawerMessage = document.getElementById('drawerMessage');
-            if (drawerMessage) {
+            if (data.message) {
                 drawerMessage.textContent = data.message || '';
-                drawerMessage.classList.remove('registered', 'not-registered');
-                if (data.already_registered) {
-                    drawerMessage.classList.add('registered');
+                drawerMessage.classList.remove('hidden');
+            }
+
+            if (data.success && data.data) {
+                drawerBody.innerHTML = '';
+                if (inquiryType === 'quick') {
+                    drawerTitle.textContent = 'Quick Inquiry Details';
+                    drawerBody.appendChild(quickForm);
+                    quickForm.classList.remove('hidden');
+                    fillForm(quickForm, data.data);
+                    document.getElementById('inquiry_id').value = inquiryId;
                 } else {
-                    drawerMessage.classList.add('not-registered');
+                    drawerTitle.textContent = 'Test Inquiry Details';
+                    drawerBody.appendChild(testForm);
+                    testForm.classList.remove('hidden');
+                    fillForm(testForm, data.data);
+                    document.getElementById('inquiry_id_test').value = inquiryId;
                 }
-            }
-
-            if (!data || !data.success) {
-                console.error('Fetch failed:', data);
-                drawer.querySelector('.drawer-body').innerHTML = `<p class="error">Failed: ${data?.message ?? 'Unknown'}</p>`;
-                return;
-            }
-
-            const d = data.data || {};
-            if (inquiryType === 'quick') {
-                quickForm.classList.remove('hidden');
-                fillForm(quickForm, d);
-                // store id for potential submit handler
-                quickForm.dataset.inquiryId = inquiryId;
             } else {
-                testForm.classList.remove('hidden');
-                fillForm(testForm, d);
-                testForm.dataset.inquiryId = inquiryId;
+                drawerBody.innerHTML = `<p class="text-center p-8 text-red-500">${data.message || 'Failed to load details.'}</p>`;
             }
         } catch (err) {
             console.error('Drawer fetch error:', err);
-            drawer.querySelector('.drawer-body').innerHTML = `<p class="error">Error: ${err.message}</p>`;
-        } finally {
-            if (targetBody) targetBody.classList.remove('loading');
+            drawerBody.innerHTML = `<p class="text-center p-8 text-red-500">An error occurred while fetching details.</p>`;
         }
     });
 
-    // close btn
-    closeBtn.addEventListener('click', closeDrawer);
+    if (closeDrawerButton) closeDrawerButton.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeDrawer();
+        if (e.key === 'Escape' && !drawer.classList.contains('translate-x-full')) {
+            closeDrawer();
+        }
     });
 
-    // Example submit handler for quickForm
-    quickForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new URLSearchParams(new FormData(quickForm));
-        formData.append('type', 'quick');
+    // --- DRAWER FORM SUBMISSION ---
+    if (quickForm) {
+        quickForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(quickForm);
+            try {
+                const response = await fetch('../api/insert_inquiry_reg.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast(result.message || 'Registration successful!', 'success');
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    throw new Error(result.message || 'An unknown error occurred.');
+                }
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        });
+    }
+    if (testForm) {
+        testForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(testForm);
+            try {
+                const response = await fetch('../api/test_submission.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast(result.message || 'Test submitted successfully!', 'success');
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    throw new Error(result.message || 'An unknown error occurred.');
+                }
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        });
+    }
 
-        try {
-            const res = await fetch('../api/insert_inquiry_reg.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: formData
+    // --- TIME SLOT LOGIC ---
+    function fetchSlotsForDate(dateString) {
+        if (!dateString || !slotSelect) return;
+        slotSelect.innerHTML = '<option>Loading slots...</option>';
+        fetch(`../api/get_slots.php?date=${dateString}`)
+            .then(res => res.json())
+            .then(data => {
+                slotSelect.innerHTML = '';
+                if (data.success && data.slots.length > 0) {
+                    data.slots.forEach(slot => {
+                        const opt = document.createElement("option");
+                        opt.value = slot.time;
+                        opt.textContent = slot.label;
+                        if (slot.disabled) {
+                            opt.disabled = true;
+                            opt.textContent += " (Booked)";
+                        }
+                        slotSelect.appendChild(opt);
+                    });
+                } else {
+                    const errorOption = document.createElement("option");
+                    errorOption.textContent = data.message || "No slots available.";
+                    errorOption.disabled = true;
+                    slotSelect.appendChild(errorOption);
+                }
+            })
+            .catch(err => {
+                slotSelect.innerHTML = '<option>Error loading slots.</option>';
+                console.error("Error fetching slots:", err);
             });
-            const j = await res.json();
-            if (j.success) {
-                showToast(j.message ?? 'Saved successfully', 'success');
-                closeDrawer();
-            } else {
-                showToast(j.message ?? 'Save failed', 'error');
-            }
-        } catch (err) {
-            console.error('submit error', err);
-            showToast('Save failed: ' + err.message, 'error');
-        }
-    });
+    }
 
-    // testForm submit handler (similar)
-    testForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new URLSearchParams(new FormData(testForm));
-        formData.append('id', testForm.dataset.inquiryId || '');
-        formData.append('type', 'test');
+    if (dateInput) {
+        dateInput.addEventListener('change', (event) => {
+            fetchSlotsForDate(event.target.value);
+        });
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
+        dateInput.min = today;
+        fetchSlotsForDate(today);
+    }
 
-        try {
-            const res = await fetch('../api/insert_inquiry_test.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: formData
-            });
-            const j = await res.json();
-            if (j.success) {
-                showToast(j.message ?? 'Saved successfully', 'success');
-                closeDrawer();
-            } else {
-                showToast(j.message ?? 'Save failed', 'error');
-            }
-        } catch (err) {
-            console.error('submit error', err);
-            showToast('Save failed: ' + err.message, 'error');
-        }
-    });
+    // --- HAMBURGER/DRAWER NAVIGATION ---
+    const menuBtn = document.getElementById('menuBtn'); // Hamburger for tablet/mobile
+    const closeNavBtn = document.getElementById('closeBtn'); // Close button inside drawer
+    const drawerNav = document.getElementById('drawerNav');
+    const navDrawerOverlay = document.getElementById('drawer-overlay'); // Shared overlay
+    const mainNavLinks = document.querySelector('header nav');
+    const drawerLinksContainer = drawerNav.querySelector('nav');
 
-    const totalAmountInput = document.querySelector('input[name="total_amount"]');
-    const advanceAmountInput = document.querySelector('input[name="advance_amount"]');
-    const dueAmountInput = document.querySelector('input[name="due_amount"]');
-    const discountInput = document.querySelector('input[name="discount"]');
+    if (menuBtn && closeNavBtn && drawerNav && navDrawerOverlay && mainNavLinks && drawerLinksContainer) {
+        // Clone main navigation links into the drawer
+        drawerLinksContainer.innerHTML = mainNavLinks.innerHTML;
 
-    if (totalAmountInput && advanceAmountInput && dueAmountInput && discountInput) {
-        function calculateDue() {
-            const total = parseFloat(totalAmountInput.value) || 0;
-            const advance = parseFloat(advanceAmountInput.value) || 0;
-            const discount = parseFloat(discountInput.value) || 0;
-
-            let due = total - discount - advance;
-
-            if (due < 0) {
-                due = 0;
-            }
-
-            dueAmountInput.value = due.toFixed(2);
+        function openNavDrawer() {
+            drawerNav.classList.remove('translate-x-full');
+            navDrawerOverlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         }
 
-        totalAmountInput.addEventListener('input', calculateDue);
-        advanceAmountInput.addEventListener('input', calculateDue);
-        discountInput.addEventListener('input', calculateDue);
+        function closeNavDrawer() {
+            drawerNav.classList.add('translate-x-full');
+            navDrawerOverlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
 
-        calculateDue(); // initial run
+        menuBtn.addEventListener('click', openNavDrawer);
+        closeNavBtn.addEventListener('click', closeNavDrawer);
+        navDrawerOverlay.addEventListener('click', (e) => {
+            // This overlay is shared, so we only close if the nav drawer is open
+            if (!drawerNav.classList.contains('translate-x-full')) {
+                closeNavDrawer();
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !drawerNav.classList.contains('translate-x-full')) closeNavDrawer();
+        });
     }
 });

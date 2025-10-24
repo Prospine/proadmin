@@ -4,176 +4,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="../image/favicon.png" type="image/x-icon" />
+  <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/changelog.css">
-  <style>
-    body {
-      background: #f7f8fa;
-      color: #222;
-    }
-
-    header h1,
-    .log-entry h2 {
-      color: #1a202c;
-    }
-
-    .segment {
-      padding-left: 0;
-    }
-
-    .log-entry {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-      border: 1px solid #e5e7eb;
-      margin-bottom: 2.5rem;
-      padding: 1.5rem 2rem;
-      transition: box-shadow 0.2s, border 0.2s, background 0.2s;
-    }
-
-    .log-entry:hover {
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.13);
-      border: 1.5px solid #a5b4fc;
-      background: #f7f8fa;
-      color: #222;
-    }
-
-    .unreleased-modern {
-      background: linear-gradient(90deg, #e0e7ff 0%, #f1f5f9 100%);
-      border: 2px solid #6366f1;
-      color: #222;
-      box-shadow: 0 2px 16px rgba(99, 102, 241, 0.08);
-      margin-bottom: 2.5rem;
-      padding: 2rem 2.5rem 1.5rem 2.5rem;
-      border-radius: 16px;
-      position: relative;
-      overflow: hidden;
-      transition: box-shadow 0.2s, border 0.2s, background 0.2s;
-    }
-
-    .unreleased-modern:hover {
-      box-shadow: 0 6px 24px rgba(99, 102, 241, 0.13);
-      border: 2px solid #3730a3;
-      background: linear-gradient(90deg, #e0e7ff 0%, #f7f8fa 100%);
-      color: #222;
-    }
-
-    .log-entry::before,
-    .log-entry:not(:last-child)::after {
-      display: none;
-    }
-
-    .badge {
-      font-weight: 600;
-      letter-spacing: 0.03em;
-    }
-
-    .unreleased-modern {
-      background: linear-gradient(90deg, #e0e7ff 0%, #f1f5f9 100%);
-      border: 2px solid #6366f1;
-      color: #222;
-      box-shadow: 0 2px 16px rgba(99, 102, 241, 0.08);
-      margin-bottom: 2.5rem;
-      padding: 2rem 2.5rem 1.5rem 2.5rem;
-      border-radius: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .unreleased-modern h2 {
-      font-size: 1.4rem;
-      margin-bottom: 0.7rem;
-      color: #3730a3;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .unreleased-modern .meta {
-      color: #6366f1;
-      font-size: 1.05rem;
-      margin-bottom: 1.2rem;
-    }
-
-    .unreleased-modern ul.changes li {
-      margin-bottom: 0.7rem;
-    }
-
-    .unreleased-modern .tag {
-      background: #6366f1;
-      color: #fff;
-      border-radius: 4px;
-      padding: 2px 8px;
-      font-size: 0.9em;
-      margin-right: 0.5em;
-    }
-
-    .dev-banner {
-      background: #fef9c3;
-      color: #a16207;
-      border: 1.5px solid #fde047;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      font-weight: 500;
-      padding: 10px 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      justify-content: center;
-    }
-
-    #changelog-search {
-      background: #f1f5f9;
-      border: 1.5px solid #cbd5e1;
-      color: #222;
-      transition: border 0.2s;
-    }
-
-    #changelog-search:focus {
-      border: 1.5px solid #6366f1;
-      outline: none;
-    }
-
-    @media (max-width: 700px) {
-
-      .log-entry,
-      .unreleased-modern {
-        padding: 1rem 0.7rem;
-      }
-    }
-  </style>
   <title>Changelog</title>
 </head>
 
 <body>
-  <header>
-    <div class="nav"><a href="dashboard.php"> <i class="fa-solid fa-arrow-left"> Back</i></a>
+  <header class="app-header">
+    <div class="logo-container">
+      <a href="dashboard.php">
+        <img src="../../assets/images/image.png" alt="Logo" class="logo-light">
+        <img src="../../assets/images/logo-dark.png" alt="Logo" class="logo-dark">
+      </a>
     </div>
-    <div class="text">
-      <h1>Changelog</h1>
-      <div class="dev-banner"
-        style="background:#ffeeba;color:#856404;padding:10px 20px;border-radius:6px;margin-bottom:10px;font-weight:500;">
-        <i class="fa-solid fa-triangle-exclamation"></i> This page is under active development. Features and layout may
-        change.
-      </div>
-      <p>
-        Stay up to date with the latest changes! Since the first release, we’ve been
-        working hard to make this project the best it can be. Thanks everyone for your feedback ❤️
-      </p>
-      <div style="margin-top:15px;">
-        <input id="changelog-search" type="text" placeholder="Search changelog..."
-          style="padding:7px 12px;width:260px;border-radius:5px;border:1px solid #ccc;font-size:1em;">
-      </div>
+    <div class="header-actions">
+      <a href="dashboard.php" class="back-button"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+      <button class="icon-btn" id="theme-toggle" title="Toggle Theme"><i id="theme-icon"
+          class="fa-solid fa-moon"></i></button>
     </div>
   </header>
 
   <main>
+    <div class="main-header">
+      <div class="main-header-content">
+        <h1 style="text-align: center;">Changelog</h1>
+        <p style="text-align: center;">
+          Stay up to date with the latest changes! Since the first release, we’ve been
+          working hard to make this project the best it can be. Thanks everyone for your feedback ❤️
+        </p>
+        <div class="search-container">
+          <i class="fa-solid fa-search"></i>
+          <input id="changelog-search" type="text" placeholder="Search by version or keyword...">
+        </div>
+      </div>
+    </div>
+
+    <div class="dev-banner">
+      <i class="fa-solid fa-triangle-exclamation"></i> This page is under active development. Features and layout may
+      change.
+    </div>
 
     <div class="segment">
       <div class="unreleased-modern">
@@ -222,6 +93,47 @@
       </div>
 
       <div class="log-entry">
+        <h2>v2.3.1 <span class="badge live">Major UI & Feature Release</span></h2>
+        <div class="meta">
+          October 24, 2025 · Tailwind CSS Integration, Responsive Overhaul, Pagination, and Core Fixes
+        </div>
+        <ul class="changes">
+          <li><span class="tag added">Added</span> <strong>Major UI Overhaul with Tailwind CSS:</strong>
+            <ul>
+              <li>Migrated key pages like <code>schedule.php</code> to a modern, utility-first design using Tailwind CSS, replacing legacy stylesheets.</li>
+              <li>Refactored headers, navigation, modals, and tables across multiple views for a consistent, clean, and maintainable UI.</li>
+            </ul>
+          </li>
+          <li><span class="tag added">Added</span> <strong>Server-Side Pagination:</strong>
+            <ul>
+              <li>Implemented server-side pagination on the <code>inquiry.php</code> page, significantly improving initial load times by fetching data in manageable chunks (15 records per page).</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Comprehensive Responsive Design:</strong>
+            <ul>
+              <li>Transformed data tables on <code>inquiry.php</code> into a responsive card-based layout for optimal viewing on tablets.</li>
+              <li>Redesigned the dashboard's schedule view for tablets into a compact, horizontal-scrolling list to save vertical space and improve usability.</li>
+              <li>Resolved layout overflow issues on <code>inquiry.php</code> and <code>schedule.php</code> for tablet screens, ensuring all controls (search, filters, navigation) are properly displayed.</li>
+            </ul>
+          </li>
+          <li><span class="tag fixed">Fixed</span> <strong>Core Functionality & UI Bugs:</strong>
+            <ul>
+              <li>Corrected the non-functional hamburger menu on <code>inquiry.php</code> by adding the required JavaScript logic for the navigation drawer.</li>
+              <li>Fixed an issue where status pill colors (pending, visited, etc.) were not rendering correctly due to improper CSS processing.</li>
+              <li>Resolved a bug on the <code>schedule.php</code> page where the reschedule modal was not opening on click.</li>
+              <li>Fixed broken notification and profile popups on the schedule page.</li>
+            </ul>
+          </li>
+          <li><span class="tag improved">Improved</span> <strong>Changelog Page Experience:</strong>
+            <ul>
+              <li>Refactored the changelog page to match the new application-wide "Zen" theme, with a full-width, aesthetically pleasing layout.</li>
+              <li>Added a working theme toggle (light/dark mode) and a functional search bar to easily filter changelog entries by version or keyword.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="log-entry">
         <h2>v2.3.0 <span class="badge live">Feature &amp; Fix</span></h2>
         <div class="meta">
           October 16, 2025 · Dynamic Reporting & Schedule Logic Fix
@@ -229,24 +141,32 @@
         <ul class="changes">
           <li><span class="tag added">Added</span> <strong>Dynamic Summary Totals for Reports:</strong>
             <ul>
-              <li>All major report pages (Tests, Registrations, Patients) now feature dynamic summary cards that calculate and display aggregate financial data (e.g., Total Billed, Paid, Due) based on the currently applied filters.</li>
-              <li>Registration reports provide a detailed revenue breakdown by status: Consulted (Green), Pending (Yellow), and Closed (Red).</li>
+              <li>All major report pages (Tests, Registrations, Patients) now feature dynamic summary cards that
+                calculate and display aggregate financial data (e.g., Total Billed, Paid, Due) based on the currently
+                applied filters.</li>
+              <li>Registration reports provide a detailed revenue breakdown by status: Consulted (Green), Pending
+                (Yellow), and Closed (Red).</li>
             </ul>
           </li>
           <li><span class="tag improved">Improved</span> <strong>Report UI &amp; UX:</strong>
             <ul>
-              <li>Enhanced the styling of all report tables with color-coded, right-aligned amount columns for better financial clarity.</li>
+              <li>Enhanced the styling of all report tables with color-coded, right-aligned amount columns for better
+                financial clarity.</li>
               <li>Standardized status pill styling across all report pages for a consistent user experience.</li>
             </ul>
           </li>
           <li><span class="tag fixed">Fixed</span> <strong>Critical Scheduling Logic:</strong>
             <ul>
-              <li>Resolved a major bug where time slots for 'closed' or 'cancelled' appointments remained blocked. The <code>get_slots.php</code> API now correctly frees up these slots, allowing them to be booked again.</li>
+              <li>Resolved a major bug where time slots for 'closed' or 'cancelled' appointments remained blocked. The
+                <code>get_slots.php</code> API now correctly frees up these slots, allowing them to be booked again.
+              </li>
             </ul>
           </li>
           <li><span class="tag improved">Improved</span> <strong>Schedule Views:</strong>
             <ul>
-              <li>The schedule views on the Dashboard, Weekly Schedule page, and Today's Appointments page have been updated to hide 'closed' and 'cancelled' events, providing a cleaner and more accurate view of the active agenda.</li>
+              <li>The schedule views on the Dashboard, Weekly Schedule page, and Today's Appointments page have been
+                updated to hide 'closed' and 'cancelled' events, providing a cleaner and more accurate view of the
+                active agenda.</li>
             </ul>
           </li>
         </ul>
@@ -260,20 +180,24 @@
         <ul class="changes">
           <li><span class="tag added">Added</span> <strong>Directional Page Transitions:</strong>
             <ul>
-              <li>Implemented a new, app-like page transition system that slides pages in from the right or left based on the user's navigation direction in the main menu.</li>
+              <li>Implemented a new, app-like page transition system that slides pages in from the right or left based
+                on the user's navigation direction in the main menu.</li>
               <li>Navigating forward (e.g., Dashboard → Inquiry) slides the new page in from the right.</li>
               <li>Navigating backward (e.g., Inquiry → Dashboard) slides the new page in from the left.</li>
             </ul>
           </li>
           <li><span class="tag added">Added</span> <strong>New Transition Logic:</strong>
             <ul>
-              <li>Created <code>page_transition.js</code> to track navigation history using <code>sessionStorage</code> and apply the correct animation class.</li>
-              <li>Created <code>page_transition.css</code> with new `slideInFromLeft` and `slideInFromRight` animations.</li>
+              <li>Created <code>page_transition.js</code> to track navigation history using <code>sessionStorage</code>
+                and apply the correct animation class.</li>
+              <li>Created <code>page_transition.css</code> with new `slideInFromLeft` and `slideInFromRight` animations.
+              </li>
             </ul>
           </li>
           <li><span class="tag improved">Improved</span> <strong>Page Structure for Animations:</strong>
             <ul>
-              <li>Wrapped the content of all views in a <code>.page-wrapper</code> div. This was a critical fix to ensure the slide animations are visible and not clipped by the browser's default overflow settings.</li>
+              <li>Wrapped the content of all views in a <code>.page-wrapper</code> div. This was a critical fix to
+                ensure the slide animations are visible and not clipped by the browser's default overflow settings.</li>
             </ul>
           </li>
         </ul>
@@ -1095,49 +1019,26 @@
   </main>
 
   <footer>
-    © 2025 Prospine · Made with ☕ + sanity sacrifices
-    <footer>
-      © 2025 Prospine · Made with ☕ + sanity sacrifices
-      <script>
-        // Simple search/filter for changelog entries
-        document.addEventListener('DOMContentLoaded', function () {
-          var searchInput = document.getElementById('changelog-search');
-          if (searchInput) {
-            searchInput.addEventListener('input', function () {
-              var query = this.value.toLowerCase();
-              var entries = document.querySelectorAll('.log-entry, .unreleased-modern');
-              entries.forEach(function (entry) {
-                if (query === '' || entry.textContent.toLowerCase().indexOf(query) !== -1) {
-                  entry.style.display = '';
-                } else {
-                  entry.style.display = 'none';
-                }
-              });
-            });
-          }
+    © 2025 Prospine · Made with ☕ + sanity sacrifices.
+  </footer>
 
-          // Fetch and display CHANGELOG.md content (sync preview)
-          fetch('../../../../CHANGELOG.md')
-            .then(resp => resp.ok ? resp.text() : Promise.reject('No changelog'))
-            .then(md => {
-              // Simple markdown to HTML conversion for preview (headings, lists)
-              var preview = document.createElement('section');
-              preview.style.background = '#f1f5f9';
-              preview.style.border = '1.5px solid #e5e7eb';
-              preview.style.borderRadius = '10px';
-              preview.style.margin = '2.5rem auto';
-              preview.style.maxWidth = '900px';
-              preview.style.padding = '1.5rem 2rem';
-              preview.innerHTML = '<h2 style="color:#6366f1;">CHANGELOG.md Preview</h2>' +
-                md.replace(/^### (.*)$/gm, '<h4>$1</h4>')
-                  .replace(/^## (.*)$/gm, '<h3>$1</h3>')
-                  .replace(/^# (.*)$/gm, '<h2>$1</h2>')
-                  .replace(/^- (.*)$/gm, '<li>$1</li>')
-                  .replace(/\n\n/g, '<br>');
-              document.body.insertBefore(preview, document.querySelector('footer'));
-            });
+  <script src="../js/theme.js"></script>
+  <script>
+    // All other JS has been moved to an external file for cleanliness.
+    // This script is now only for the search functionality.
+    document.addEventListener('DOMContentLoaded', function () {
+      const searchInput = document.getElementById('changelog-search');
+      if (searchInput) {
+        searchInput.addEventListener('input', function () {
+          const query = this.value.toLowerCase().trim();
+          const entries = document.querySelectorAll('.log-entry, .unreleased-modern');
+          entries.forEach(function (entry) {
+            const isVisible = query === '' || entry.textContent.toLowerCase().includes(query);
+            entry.style.display = isVisible ? '' : 'none';
+          });
         });
-      </script>
-    </footer>
+      }
+    });
+  </script>
 
 </html>

@@ -14,10 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function applyTheme(theme) {
         if (theme === "dark") {
-            document.body.classList.add("dark");
+            document.documentElement.classList.add("dark");
             themeIcon.classList.replace("fa-moon", "fa-sun");
         } else {
-            document.body.classList.remove("dark");
+            document.documentElement.classList.remove("dark");
             themeIcon.classList.replace("fa-sun", "fa-moon");
         }
     }

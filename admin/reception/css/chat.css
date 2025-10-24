@@ -326,17 +326,19 @@ body.dark .chat-input-area {
 /* For Tablets */
 @media (max-width: 1024px) {
   .chat-inbox {
-    width: 700px;
-    height: 600px;
+    width: 95vw; /* Use more of the screen width */
+    max-width: 650px; /* But cap it so it's not too wide */
+    height: 75vh; /* Use viewport height */
+    max-height: 550px;
   }
 
   .chat-sidebar-header .closebtn {
-    margin-top: 8px;
-    font-size: 1.3rem;
+    margin-top: 0; /* Align with new header design */
+    font-size: 1.5rem; /* Slightly larger for touch */
   }
 
   .closebtn {
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
 }
 

@@ -109,160 +109,142 @@ foreach ($period as $dt) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weekly Schedule - <?= htmlspecialchars($branchName) ?></title>
-    <link rel="stylesheet" href="../css/dashboard.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon" />
-    <link rel="stylesheet" href="../css/schedule.css">
     <style>
-        /* NEW: Styles for the info notice */
-        .schedule-notice {
-            background-color: #fff4dbff;
-            border: 1px solid #fff3bdff;
-            color: #9e6c00ff;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+        /* Custom scrollbar for WebKit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
 
-        body.dark .schedule-notice {
-            background-color: #1c3b55;
-            color: #cce4ff;
-            border-color: #3a6a97;
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
         }
 
-        /* Styles for the Reschedule Modal */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
+        .dark ::-webkit-scrollbar-track {
+            background: #2d3748;
         }
 
-        .modal-overlay.is-open {
-            opacity: 1;
-            visibility: visible;
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
         }
 
-        .modal-content {
-            background: var(--bg-primary);
-            padding: 2rem;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
+        .dark ::-webkit-scrollbar-thumb {
+            background: #555;
         }
 
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-primary);
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
 
-        .form-group {
-            margin-bottom: 1rem;
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #777;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
+        @media (max-width: 1024px) and (min-width: 768px) {
+            .text-2xl {
+                font-size: 1.5rem;
+                /* Smaller title for tablet */
+            }
 
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color-primary);
-            border-radius: 8px;
-        }
-
-        .today-btn{
-            /* margin-top: 10px; */
-            height: auto;
+            .schedule-container .flex.items-center.gap-2.md\:gap-4 a {
+                padding: 0.375rem 0.75rem;
+                /* py-1.5 px-3 */
+                font-size: 0.75rem;
+                /* text-xs */
+            }
         }
     </style>
 </head>
 
-<body>
-    <header>
-        <div class="logo-container">
-            <div class="logo">
+<body class="bg-gray-100 dark:bg-gray-900 font-sans">
+    <header class="flex items-center justify-between h-26 px-4 md:px-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+        <div class="logo-container flex items-center">
+            <div class="logo h-30 flex items-center">
                 <?php if (!empty($branchDetails['logo_primary_path'])): ?>
-                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo">
+                    <img src="/admin/<?= htmlspecialchars($branchDetails['logo_primary_path']) ?>" alt="Primary Clinic Logo" class="h-20 w-30">
                 <?php else: ?>
-                    <div class="logo-placeholder">Primary Logo N/A</div>
+                    <div class="logo-placeholder text-sm font-semibold text-gray-500 dark:text-gray-400">Primary Logo N/A</div>
                 <?php endif; ?>
             </div>
         </div>
-        <nav>
-            <div class="nav-links">
-                <a href="dashboard.php">Dashboard</a>
-                <a href="inquiry.php">Inquiry</a>
-                <a href="registration.php">Registration</a>
-                <a href="appointments.php">Appointments</a>
-                <a href="patients.php">Patients</a>
-                <a href="billing.php">Billing</a>
-                <a href="attendance.php">Attendance</a>
-                <a href="tests.php">Tests</a>
-                <a href="reports.php">Reports</a>
-                <a href="expenses.php">Expenses</a>
-            </div>
+
+        <nav class="hidden lg:flex items-center gap-1">
+            <a href="dashboard.php" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-tachometer-alt w-4 text-center"></i><span>Dashboard</span></a>
+            <a href="inquiry.php" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-magnifying-glass w-4 text-center"></i><span>Inquiry</span></a>
+            <a href="registration.php" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-user-plus w-4 text-center"></i><span>Registration</span></a>
+            <a href="appointments.php" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-calendar-check w-4 text-center"></i><span>Appointments</span></a>
+            <a href="patients.php" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-users w-4 text-center"></i><span>Patients</span></a>
+            <a href="billing.php" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-file-invoice-dollar w-4 text-center"></i><span>Billing</span></a>
+            <a href="attendance.php" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-user-check w-4 text-center"></i><span>Attendance</span></a>
+            <a href="tests.php" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-vial w-4 text-center"></i><span>Tests</span></a>
+            <a href="reports.php" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-chart-line w-4 text-center"></i><span>Reports</span></a>
+            <a href="expenses.php" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-money-bill-wave w-4 text-center"></i><span>Expenses</span></a>
         </nav>
-        <div class="nav-actions">
-            <div class="icon-btn" title="Settings"> <?= htmlspecialchars($branchName) ?> Branch </div>
-            <div class="icon-btn" id="theme-toggle"> <i id="theme-icon" class="fa-solid fa-moon"></i> </div>
-            <div class="icon-btn icon-btn2" title="Notifications">🔔</div>
-            <div class="profile">S</div>
+
+        <div class="nav-actions flex items-center gap-2">
+            <div class="icon-btn hidden md:flex items-center justify-center px-3 py-1.5 rounded-full text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700/50 text-sm font-medium" title="Branch"><?= htmlspecialchars($branchName) ?> Branch</div>
+            <button class="icon-btn flex items-center justify-center w-9 h-9 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700" id="theme-toggle"><i id="theme-icon" class="fa-solid fa-moon"></i></button>
+            <button class="icon-btn icon-btn2 flex items-center justify-center w-9 h-9 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700" title="Notifications" onclick="openNotif()"><i class="fa-solid fa-bell"></i></button>
+            <button class="profile flex items-center justify-center w-9 h-9 rounded-full bg-teal-600 text-white font-semibold cursor-pointer hover:bg-teal-700 transition-all" onclick="openForm()">S</button>
         </div>
     </header>
 
-    <main class="main">
-        <div class="schedule-container">
-            <div class="schedule-header">
-                <div class="schedule-title">
+    <div class="menu hidden fixed top-16 right-4 md:right-6 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-[101]" id="myMenu">
+        <div class="p-1">
+            <a href="profile.php" class="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"><i class="fa-solid fa-user-circle w-4 text-center"></i> Profile</a>
+            <a href="logout.php" class="flex items-center gap-3 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 rounded-md"><i class="fa-solid fa-sign-out-alt w-4 text-center"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="notification hidden fixed top-16 right-4 md:right-20 w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-[101]" id="myNotif">
+        <div class="p-2">
+            <a href="changelog.html" class="active2 flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">View Changes (1)</a>
+        </div>
+    </div>
+
+    <main class="p-4 md:p-6">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                <div class="text-2xl font-bold text-gray-800 dark:text-white w-full">
                     Weekly Schedule <small style="font-weight: 400;">(<?= $startOfWeek->format('d M') ?> - <?= $endOfWeek->format('d M, Y') ?>)</small>
                 </div>
-                <div class="schedule-nav">
-                    <a href="?week_start=<?= $prevWeek->format('Y-m-d') ?>"><i class="fa fa-chevron-left"></i> Prev Week</a>
-                    <a href="?week_start=today" class="today-btn">Today</a>
-                    <a href="?week_start=<?= $nextWeek->format('Y-m-d') ?>">Next Week <i class="fa fa-chevron-right"></i></a>
+                <div class="flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-4 w-full md:w-auto justify-start">
+                    <a href="dashboard.php" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                    <a href="?week_start=<?= $prevWeek->format('Y-m-d') ?>" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"><i class="fa fa-chevron-left"></i> Prev Week</a>
+                    <a href="?week_start=today" class="px-4 py-2 text-sm font-medium text-white bg-teal-600 border border-teal-600 rounded-lg hover:bg-teal-700">Today</a>
+                    <a href="?week_start=<?= $nextWeek->format('Y-m-d') ?>" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">Next Week <i class="fa fa-chevron-right"></i></a>
                 </div>
             </div>
 
-            <!-- NEW: Informational Notice -->
-            <div class="schedule-notice">
+            <div class="flex items-center gap-3 p-4 mb-6 rounded-lg border bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800/30 dark:text-yellow-300">
                 <i class="fa-solid fa-circle-info"></i>
                 <span>To reschedule an appointment, simply click on the patient's card in the calendar below.</span>
             </div>
 
-            <div class="schedule-grid-wrapper">
-                <table class="schedule-grid">
-                    <thead>
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[1200px] border-collapse text-sm">
+                    <thead class="bg-gray-50 dark:bg-gray-700/50">
                         <tr>
-                            <th class="time-header-col">Time</th>
+                            <th class="p-3 font-semibold text-left text-gray-600 dark:text-gray-300 w-40">Time</th>
                             <?php
                             $headerDay = clone $startOfWeek;
                             for ($i = 0; $i < 7; $i++):
                                 $isTodayClass = ($headerDay->format('Y-m-d') == date('Y-m-d')) ? 'is-today' : '';
                             ?>
-                                <th class="date-header-col <?= $isTodayClass ?>">
-                                    <div><?= $headerDay->format('D') ?></div>
-                                    <div style="font-size: 1.2rem;"><?= $headerDay->format('d') ?></div>
+                                <th class="p-3 font-semibold text-center text-gray-600 dark:text-gray-300 <?= $isTodayClass ? 'bg-teal-50 dark:bg-teal-900/30' : '' ?>">
+                                    <div class="text-xs"><?= $headerDay->format('D') ?></div>
+                                    <div class="text-xl"><?= $headerDay->format('d') ?></div>
                                 </th>
                             <?php
                                 $headerDay->modify('+1 day');
@@ -272,8 +254,8 @@ foreach ($period as $dt) {
                     </thead>
                     <tbody>
                         <?php foreach ($timeSlots as $time): ?>
-                            <tr>
-                                <td class="time-row-col">
+                            <tr class="border-b border-gray-200 dark:border-gray-700">
+                                <td class="p-3 font-medium text-gray-500 dark:text-gray-400 align-top">
                                     <?php
                                     $startTime = strtotime($time);
                                     $endTime = strtotime('+30 minutes', $startTime);
@@ -284,19 +266,26 @@ foreach ($period as $dt) {
                                 $currentDay = clone $startOfWeek;
                                 for ($i = 0; $i < 7; $i++):
                                     $dayStr = $currentDay->format('Y-m-d');
-                                    $isTodayClass = ($dayStr == date('Y-m-d')) ? 'is-today' : '';
+                                    $isTodayClass = ($dayStr == date('Y-m-d')) ? 'bg-gray-50/50 dark:bg-gray-800/50' : '';
                                 ?>
-                                    <td class="<?= $isTodayClass ?>">
+                                    <td class="p-2 border-l border-gray-200 dark:border-gray-700 align-top <?= $isTodayClass ?>">
                                         <?php if (isset($appointmentsByDateAndTime[$dayStr][$time])):
                                             $appointment = $appointmentsByDateAndTime[$dayStr][$time];
                                             $uid = htmlspecialchars($appointment['patient_uid'] ?? '');
                                             $regId = htmlspecialchars((string)($appointment['registration_id'] ?? ''));
+                                            $statusClass = match (strtolower($appointment['status'])) {
+                                                'consulted', 'completed' => 'bg-green-500',
+                                                'pending' => 'bg-orange-500',
+                                                'closed', 'cancelled' => 'bg-red-500',
+                                                default => 'bg-blue-500',
+                                            };
                                         ?>
-                                            <div class="appointment-card <?= strtolower(htmlspecialchars($appointment['status'])) ?>"
-                                                 data-regid="<?= $regId ?>"
-                                                 data-date="<?= htmlspecialchars($appointment['appointment_date']) ?>">
-                                                <span class="appointment-uid"><?= $uid ?: 'Legacy' ?></span>
-                                                <?= htmlspecialchars($appointment['patient_name']) ?>
+                                            <div class="appointment-card p-2 rounded-md text-white text-xs cursor-pointer hover:opacity-90 transition-opacity <?= $statusClass ?>"
+                                                data-regid="<?= $regId ?>"
+                                                data-date="<?= htmlspecialchars($appointment['appointment_date']) ?>"
+                                                data-patient-name="<?= htmlspecialchars($appointment['patient_name']) ?>">
+                                                <div class="font-bold truncate"><?= htmlspecialchars($appointment['patient_name']) ?></div>
+                                                <div class="text-white/80"><?= $uid ?: 'Legacy' ?></div>
                                             </div>
                                         <?php endif; ?>
                                     </td>
@@ -312,37 +301,55 @@ foreach ($period as $dt) {
         </div>
     </main>
 
-    <!-- Reschedule Modal -->
-    <div class="modal-overlay" id="reschedule-modal">
-        <div class="modal-content">
-            <button class="modal-close" id="close-reschedule-modal">&times;</button>
-            <h3 style="margin-bottom: 1.5rem;">Reschedule Appointment</h3>
+    <div id="reschedule-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl w-full max-w-md m-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Reschedule Appointment</h3>
+                <button class="text-gray-500 hover:text-red-500 text-2xl font-bold" id="close-reschedule-modal">&times;</button>
+            </div>
             <form id="reschedule-form">
                 <input type="hidden" name="registration_id" id="reschedule-registration-id" required>
-
-                <div class="form-group">
-                    <label>Patient</label>
-                    <input type="text" id="reschedule-patient-name" readonly style="background: var(--bg-tertiary);">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Patient</label>
+                        <input type="text" id="reschedule-patient-name" readonly class="block w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm">
+                    </div>
+                    <div>
+                        <label for="reschedule-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">New Date</label>
+                        <input type="date" id="reschedule-date" name="new_date" required class="block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label for="reschedule-time-slot" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">New Time Slot</label>
+                        <select id="reschedule-time-slot" name="new_time_slot" required class="block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500">
+                            <option value="">Select a date first</option>
+                        </select>
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="reschedule-date">New Date</label>
-                    <input type="date" id="reschedule-date" name="new_date" required>
+                <div class="mt-6 text-right">
+                    <button type="submit" class="w-full sm:w-auto inline-flex justify-center py-2.5 px-6 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500" id="save-reschedule-btn">Update Appointment</button>
                 </div>
-
-                <div class="form-group">
-                    <label for="reschedule-time-slot">New Time Slot</label>
-                    <select id="reschedule-time-slot" name="new_time_slot" required>
-                        <option value="">Select a date first</option>
-                    </select>
-                </div>
-                <button type="submit" class="today-btn" id="save-reschedule-btn">Update Appointment</button>
             </form>
         </div>
     </div>
 
     <script src="../js/theme.js"></script>
+    <script src="../js/dashboard.js"></script>
     <script>
+        // --- Popup Functions (from dashboard.js) ---
+        function openForm() {
+            document.getElementById("myMenu").classList.toggle("hidden");
+        }
+
+        function openNotif() {
+            document.getElementById("myNotif").classList.toggle("hidden");
+        }
+        // Close popups if clicked outside (from dashboard.js)
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.profile, .menu')) document.getElementById("myMenu").classList.add('hidden');
+            if (!event.target.closest('.icon-btn2, .notification')) document.getElementById("myNotif").classList.add('hidden');
+        });
+
+        // --- Schedule Page Logic ---
         document.addEventListener('DOMContentLoaded', function() {
             const rescheduleModal = document.getElementById('reschedule-modal');
             const closeRescheduleBtn = document.getElementById('close-reschedule-modal');
@@ -353,25 +360,26 @@ foreach ($period as $dt) {
             const timeSlotSelect = document.getElementById('reschedule-time-slot');
 
             // --- Modal Open/Close ---
-            document.querySelectorAll('.appointment-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const regId = card.dataset.regid;
-                    const appointmentDate = card.dataset.date; // Get the date from the card's data attribute
-                    const patientName = card.textContent.replace(card.querySelector('.appointment-uid').textContent, '').trim();
+            document.body.addEventListener('click', function(e) {
+                const card = e.target.closest('.appointment-card');
+                if (!card) return;
 
-                    registrationIdInput.value = regId;
-                    patientNameInput.value = patientName;
-                    dateInput.value = appointmentDate; // Set the correct date from the clicked card
+                const regId = card.dataset.regid;
+                const appointmentDate = card.dataset.date;
+                const patientName = card.dataset.patientName;
+                registrationIdInput.value = regId;
+                patientNameInput.value = patientName;
+                dateInput.value = appointmentDate; // Set the correct date from the clicked card
 
-                    fetchAndPopulateSlots(dateInput.value);
-                    rescheduleModal.classList.add('is-open');
-                });
+                fetchAndPopulateSlots(dateInput.value);
+                rescheduleModal.classList.remove('hidden');
+                rescheduleModal.classList.add('flex');
             });
 
-            closeRescheduleBtn.addEventListener('click', () => rescheduleModal.classList.remove('is-open'));
+            closeRescheduleBtn.addEventListener('click', () => rescheduleModal.classList.add('hidden'));
             rescheduleModal.addEventListener('click', (e) => {
                 if (e.target === rescheduleModal) {
-                    rescheduleModal.classList.remove('is-open');
+                    rescheduleModal.classList.add('hidden');
                 }
             });
 
@@ -432,14 +440,11 @@ foreach ($period as $dt) {
                     const result = await response.json();
 
                     if (result.success) {
-                        alert('Appointment rescheduled successfully!');
                         window.location.reload();
                     } else {
                         throw new Error(result.message || 'Failed to reschedule appointment.');
                     }
-                } catch (error) {
-                    alert('Error: ' + error.message);
-                } finally {
+                } catch (error) {} finally {
                     saveBtn.disabled = false;
                     saveBtn.textContent = 'Update Appointment';
                 }

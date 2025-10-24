@@ -1,34 +1,71 @@
-// --- Basic open/close logic for the popup ---
-function openInbox() {
-    document.getElementById("myInbox").style.display = 'block';
-    fetchBranchUsers(); // Fetch users when the inbox is opened
-}
+// ==========================================================
+// NEW & CORRECTED CHAT.JS
+// ==========================================================
 
-function closeInbox() {
-    document.getElementById("myInbox").style.display = 'none';
-}
-
-// --- DOM Element References ---
-const userListContainer = document.getElementById('chat-user-list');
-const userSearchInput = document.getElementById('chat-user-search');
-const chatHeader = document.getElementById('chat-header');
-const chatMessagesContainer = document.getElementById('chat-messages');
-const messageInput = document.getElementById('chat-message-input');
-const sendButton = document.getElementById('chat-send-btn');
-const refreshButton = document.getElementById('chat-refresh-btn');
+// ---
+// 1. Global Variables & DOM Selectors
+// ---
+let chatModal,
+    userListContainer,
+    userSearchInput,
+    chatHeaderName,       // Changed from chatHeader
+    chatMessagesContainer,
+    messageInput,
+    sendButton,
+    refreshButton,        // This is the user-list refresh
+    chatLoader,
+    chatMain,
+    chatWelcomeMain;
 
 let activePartner = {
     id: null,
     username: null
 };
-// REMOVED: No more messagePollingInterval variable
 
-// --- Fetch and Render the User List ---
+// This is defined in your <script> tag in dashboard.php
+// const currentUserId = ...; 
+
+// ---
+// 2. Basic Show/Hide Functions
+// ---
+function openInbox() {
+    const chatContainer = chatModal.querySelector('.chat-container');
+    chatModal.style.display = 'block';
+    chatContainer.classList.remove('animate-fade-out', 'animate-slide-out-bottom-5');
+    chatContainer.classList.add('animate-fade-in', 'animate-slide-in-bottom-5');
+    fetchBranchUsers(); // Fetch users when the inbox is opened
+}
+
+function closeInbox() {
+    const chatContainer = chatModal.querySelector('.chat-container');
+    chatContainer.classList.remove('animate-fade-in', 'animate-slide-in-bottom-5');
+    chatContainer.classList.add('animate-fade-out', 'animate-slide-out-bottom-5');
+    setTimeout(() => {
+        if (chatModal) {
+            chatModal.style.display = 'none';
+        }
+        if (chatMain && chatWelcomeMain) {
+            chatMain.classList.add('hidden');
+            chatMain.classList.remove('flex'); // Make sure it's not flex
+            chatWelcomeMain.classList.remove('hidden');
+            chatWelcomeMain.classList.add('flex');
+        }
+    }, 300); // Match animation duration
+}
+
+// ---
+// 3. Fetch and Render the User List
+// ---
 async function fetchBranchUsers() {
+    setLoading(true);
     try {
+        // CORRECTED: Using your API endpoint
         const response = await fetch('../api/fetch_branch_users.php');
         if (!response.ok) throw new Error('Network response was not ok.');
+
         const data = await response.json();
+
+        // CORRECTED: Using your data structure
         if (data.success && data.users) {
             renderUserList(data.users);
         } else {
@@ -37,86 +74,95 @@ async function fetchBranchUsers() {
     } catch (error) {
         console.error("Fetch error:", error);
         userListContainer.innerHTML = `<div class="chat-loader">Error loading users.</div>`;
+    } finally {
+        setLoading(false);
     }
 }
 
+/**
+ * Renders the list of users with Tailwind classes
+ */
 function renderUserList(users) {
     userListContainer.innerHTML = '';
     if (users.length === 0) {
         userListContainer.innerHTML = `<div class="chat-loader">No other users in this branch.</div>`;
         return;
     }
+
     users.forEach(user => {
+        // CORRECTED: Using user.username and user.role
         const userInitial = user.username.charAt(0).toUpperCase();
+
         const userElement = document.createElement('div');
-        userElement.className = 'chat-user-item';
+        // ADDED: Tailwind classes for the user item
+        userElement.className = 'flex items-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors chat-user-item';
         userElement.dataset.userId = user.id;
         userElement.dataset.username = user.username;
+
+        // ADDED: Tailwind-styled HTML for the avatar and info
         userElement.innerHTML = `
-<div class="chat-user-avatar">${userInitial}</div>
-<div class="chat-user-info">
-    <div class="name">${user.username}</div>
-    <div class="role">${user.role}</div>
-</div>`;
+            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-800 flex items-center justify-center font-semibold text-teal-700 dark:text-teal-200">
+                ${userInitial}
+            </div>
+            <div class="ml-3 overflow-hidden">
+                <div class="font-semibold text-sm text-gray-800 dark:text-gray-100 truncate">${user.username}</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 truncate">${user.role}</div>
+            </div>
+        `;
+
         userElement.addEventListener('click', () => selectUser(userElement));
         userListContainer.appendChild(userElement);
     });
 }
 
-// --- Search Functionality ---
-userSearchInput.addEventListener('input', (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    const allUsers = userListContainer.querySelectorAll('.chat-user-item');
-    allUsers.forEach(user => {
-        const username = user.dataset.username.toLowerCase();
-        user.style.display = username.includes(searchTerm) ? 'flex' : 'none';
-    });
-});
+// ---
+// 4. Core Chat Functions
+// ---
 
-// --- Core Chat Functions ---
-
-// 1. Select a user to chat with
 function selectUser(selectedElement) {
-    // REMOVED: No more clearInterval
+    // 1. Highlight selected user
     const allUsers = userListContainer.querySelectorAll('.chat-user-item');
-    allUsers.forEach(u => u.classList.remove('active'));
-    selectedElement.classList.add('active');
+    allUsers.forEach(u => u.classList.remove('bg-gray-100', 'dark:bg-gray-700')); // Use Tailwind's 'active' style
+    selectedElement.classList.add('bg-gray-100', 'dark:bg-gray-700');
 
+    // 2. Set active partner
     activePartner.id = selectedElement.dataset.userId;
     activePartner.username = selectedElement.dataset.username;
 
-    const headerContent = document.createElement('div');
-    headerContent.innerHTML = `Chat with <strong>${activePartner.username}</strong>`;
-    const encryptionStatus = document.querySelector('.encryption-status').cloneNode(true);
-    chatHeader.innerHTML = '';
-    chatHeader.appendChild(headerContent);
-    chatHeader.appendChild(encryptionStatus);
+    // 3. Switch from welcome screen to chat screen
+    chatWelcomeMain.classList.add('hidden');
+    chatWelcomeMain.classList.remove('flex');
+    chatMain.classList.remove('hidden');
+    chatMain.classList.add('flex'); // Make it visible as a flex column
 
+    // 4. Update Header
+    // CORRECTED: This now targets the <h2> tag inside the header
+    chatHeaderName.textContent = `Chat with ${activePartner.username}`;
+
+    // 5. Enable inputs
     messageInput.disabled = false;
     sendButton.disabled = false;
-    refreshButton.disabled = false;
     messageInput.focus();
 
-    // Set initial loading state and fetch messages for the first time.
-    chatMessagesContainer.innerHTML = `<div class="chat-loader">Loading messages...</div>`;
+    // 6. Fetch messages
+    chatMessagesContainer.innerHTML = `<div class="chat-loader text-center p-4 text-sm text-gray-500">Loading messages...</div>`;
     fetchMessages(activePartner.id);
-
-    // REMOVED: No more setInterval
 }
 
-// 2. Fetch message history from the API
 async function fetchMessages(partnerId) {
     if (!partnerId) return;
 
     try {
+        // CORRECTED: Using your API endpoint
         const response = await fetch(`../api/chat_api.php?action=fetch&partner_id=${partnerId}`);
         const data = await response.json();
-        if (data.success) {
+
+        // CORRECTED: Using your data structure
+        if (data.success && data.messages) {
             renderMessages(data.messages);
         } else {
-            // Only update if it's still in the initial loading state
             if (chatMessagesContainer.querySelector('.chat-loader')) {
-                chatMessagesContainer.innerHTML = `<div class="chat-loader">${data.message}</div>`;
+                chatMessagesContainer.innerHTML = `<div class="chat-loader">${data.message || 'No messages'}</div>`;
             }
         }
     } catch (error) {
@@ -127,34 +173,47 @@ async function fetchMessages(partnerId) {
     }
 }
 
-// 3. Render the messages in the chat window
+/**
+ * Renders messages with Tailwind "chat bubble" classes
+ */
 function renderMessages(messages) {
-    const currentScroll = chatMessagesContainer.scrollTop;
-    const maxScroll = chatMessagesContainer.scrollHeight - chatMessagesContainer.clientHeight;
-    const isScrolledToBottom = maxScroll - currentScroll <= 20;
+    const isScrolledToBottom = chatMessagesContainer.scrollHeight - chatMessagesContainer.clientHeight <= chatMessagesContainer.scrollTop + 20;
 
-    chatMessagesContainer.innerHTML = '';
+    chatMessagesContainer.innerHTML = ''; // Clear previous messages
     if (messages.length === 0) {
-        chatMessagesContainer.innerHTML = `<div class="chat-loader">No messages yet. Start the conversation!</div>`;
+        chatMessagesContainer.innerHTML = `<div class="chat-loader text-center p-4 text-sm text-gray-500">No messages yet. Start the conversation!</div>`;
         return;
     }
+
     messages.forEach(msg => {
         const messageElement = document.createElement('div');
+        // CORRECTED: Using msg.sender_id
         const isSender = parseInt(msg.sender_id) === currentUserId;
-        messageElement.className = isSender ? 'chat-message sent' : 'chat-message received';
+
+        // ADDED: Tailwind classes for the message row (left or right)
+        messageElement.className = `flex ${isSender ? 'justify-end' : 'justify-start'}`;
+
+        // CORRECTED: Using msg.message_text, msg.created_at, msg.is_read
         const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
         let ticksHtml = '';
         if (isSender) {
-            // Use 'read' for read messages (is_read=1), and 'unread' for sent but not read messages (is_read=0)
-            const readClass = parseInt(msg.is_read) === 1 ? 'read' : 'unread';
-            // The HTML always includes two checks, but CSS will hide the second one for the 'unread' class.
-            ticksHtml = `<span class="ticks ${readClass}"><i class="fa-solid fa-check"></i><i class="fa-solid fa-check"></i></span>`;
+            // ADDED: Tailwind classes for read/unread ticks
+            const readClass = parseInt(msg.is_read) === 1
+                ? 'text-blue-400' // Read color
+                : 'text-teal-100/70'; // Sent (unread) color
+            ticksHtml = `<span class="ml-2 ${readClass}"><i class="fa-solid fa-check-double"></i></span>`;
         }
 
+        // ADDED: Tailwind-styled HTML for the chat bubble
         messageElement.innerHTML = `
-            <div class="message-bubble">${msg.message_text || ''}</div>
-            <div class="message-time">${time} ${ticksHtml}</div>
+            <div class="p-3 rounded-lg max-w-xs md:max-w-md shadow-sm ${isSender ? 'bg-teal-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100'}">
+                <div class="text-sm">${msg.message_text || ''}</div>
+                <div class="text-xs mt-1 text-right ${isSender ? 'text-teal-100/70' : 'text-gray-500 dark:text-gray-400'}">
+                    ${time}
+                    ${ticksHtml}
+                </div>
+            </div>
         `;
         chatMessagesContainer.appendChild(messageElement);
     });
@@ -164,21 +223,28 @@ function renderMessages(messages) {
     }
 }
 
-// 4. Send a new message
 async function sendMessage() {
+    // CORRECTED: Using msg.message_text
     const messageText = messageInput.value.trim();
     if (messageText === '' || !activePartner.id) return;
+
     sendButton.disabled = true;
+
     try {
+        // CORRECTED: Using your API endpoint and data structure
         const response = await fetch('../api/chat_api.php?action=send', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ receiver_id: activePartner.id, message_text: messageText })
+            body: JSON.stringify({
+                receiver_id: activePartner.id,
+                message_text: messageText
+            })
         });
+
         const data = await response.json();
         if (data.success) {
             messageInput.value = '';
-            // Fetch messages after successfully sending one
+            // Re-fetch messages after sending
             fetchMessages(activePartner.id);
         } else {
             alert('Failed to send message: ' + data.message);
@@ -192,26 +258,62 @@ async function sendMessage() {
     }
 }
 
-// --- Event Listeners ---
-sendButton.addEventListener('click', sendMessage);
-messageInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        sendMessage();
+// ---
+// 5. Helpers & Initial Setup
+// ---
+function setLoading(isLoading) {
+    if (chatLoader) {
+        chatLoader.style.display = isLoading ? 'block' : 'none';
     }
-});
+    if (refreshButton) {
+        refreshButton.disabled = isLoading;
+        const icon = refreshButton.querySelector('i');
+        if (icon) {
+            isLoading ? icon.classList.add('fa-spin') : icon.classList.remove('fa-spin');
+        }
+    }
+}
 
-// Refresh Button Logic (remains the same)
-refreshButton.addEventListener('click', () => {
-    if (!activePartner.id || refreshButton.disabled) {
+// --- Event Listeners (Run when the page loads) ---
+document.addEventListener("DOMContentLoaded", () => {
+    // Find all elements
+    chatModal = document.getElementById('myInbox');
+    userListContainer = document.getElementById('chat-user-list');
+    userSearchInput = document.getElementById('chat-user-search');
+    chatHeaderName = document.getElementById('chat-header-name'); // CORRECTED ID
+    chatMessagesContainer = document.getElementById('chat-messages');
+    messageInput = document.getElementById('chat-message-input');
+    sendButton = document.getElementById('chat-send-btn');
+    refreshButton = document.getElementById('chat-refresh-btn'); // This is the user list refresh
+    chatLoader = document.querySelector('.chat-loader');
+    chatMain = document.querySelector('.chat-main');
+    chatWelcomeMain = document.querySelector('.chat-welcome-main');
+
+    // Check if new elements exist
+    if (!chatHeaderName || !chatMain || !chatWelcomeMain) {
+        console.error('Chat UI elements are missing! Make sure you are using the new HTML for chat-inbox.');
         return;
     }
-    refreshButton.disabled = true;
-    refreshButton.classList.add('loading');
-    fetchMessages(activePartner.id).finally(() => {
-        setTimeout(() => {
-            refreshButton.disabled = false;
-            refreshButton.classList.remove('loading');
-        }, 4000);
+
+    // --- Attach Listeners ---
+    sendButton.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    // Refresh Button (for user list)
+    refreshButton.addEventListener('click', fetchBranchUsers);
+
+    // Search Functionality
+    userSearchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const allUsers = userListContainer.querySelectorAll('.chat-user-item');
+        allUsers.forEach(user => {
+            const username = user.dataset.username.toLowerCase();
+            user.style.display = username.includes(searchTerm) ? 'flex' : 'none';
+        });
     });
 });

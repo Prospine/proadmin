@@ -54,16 +54,27 @@ try {
                 throw new Exception('First name, last name, and joining date are required.');
             }
 
+            // FIX: The live database has user_id as NOT NULL and UNIQUE.
+            // We insert a unique negative placeholder to satisfy the constraints, then set it to NULL.
+            // A better long-term fix is to `ALTER TABLE employees MODIFY user_id INT(11) NULL;`
+            
+            // Generate a unique negative number based on timestamp to avoid collisions.
+            $placeholderUserId = -time();
+
             $stmtEmployee = $pdo->prepare(
-                "INSERT INTO employees (first_name, last_name, phone_number, address, date_of_joining) VALUES (?, ?, ?, ?, ?)"
+                "INSERT INTO employees (user_id, first_name, last_name, phone_number, address, date_of_joining) VALUES (?, ?, ?, ?, ?, ?)"
             );
             $stmtEmployee->execute([
-                $data['first_name'],
+                $placeholderUserId, // Use unique negative placeholder
                 $data['last_name'],
+                $data['first_name'], // Corrected order
                 $data['phone_number'] ?: null,
                 $data['address'] ?: null,
                 $data['date_of_joining']
             ]);
+            $employeeId = $pdo->lastInsertId();
+            $stmtSetNull = $pdo->prepare("UPDATE employees SET user_id = NULL WHERE employee_id = ?");
+            $stmtSetNull->execute([$employeeId]);
 
             $response = ['success' => true, 'message' => 'Employee profile created successfully.'];
             break;
@@ -203,7 +214,7 @@ try {
         } elseif (str_contains($e->getMessage(), 'user_id_unique')) {
             $response['message'] = 'This employee is already linked to another user.';
         } else {
-            $response['message'] = 'A database constraint failed. Check for duplicate entries.';
+            $response['message'] = 'A database constraint failed. This can be due to a duplicate entry or a missing required field (like user_id).';
         }
     } else {
         $response['message'] = 'Database error: ' . $e->getMessage();
